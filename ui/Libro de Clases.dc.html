@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-e0ee8877-56a2-498b-bf40-b514218f2e86/styles.css">
+<script src="_ds/modernist-e0ee8877-56a2-498b-bf40-b514218f2e86/_ds_bundle.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;align-items:flex-start">
+  <sc-if value="{{ sideDesktop }}" hint-placeholder-val="{{ true }}">
+    <aside style="flex:0 0 248px;width:248px;position:sticky;top:0;height:100vh;background:var(--color-text);color:var(--color-bg);display:flex;flex-direction:column;overflow-y:auto">
+      <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3);border-bottom:2px solid var(--color-neutral-700)">
+        <div style="width:36px;height:36px;background:var(--color-accent);display:grid;place-items:center;font-weight:700;font-family:var(--font-heading);flex:0 0 auto">L</div>
+        <div style="display:flex;flex-direction:column;min-width:0"><strong style="font-family:var(--font-heading);font-size:15px;line-height:1.1">Libro de Clases</strong><span style="font-size:11px;opacity:.65">Administración del establecimiento</span></div>
+      </div>
+      <nav style="display:flex;flex-direction:column;gap:10px;padding:10px 8px;flex:1">
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:1px">
+            <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.55;padding:0 10px 3px">{{ g.title }}</span>
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+              <button onClick="{{ it.go }}" style="display:flex;align-items:center;gap:9px;width:100%;min-height:32px;padding:5px 10px;border:0;background:{{ it.bg }};color:inherit;font:inherit;font-size:13px;text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-800)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="{{ it.d }}"></path></svg><span>{{ it.label }}</span></button>
+            </sc-for>
+          </div>
+        </sc-for>
+      </nav>
+      <div style="padding:var(--space-3);border-top:2px solid var(--color-neutral-700);display:flex;flex-direction:column;gap:var(--space-2)">
+        <span style="font-size:11px;opacity:.55">Libro de Clases v1.0 · 2027</span>
+        <button style="display:flex;align-items:center;gap:10px;min-height:42px;padding:8px 10px;border:2px solid var(--color-neutral-700);background:transparent;color:inherit;font:inherit;font-size:14px;cursor:pointer;text-align:left"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9"></path></svg><span>Salir</span></button>
+      </div>
+    </aside>
+  </sc-if>
+  <sc-if value="{{ sideDrawer }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeMenu }}" style="position:fixed;inset:0;z-index:55;background:color-mix(in srgb, var(--color-text) 55%, transparent)"></div>
+    <aside style="position:fixed;top:0;left:0;bottom:0;z-index:60;width:min(280px,86vw);background:var(--color-text);color:var(--color-bg);display:flex;flex-direction:column;overflow-y:auto">
+      <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3);border-bottom:2px solid var(--color-neutral-700)">
+        <div style="width:36px;height:36px;background:var(--color-accent);display:grid;place-items:center;font-weight:700;font-family:var(--font-heading);flex:0 0 auto">L</div>
+        <div style="display:flex;flex-direction:column;min-width:0"><strong style="font-family:var(--font-heading);font-size:15px;line-height:1.1">Libro de Clases</strong><span style="font-size:11px;opacity:.65">Administración del establecimiento</span></div>
+      </div>
+      <nav style="display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-3) var(--space-2);flex:1">
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:1px">
+            <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.55;padding:0 10px 3px">{{ g.title }}</span>
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+              <button onClick="{{ it.go }}" style="display:flex;align-items:center;gap:9px;width:100%;min-height:32px;padding:5px 10px;border:0;background:{{ it.bg }};color:inherit;font:inherit;font-size:13px;text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-800)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="{{ it.d }}"></path></svg><span>{{ it.label }}</span></button>
+            </sc-for>
+          </div>
+        </sc-for>
+      </nav>
+      <div style="padding:var(--space-3);border-top:2px solid var(--color-neutral-700);display:flex;flex-direction:column;gap:var(--space-2)">
+        <span style="font-size:11px;opacity:.55">Libro de Clases v1.0 · 2027</span>
+        <button style="display:flex;align-items:center;gap:10px;min-height:42px;padding:8px 10px;border:2px solid var(--color-neutral-700);background:transparent;color:inherit;font:inherit;font-size:14px;cursor:pointer;text-align:left"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9"></path></svg><span>Salir</span></button>
+      </div>
+    </aside>
+  </sc-if>
+  <div style="flex:1;min-width:0;min-height:100vh;display:flex;flex-direction:column">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-divider)">
+    <sc-if value="{{ showMenuBtn }}" hint-placeholder-val="{{ false }}">
+      <button class="btn btn-secondary btn-icon" onClick="{{ openMenu }}" aria-label="Menú" style="width:44px;height:44px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M4 6h16 M4 12h16 M4 18h16"></path></svg></button>
+    </sc-if>
+    <div style="display:flex;align-items:center;gap:var(--space-2);margin-right:auto;min-width:0">
+      <sc-if value="{{ showBrand }}" hint-placeholder-val="{{ false }}">
+        <div style="width:32px;height:32px;background:var(--color-accent);color:var(--color-bg);display:grid;place-items:center;font-weight:700;font-family:var(--font-heading);flex:0 0 auto">L</div>
+      </sc-if>
+      <div style="display:flex;flex-direction:column;min-width:0">
+        <strong style="font-family:var(--font-heading);font-size:17px;line-height:1.1">{{ headTitle }}</strong>
+        <span style="font-size:12px;opacity:.7">Liceo Bicentenario Nueva Araucanía · 2027</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:var(--space-2);flex-wrap:wrap">
+      <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+        <a class="btn btn-primary" href="Biblioteca.dc.html" style="white-space:nowrap;text-decoration:none">Libros de clases →</a>
+      </sc-if>
+      <sc-if value="{{ isBook }}" hint-placeholder-val="{{ false }}">
+        <a class="btn btn-secondary" href="Biblioteca.dc.html" style="white-space:nowrap;text-decoration:none">← Biblioteca</a>
+        <a class="btn btn-secondary" href="Libro%20de%20Clases.dc.html" style="white-space:nowrap;text-decoration:none">Administrador</a>
+      </sc-if>
+    </div>
+  </header>
+
+  <sc-if value="{{ showTopTabs }}" hint-placeholder-val="{{ false }}">
+  <nav style="display:flex;gap:var(--space-1);overflow-x:auto;padding:var(--space-2) var(--space-4);border-bottom:2px solid var(--color-divider);-webkit-overflow-scrolling:touch">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+      <button class="{{ t.cls }}" onClick="{{ t.go }}" style="flex:0 0 auto;white-space:nowrap">{{ t.label }}</button>
+    </sc-for>
+  </nav>
+  </sc-if>
+
+  <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+  <main style="flex:1;width:100%;max-width:1200px;margin:0 auto;padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-4)">
+
+    <sc-if value="{{ s.ini }}" hint-placeholder-val="{{ true }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div style="background:var(--color-accent);color:var(--color-bg);padding:var(--space-4);display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-3)">
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <h1 style="margin:0;font-size:clamp(24px,4vw,34px);line-height:1.05;text-transform:uppercase">Hola, Alejandro Rivas Lagos</h1>
+            <span style="font-size:15px">Así está funcionando el Liceo Bicentenario Nueva Araucanía</span>
+          </div>
+          <button class="btn" onClick="{{ goAsistencia }}" style="background:var(--color-bg);color:var(--color-text);white-space:nowrap;min-height:44px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto"><path d="M8 2v4 M16 2v4 M3 10h18 M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z M9 16l2 2 4-4"></path></svg>Tomar asistencia</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--space-3);padding:var(--space-3);background:var(--color-surface);border:2px solid var(--color-divider)">
+          <div class="field" style="flex:1 1 160px"><label>Desde</label><input class="input" type="date" defaultValue="2027-03-08"></div>
+          <div class="field" style="flex:1 1 160px"><label>Hasta</label><input class="input" type="date" defaultValue="2027-03-15"></div>
+          <div class="field" style="flex:1 1 160px"><label>Curso</label><select class="input"><option>Todos los cursos</option><sc-for list="{{ courses }}" as="c" hint-placeholder-count="3"><option>{{ c.name }}</option></sc-for></select></div>
+          <div class="seg"><label class="seg-opt" style="min-height:36px"><input type="radio" name="rng"> Hoy</label><label class="seg-opt" style="min-height:36px"><input type="radio" name="rng" defaultChecked="{{ true }}"> 7 días</label><label class="seg-opt" style="min-height:36px"><input type="radio" name="rng"> 30 días</label><label class="seg-opt" style="min-height:36px"><input type="radio" name="rng"> Año</label></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2px;background:var(--color-divider);border:2px solid var(--color-divider)">
+          <sc-for list="{{ stats }}" as="k" hint-placeholder-count="4">
+            <div style="background:var(--color-surface);padding:var(--space-3);display:flex;gap:var(--space-3);align-items:flex-start">
+              <div style="width:44px;height:44px;flex:0 0 auto;background:var(--color-accent-100);color:var(--color-accent-700);display:grid;place-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ k.d }}"></path></svg></div>
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:13px;opacity:.7">{{ k.label }}</span><strong style="font-size:26px;line-height:1.1;font-family:var(--font-heading)">{{ k.value }}</strong><span style="font-size:12px;color:var(--color-accent-700)">{{ k.note }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:2px;background:var(--color-divider);border:2px solid var(--color-divider)">
+          <div style="flex:2 1 420px;min-width:0;background:var(--color-surface);padding:var(--space-3);display:flex;flex-direction:column;gap:var(--space-3)">
+            <div style="display:flex;flex-direction:column;gap:2px"><strong style="font-size:17px">Asistencia de los últimos 7 días</strong><span style="font-size:12px;opacity:.65">Porcentaje diario del establecimiento</span></div>
+            <div style="display:flex;align-items:flex-end;gap:var(--space-2);height:220px;border-bottom:2px solid var(--color-divider);padding-top:var(--space-2)">
+              <sc-for list="{{ week }}" as="w" hint-placeholder-count="7">
+                <div style="flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;gap:4px">
+                  <span style="font-size:11px;font-weight:700">{{ w.pct }}</span>
+                  <div style="height:{{ w.h }};background:{{ w.bg }}"></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:var(--space-2)"><sc-for list="{{ week }}" as="w" hint-placeholder-count="7"><span style="flex:1;min-width:0;font-size:11px;opacity:.7">{{ w.day }}</span></sc-for></div>
+          </div>
+          <div style="flex:1 1 280px;min-width:0;background:var(--color-surface);padding:var(--space-3);display:flex;flex-direction:column;gap:var(--space-3)">
+            <div style="display:flex;flex-direction:column;gap:2px"><strong style="font-size:17px">Firmas del leccionario</strong><span style="font-size:12px;opacity:.65">Clases registradas esta semana</span></div>
+            <strong style="font-size:44px;line-height:1;font-family:var(--font-heading)">96%</strong>
+            <div style="display:flex;height:14px;background:var(--color-neutral-200)"><div style="width:96%;background:var(--color-accent)"></div></div>
+            <div style="display:flex;flex-direction:column">
+              <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--color-neutral-200)"><span>Firmadas</span><strong>142</strong></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--color-neutral-200)"><span>Pendientes</span><strong>6</strong></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0"><span>Total de clases</span><strong>148</strong></div>
+            </div>
+            <button class="btn btn-secondary" onClick="{{ goFirmas }}" style="white-space:nowrap;justify-content:flex-start">Revisar pendientes →</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:2px;background:var(--color-divider);border:2px solid var(--color-divider)">
+          <div style="flex:1 1 380px;min-width:0;background:var(--color-surface);padding:var(--space-3);display:flex;flex-direction:column;gap:var(--space-3)">
+            <div style="display:flex;flex-direction:column;gap:2px"><strong style="font-size:17px">Asistencia por curso</strong><span style="font-size:12px;opacity:.65">Promedio del período</span></div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+              <sc-for list="{{ byCourse }}" as="bc" hint-placeholder-count="4">
+                <div style="display:grid;grid-template-columns:90px 1fr 52px;gap:var(--space-2);align-items:center"><span style="font-size:13px">{{ bc.name }}</span><div style="height:12px;background:var(--color-neutral-200)"><div style="height:100%;width:{{ bc.pct }};background:{{ bc.bg }}"></div></div><strong style="font-size:13px;text-align:right">{{ bc.pct }}</strong></div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex:1 1 380px;min-width:0;background:var(--color-surface);padding:var(--space-3);display:flex;flex-direction:column;gap:var(--space-2)">
+            <div style="display:flex;flex-direction:column;gap:2px"><strong style="font-size:17px">Requiere atención</strong><span style="font-size:12px;opacity:.65">Pendientes de hoy</span></div>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ alerts }}" as="al" hint-placeholder-count="4">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-2);padding:10px 0;border-bottom:1px solid var(--color-neutral-200)">
+                  <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><strong style="font-size:14px">{{ al.title }}</strong><span style="font-size:12px;opacity:.7">{{ al.detail }}</span></div>
+                  <span class="{{ al.cls }}" style="white-space:nowrap">{{ al.tag }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+
+    <!-- ================= ADMINISTRADOR ================= -->
+    <sc-if value="{{ s.est }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div style="display:flex;flex-direction:column;gap:4px"><span class="card-kicker">Administrador</span><h1 style="margin:0;font-size:28px">Establecimiento</h1></div>
+        <hr class="hr" style="margin:0">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-3)">
+          <div class="field"><label>Nombre del establecimiento</label><input class="input" defaultValue="Liceo Bicentenario Nueva Araucanía"></div>
+          <div class="field"><label>RBD</label><input class="input" defaultValue="12345-6"></div>
+          <div class="field"><label>Dependencia</label><select class="input"><option>Municipal / SLEP</option><option>Particular subvencionado</option><option>Particular pagado</option></select></div>
+          <div class="field"><label>Año escolar</label><input class="input" defaultValue="2027"></div>
+          <div class="field"><label>Dirección</label><input class="input" defaultValue="Av. Alemania 0450"></div>
+          <div class="field"><label>Comuna</label><input class="input" defaultValue="Temuco"></div>
+          <div class="field"><label>Región</label><input class="input" defaultValue="La Araucanía"></div>
+          <div class="field"><label>Director(a)</label><input class="input" defaultValue="Alejandro Rivas Lagos"></div>
+          <div class="field"><label>Teléfono</label><input class="input" defaultValue="+56 45 221 0000"></div>
+          <div class="field"><label>Correo</label><input class="input" defaultValue="contacto@liceonuevaaraucania.cl"></div>
+        </div>
+        <div style="display:flex;gap:var(--space-2);flex-wrap:wrap"><button class="btn btn-primary" style="white-space:nowrap;flex-shrink:0">Guardar cambios</button><button class="btn btn-secondary" style="white-space:nowrap;flex-shrink:0">Cancelar</button></div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ s.doc }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div style="display:flex;flex-direction:column;gap:4px"><span class="card-kicker">Administrador</span><h1 style="margin:0;font-size:28px">Docentes</h1></div>
+        <hr class="hr" style="margin:0">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--space-3);align-items:end">
+          <div class="field"><label>RUN</label><input class="input" placeholder="12.345.678-9"></div>
+          <div class="field"><label>Nombre completo</label><input class="input" placeholder="Nombre y apellidos"></div>
+          <div class="field"><label>Especialidad</label><input class="input" placeholder="Matemática"></div>
+          <div class="field"><label>Correo</label><input class="input" placeholder="docente@liceo.cl"></div>
+          <div class="field"><label>Teléfono</label><input class="input" placeholder="+56 9"></div>
+          <button class="btn btn-primary" style="white-space:nowrap;flex-shrink:0">Agregar docente</button>
+        </div>
+        <div style="overflow-x:auto;border-top:2px solid var(--color-divider)">
+          <table class="table" style="min-width:640px">
+            <thead><tr><th>RUN</th><th>Nombre</th><th>Especialidad</th><th>Correo</th><th>Jefatura</th><th></th></tr></thead>
+            <tbody>
+              <sc-for list="{{ teachers }}" as="d" hint-placeholder-count="5">
+                <tr><td>{{ d.run }}</td><td>{{ d.name }}</td><td>{{ d.spec }}</td><td>{{ d.mail }}</td><td>{{ d.head }}</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ s.cur }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div style="display:flex;flex-direction:column;gap:4px"><span class="card-kicker">Administrador</span><h1 style="margin:0;font-size:28px">Cursos</h1></div>
+        <hr class="hr" style="margin:0">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--space-3);align-items:end">
+          <div class="field"><label>Nivel</label><select class="input"><option>1° Medio</option><option>2° Medio</option><option>3° Medio</option><option>4° Medio</option></select></div>
+          <div class="field"><label>Letra</label><input class="input" placeholder="A"></div>
+          <div class="field"><label>Jornada</label><select class="input"><option>Completa</option><option>Mañana</option><option>Tarde</option></select></div>
+          <div class="field"><label>Profesor(a) jefe</label><select class="input"><sc-for list="{{ teachers }}" as="d" hint-placeholder-count="3"><option>{{ d.name }}</option></sc-for></select></div>
+          <button class="btn btn-primary" style="white-space:nowrap;flex-shrink:0">Agregar curso</button>
+        </div>
+        <div style="overflow-x:auto;border-top:2px solid var(--color-divider)">
+          <table class="table" style="min-width:560px">
+            <thead><tr><th>Curso</th><th>Jornada</th><th>Profesor(a) jefe</th><th>Matrícula</th><th></th></tr></thead>
+            <tbody>
+              <sc-for list="{{ courses }}" as="c" hint-placeholder-count="4">
+                <tr><td><strong>{{ c.name }}</strong></td><td>{{ c.shift }}</td><td>{{ c.head }}</td><td>{{ c.n }}</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ s.ant }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div style="display:flex;flex-direction:column;gap:4px"><span class="card-kicker">Administrador</span><h1 style="margin:0;font-size:28px">Antecedentes de estudiantes</h1></div>
+        <hr class="hr" style="margin:0">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--space-3)">
+          <div class="field"><label>RUN / IPE</label><input class="input" placeholder="22.345.600-1"></div>
+          <div class="field"><label>Nombres</label><input class="input"></div>
+          <div class="field"><label>Apellidos</label><input class="input"></div>
+          <div class="field"><label>Fecha de nacimiento</label><input class="input" type="date"></div>
+          <div class="field"><label>Sexo</label><select class="input"><option>Femenino</option><option>Masculino</option></select></div>
+          <div class="field"><label>Curso</label><select class="input"><sc-for list="{{ courses }}" as="c" hint-placeholder-count="3"><option>{{ c.name }}</option></sc-for></select></div>
+          <div class="field"><label>Dirección</label><input class="input"></div>
+          <div class="field"><label>Apoderado(a)</label><input class="input"></div>
+          <div class="field"><label>Teléfono apoderado</label><input class="input" placeholder="+56 9"></div>
+          <div class="field"><label>Correo apoderado</label><input class="input"></div>
+        </div>
+        <div class="field"><label>Antecedentes de salud / observaciones</label><textarea class="input" rows="3" style="resize:vertical"></textarea></div>
+        <div><button class="btn btn-primary" style="white-space:nowrap;flex-shrink:0">Matricular estudiante</button></div>
+        <div style="overflow-x:auto;border-top:2px solid var(--color-divider)">
+          <table class="table" style="min-width:720px">
+            <thead><tr><th>N°</th><th>Estudiante</th><th>RUN</th><th>Nacimiento</th><th>Apoderado(a)</th><th>Teléfono</th><th></th></tr></thead>
+            <tbody>
+              <sc-for list="{{ students }}" as="st" hint-placeholder-count="8">
+                <tr><td>{{ st.n }}</td><td>{{ st.name }}</td><td>{{ st.run }}</td><td>{{ st.birth }}</td><td>{{ st.guardian }}</td><td>{{ st.phone }}</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ s.asi }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div style="display:flex;flex-direction:column;gap:4px"><span class="card-kicker">Administrador</span><h1 style="margin:0;font-size:28px">Asignaturas</h1></div>
+        <hr class="hr" style="margin:0">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--space-3);align-items:end">
+          <div class="field"><label>Asignatura</label><input class="input" placeholder="Lengua y Literatura"></div>
+          <div class="field"><label>Curso</label><select class="input"><sc-for list="{{ courses }}" as="c" hint-placeholder-count="3"><option>{{ c.name }}</option></sc-for></select></div>
+          <div class="field"><label>Docente</label><select class="input"><sc-for list="{{ teachers }}" as="d" hint-placeholder-count="3"><option>{{ d.name }}</option></sc-for></select></div>
+          <div class="field"><label>Horas semanales</label><input class="input" type="number" placeholder="6"></div>
+          <button class="btn btn-primary" style="white-space:nowrap;flex-shrink:0">Agregar asignatura</button>
+        </div>
+        <div style="overflow-x:auto;border-top:2px solid var(--color-divider)">
+          <table class="table" style="min-width:560px">
+            <thead><tr><th>Asignatura</th><th>Docente</th><th>Horas</th><th></th></tr></thead>
+            <tbody>
+              <sc-for list="{{ subjects }}" as="a" hint-placeholder-count="8">
+                <tr><td><strong>{{ a.name }}</strong></td><td>{{ a.teacher }}</td><td>{{ a.hours }}</td><td><button class="btn btn-ghost">Editar</button></td></tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ s.ast }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div style="display:flex;flex-direction:column;gap:4px"><span class="card-kicker">Administrador</span><h1 style="margin:0;font-size:28px">Asistencia</h1></div>
+        <hr class="hr" style="margin:0">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--space-3)">
+          <div class="field"><label>Curso</label><select class="input"><sc-for list="{{ courses }}" as="c" hint-placeholder-count="3"><option>{{ c.name }}</option></sc-for></select></div>
+          <div class="field"><label>Fecha</label><input class="input" type="date" defaultValue="2027-03-15"></div>
+          <div class="field"><label>Bloque</label><select class="input"><option>1° bloque · 08:00</option><option>2° bloque · 09:45</option><option>3° bloque · 11:30</option></select></div>
+        </div>
+        <div style="display:flex;gap:var(--space-3);flex-wrap:wrap;font-size:12px;opacity:.75"><span>P Presente</span><span>A Ausente</span><span>T Atraso</span><span>J Justificado</span></div>
+        <div style="display:flex;flex-direction:column;border-top:2px solid var(--color-divider)">
+          <sc-for list="{{ students }}" as="st" hint-placeholder-count="8">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-2);padding:10px 0;border-bottom:1px solid var(--color-neutral-200)">
+              <div style="display:flex;gap:var(--space-2);align-items:baseline;min-width:0"><span style="width:24px;font-size:12px;opacity:.6">{{ st.n }}</span><span>{{ st.name }}</span></div>
+              <div class="seg">
+                <label class="seg-opt" style="min-width:44px;min-height:40px;justify-content:center"><input type="radio" name="as{{ st.n }}" defaultChecked="{{ true }}"> P</label>
+                <label class="seg-opt" style="min-width:44px;min-height:40px;justify-content:center"><input type="radio" name="as{{ st.n }}"> A</label>
+                <label class="seg-opt" style="min-width:44px;min-height:40px;justify-content:center"><input type="radio" name="as{{ st.n }}"> T</label>
+                <label class="seg-opt" style="min-width:44px;min-height:40px;justify-content:center"><input type="radio" name="as{{ st.n }}"> J</label>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:var(--space-2);flex-wrap:wrap"><button class="btn btn-primary" style="white-space:nowrap;flex-shrink:0">Guardar asistencia</button><button class="btn btn-secondary" style="white-space:nowrap;flex-shrink:0">Guardar y firmar bloque</button></div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ s.cal }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div style="display:flex;flex-direction:column;gap:4px"><span class="card-kicker">Administrador</span><h1 style="margin:0;font-size:28px">Calificaciones</h1></div>
+        <hr class="hr" style="margin:0">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--space-3)">
+          <div class="field"><label>Curso</label><select class="input"><sc-for list="{{ courses }}" as="c" hint-placeholder-count="3"><option>{{ c.name }}</option></sc-for></select></div>
+          <div class="field"><label>Asignatura</label><select class="input"><sc-for list="{{ subjects }}" as="a" hint-placeholder-count="3"><option>{{ a.name }}</option></sc-for></select></div>
+          <div class="field"><label>Evaluación</label><input class="input" defaultValue="N3 · Prueba escrita"></div>
+          <div class="field"><label>Fecha</label><input class="input" type="date" defaultValue="2027-04-12"></div>
+          <div class="field"><label>Ponderación</label><input class="input" defaultValue="25%"></div>
+        </div>
+        <div style="overflow-x:auto;border-top:2px solid var(--color-divider)">
+          <table class="table" style="min-width:520px">
+            <thead><tr><th>N°</th><th>Estudiante</th><th>N1</th><th>N2</th><th>N3</th><th>Prom.</th></tr></thead>
+            <tbody>
+              <sc-for list="{{ grades }}" as="g" hint-placeholder-count="8">
+                <tr><td>{{ g.n }}</td><td>{{ g.name }}</td><td>{{ g.n1 }}</td><td>{{ g.n2 }}</td><td><input class="input" style="width:72px" placeholder="1,0–7,0" defaultValue="{{ g.n3 }}"></td><td><strong>{{ g.avg }}</strong></td></tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+        <div><button class="btn btn-primary" style="white-space:nowrap;flex-shrink:0">Guardar calificaciones</button></div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ s.fir }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div style="display:flex;flex-direction:column;gap:4px"><span class="card-kicker">Administrador</span><h1 style="margin:0;font-size:28px">Leccionario y firmas</h1></div>
+        <hr class="hr" style="margin:0">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--space-3)">
+          <div class="field"><label>Fecha</label><input class="input" type="date" defaultValue="2027-03-15"></div>
+          <div class="field"><label>Curso</label><select class="input"><sc-for list="{{ courses }}" as="c" hint-placeholder-count="3"><option>{{ c.name }}</option></sc-for></select></div>
+          <div class="field"><label>Asignatura</label><select class="input"><sc-for list="{{ subjects }}" as="a" hint-placeholder-count="3"><option>{{ a.name }}</option></sc-for></select></div>
+          <div class="field"><label>Bloque</label><select class="input"><option>1° bloque · 08:00</option><option>2° bloque · 09:45</option><option>3° bloque · 11:30</option></select></div>
+        </div>
+        <div class="field"><label>Objetivo de aprendizaje (OA)</label><textarea class="input" rows="2" style="resize:vertical"></textarea></div>
+        <div class="field"><label>Actividades desarrolladas</label><textarea class="input" rows="3" style="resize:vertical"></textarea></div>
+        <div class="field"><label>Firma del docente</label>
+          <div style="height:120px;border:2px dashed var(--color-neutral-400);background:var(--color-surface);display:flex;align-items:flex-end;padding:var(--space-2)"><span style="font-size:12px;opacity:.6">Firmar aquí</span></div>
+        </div>
+        <div style="display:flex;gap:var(--space-2);flex-wrap:wrap"><button class="btn btn-primary" style="white-space:nowrap;flex-shrink:0">Guardar y firmar</button><button class="btn btn-secondary" style="white-space:nowrap;flex-shrink:0">Limpiar firma</button></div>
+        <div style="overflow-x:auto;border-top:2px solid var(--color-divider)">
+          <table class="table" style="min-width:640px">
+            <thead><tr><th>Fecha</th><th>Asignatura</th><th>Docente</th><th>Contenido</th><th>Estado</th></tr></thead>
+            <tbody>
+              <sc-for list="{{ lessons }}" as="l" hint-placeholder-count="4">
+                <tr><td>{{ l.date }}</td><td>{{ l.subject }}</td><td>{{ l.teacher }}</td><td>{{ l.oa }}</td><td><span class="{{ l.cls }}">{{ l.status }}</span></td></tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </sc-if>
+
+    </main>
+  </sc-if>
+  <sc-if value="{{ isBook }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;display:flex;flex-direction:column;gap:18px;padding:clamp(14px,3vw,40px) {{ deskPadR }} 28px clamp(10px,3vw,48px);background:radial-gradient(circle at 18% 12%,rgba(201,146,97,.55),transparent 38%),repeating-linear-gradient(92deg,rgba(255,255,255,.03) 0 2px,rgba(20,8,3,.04) 2px 6px),linear-gradient(120deg,#6b432b,#a76f45 48%,#6b432b)">
+    <div style="position:relative;width:100%;max-width:1480px;margin:0 auto;height:{{ bookH }};display:flex;perspective:2400px;filter:drop-shadow(0 26px 28px rgba(0,0,0,.45))">
+      <div style="position:absolute;inset:12px -8px -8px -8px;background:#17293b;border-radius:14px;box-shadow:inset 0 0 0 3px #0e1b29"></div>
+      <div style="position:absolute;inset:4px -3px -4px -3px;border-radius:12px;background:repeating-linear-gradient(90deg,#f9f4e9 0 4px,#eee6d8 4px 5px)"></div>
+      <sc-if value="{{ s.bCo }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ showL }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zL }};flex:1 1 0;min-width:0;background:#eae1d2;border:1px solid #c6bba8;border-radius:12px 2px 2px 12px;box-shadow:inset -16px 0 30px rgba(0,0,0,.13);transform-origin:{{ oL }};transform:{{ tL }};transition:{{ trans }};backface-visibility:hidden"></section>
+        </sc-if>
+        <sc-if value="{{ showR }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zR }};flex:1 1 0;min-width:0;min-height:{{ coverMinH }};display:flex;flex-direction:column;gap:12px;padding:clamp(26px,4vw,60px);color:#fff;overflow:hidden;background:linear-gradient(145deg,#c81e1e 0 56%,#e5e7eb 56% 70%,#9d151c 70%);border-radius:2px 12px 12px 2px;box-shadow:inset 8px 0 16px rgba(0,0,0,.2);transform-origin:{{ oR }};transform:{{ tR }};transition:{{ trans }};backface-visibility:hidden">
+            <div style="display:flex;align-items:center;gap:8px;font-weight:900;font-size:18px"><span style="width:30px;height:30px;border:2px solid #fff;display:grid;place-items:center;font-size:15px">L</span><span>LIBRO DE CLASES</span></div>
+            <span style="font-size:11px;font-weight:800;letter-spacing:.14em;color:#ffe4e6;text-transform:uppercase">Registro oficial del curso</span>
+            <h1 style="margin:0;font-size:clamp(42px,5.4vw,72px);line-height:.88;letter-spacing:-.03em;text-transform:uppercase">Libro de<br>clases</h1>
+            <span style="font-size:clamp(20px,2vw,26px);font-weight:800">Año escolar 2027</span>
+            <div style="margin-top:clamp(16px,3vw,40px);background:rgba(248,250,252,.93);color:#17324d;padding:clamp(12px,1.6vw,20px);display:flex;flex-direction:column">
+              <div style="font-size:12px;border-bottom:1px solid #657b8e;padding:9px 4px"><strong>ESTABLECIMIENTO</strong> · Liceo Bicentenario Nueva Araucanía</div>
+              <div style="font-size:12px;border-bottom:1px solid #657b8e;padding:9px 4px"><strong>PROFESOR(A) JEFE</strong> · {{ jefe }}</div>
+              <div style="font-size:12px;border-bottom:1px solid #657b8e;padding:9px 4px;display:flex;flex-wrap:wrap;gap:4px 18px"><span><strong>CURSO</strong> · {{ curso }}</span><span><strong>ENSEÑANZA</strong> · Media</span><span><strong>AÑO</strong> · 2027</span></div>
+            </div>
+            <div style="margin-top:auto;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-top:20px">
+              <button class="btn btn-primary" onClick="{{ next }}" style="white-space:nowrap;min-height:44px;background:#b91c1c">Abrir libro →</button>
+              <div style="width:clamp(96px,9vw,126px);aspect-ratio:1;border-radius:50%;background:#1f2937;border:5px solid #f3f4f6;display:grid;place-items:center;text-align:center;font-size:11px;font-weight:800;line-height:1.3;padding:8px">FORMATO<br>FÍSICO +<br>DIGITAL</div>
+            </div>
+          </section>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ s.bId }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ showL }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zL }};flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px) clamp(14px,2.6vw,38px) 12px;overflow:auto;background:linear-gradient(90deg,#fffdf7,#fff 92%,#f3eee3);border:1px solid #cfd8df;border-radius:12px 2px 2px 12px;box-shadow:inset -18px 0 28px rgba(107,79,44,.08);transform-origin:{{ oL }};transform:{{ tL }};transition:{{ trans }};backface-visibility:hidden">
+            <h2 style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;text-align:center;color:#0f477d;font-size:clamp(17px,1.9vw,24px);font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance">Identificación del curso</h2>
+            <div style="display:flex;flex-direction:column;flex-shrink:0"><div style="background:#1f5f9e;color:#fff;padding:7px 10px;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase">1. Antecedentes generales</div><div style="flex-shrink:0;border:1px solid #a9bfd4;background:rgba(255,255,255,.6)"><sc-for list="{{ idRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:minmax(110px,36%) 1fr;border-bottom:1px solid #d5e0ea;min-height:34px;align-items:center"><div style="font-size:10px;font-weight:800;color:#3f6e99;text-transform:uppercase;padding:7px">{{ r.k }}</div><div style="font-family:Georgia,serif;font-size:14px;color:#183a59;padding:6px 8px">{{ r.v }}</div></div></sc-for></div></div><div style="display:flex;flex-direction:column;flex-shrink:0"><div style="background:#1f5f9e;color:#fff;padding:7px 10px;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase">2. Equipo del curso</div><div style="flex-shrink:0;border:1px solid #a9bfd4;background:rgba(255,255,255,.6)"><sc-for list="{{ team }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:minmax(110px,36%) 1fr;border-bottom:1px solid #d5e0ea;min-height:34px;align-items:center"><div style="font-size:10px;font-weight:800;color:#3f6e99;text-transform:uppercase;padding:7px">{{ r.k }}</div><div style="font-family:Georgia,serif;font-size:14px;color:#183a59;padding:6px 8px">{{ r.v }}</div></div></sc-for></div></div><div style="display:flex;flex-direction:column;flex-shrink:0"><div style="background:#1f5f9e;color:#fff;padding:7px 10px;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase">3. Resumen de estudiantes</div><div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:300px;border-collapse:collapse;font-size:12px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Matrícula</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Hombres</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Mujeres</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Total</th></tr></thead><tbody><sc-for list="{{ matricula }}" as="x" hint-placeholder-count="6"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ x.k }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ x.h }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ x.m }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle"><strong>{{ x.t }}</strong></td></tr></sc-for></tbody></table></div></div>
+            <div style="margin-top:auto;padding-top:10px;text-align:center;font-size:12px;font-weight:800;color:#245f98">{{ pL }}</div>
+          </section>
+        </sc-if>
+        <sc-if value="{{ showR }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zR }};flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px) clamp(14px,2.6vw,38px) 12px;overflow:auto;background:linear-gradient(270deg,#fffdf7,#fff 92%,#f3eee3);border:1px solid #cfd8df;border-radius:2px 12px 12px 2px;box-shadow:inset 18px 0 28px rgba(107,79,44,.08);transform-origin:{{ oR }};transform:{{ tR }};transition:{{ trans }};backface-visibility:hidden">
+            <h2 style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;text-align:center;color:#0f477d;font-size:clamp(17px,1.9vw,24px);font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance">Índice de asignaturas</h2>
+            <div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:280px;border-collapse:collapse;font-size:12px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">N°</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Asignatura</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Pág.</th></tr></thead><tbody><sc-for list="{{ subjects }}" as="a" hint-placeholder-count="6"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ a.i }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;font-family:'Segoe Print','Bradley Hand',cursive;font-size:12px;color:#265c93">{{ a.name }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ a.pg }}</td></tr></sc-for></tbody></table></div><div style="display:flex;flex-direction:column;flex-shrink:0"><div style="background:#1f5f9e;color:#fff;padding:7px 10px;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase">Resumen del curso</div><div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:280px;border-collapse:collapse;font-size:12px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Concepto</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">H</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">M</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Total</th></tr></thead><tbody><sc-for list="{{ resumen }}" as="x" hint-placeholder-count="6"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ x.k }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ x.h }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ x.m }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle"><strong>{{ x.t }}</strong></td></tr></sc-for></tbody></table></div></div><div style="flex-shrink:0;padding:8px 10px;border:1px solid #d6e1e9;background:#f7fafc;font-size:11px;color:#506a80;line-height:1.45">El libro conserva la estructura del registro físico: índice, secciones, páginas y firmas.</div>
+            <div style="margin-top:auto;padding-top:10px;text-align:center;font-size:12px;font-weight:800;color:#245f98">{{ pR }}</div>
+          </section>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ s.bNo }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ showL }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zL }};flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px) clamp(14px,2.6vw,38px) 12px;overflow:auto;background:linear-gradient(90deg,#fffdf7,#fff 92%,#f3eee3);border:1px solid #cfd8df;border-radius:12px 2px 2px 12px;box-shadow:inset -18px 0 28px rgba(107,79,44,.08);transform-origin:{{ oL }};transform:{{ tL }};transition:{{ trans }};backface-visibility:hidden">
+            <h2 style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;text-align:center;color:#0f477d;font-size:clamp(17px,1.9vw,24px);font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance">Nómina del curso</h2>
+            <div style="font-size:11px;color:#4f6f8c;text-transform:uppercase;font-weight:800;letter-spacing:.08em">{{ curso }} · Año 2027</div><div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:420px;border-collapse:collapse;font-size:12px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">N°</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Nombre completo</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">RUN/IPE</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Fecha nac.</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">G.</th></tr></thead><tbody><sc-for list="{{ students }}" as="st" hint-placeholder-count="6"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ st.n }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;font-family:'Segoe Print','Bradley Hand',cursive;font-size:12px;color:#265c93">{{ st.name }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ st.run }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ st.birth }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ st.g }}</td></tr></sc-for></tbody></table></div><div style="flex-shrink:0;padding:8px 10px;border:1px solid #d6e1e9;background:#f7fafc;font-size:11px;color:#506a80;line-height:1.45">Información de demostración · datos ficticios.</div>
+            <div style="margin-top:auto;padding-top:10px;text-align:center;font-size:12px;font-weight:800;color:#245f98">{{ pL }}</div>
+          </section>
+        </sc-if>
+        <sc-if value="{{ showR }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zR }};flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px) clamp(14px,2.6vw,38px) 12px;overflow:auto;background:linear-gradient(270deg,#fffdf7,#fff 92%,#f3eee3);border:1px solid #cfd8df;border-radius:2px 12px 12px 2px;box-shadow:inset 18px 0 28px rgba(107,79,44,.08);transform-origin:{{ oR }};transform:{{ tR }};transition:{{ trans }};backface-visibility:hidden">
+            <h2 style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;text-align:center;color:#0f477d;font-size:clamp(17px,1.9vw,24px);font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance">Datos de contacto y apoderado</h2>
+            <div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:520px;border-collapse:collapse;font-size:12px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">N°</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Estudiante</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Apoderado</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Teléfono</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Correo</th></tr></thead><tbody><sc-for list="{{ students }}" as="st" hint-placeholder-count="6"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ st.n }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;font-family:'Segoe Print','Bradley Hand',cursive;font-size:12px;color:#265c93">{{ st.name }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ st.guardian }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;white-space:nowrap">{{ st.phone }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;font-size:10px">{{ st.mail }}</td></tr></sc-for></tbody></table></div>
+            <div style="margin-top:auto;padding-top:10px;text-align:center;font-size:12px;font-weight:800;color:#245f98">{{ pR }}</div>
+          </section>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ s.bAs }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ showL }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zL }};flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px) clamp(14px,2.6vw,38px) 12px;overflow:auto;background:linear-gradient(90deg,#fffdf7,#fff 92%,#f3eee3);border:1px solid #cfd8df;border-radius:12px 2px 2px 12px;box-shadow:inset -18px 0 28px rgba(107,79,44,.08);transform-origin:{{ oL }};transform:{{ tL }};transition:{{ trans }};backface-visibility:hidden">
+            <h2 style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;text-align:center;color:#0f477d;font-size:clamp(17px,1.9vw,24px);font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance">Asistencia mensual · 1–15</h2>
+            <div style="flex-shrink:0;border:1px solid #a9bfd4;background:rgba(255,255,255,.6)"><sc-for list="{{ attInfo }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:minmax(110px,36%) 1fr;border-bottom:1px solid #d5e0ea;min-height:34px;align-items:center"><div style="font-size:10px;font-weight:800;color:#3f6e99;text-transform:uppercase;padding:7px">{{ r.k }}</div><div style="font-family:Georgia,serif;font-size:14px;color:#183a59;padding:6px 8px">{{ r.v }}</div></div></sc-for></div><div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:560px;border-collapse:collapse;font-size:10px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">N°</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Nombre del estudiante</th><sc-for list="{{ daysA }}" as="d" hint-placeholder-count="5"><th style="background:#e7f0f8;color:#235886;font-size:9px;border:1px solid #a9bfd4;padding:3px 1px;text-align:center">{{ d }}</th></sc-for></tr></thead><tbody><sc-for list="{{ attRows }}" as="r" hint-placeholder-count="8"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ r.n }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;white-space:nowrap">{{ r.name }}</td><sc-for list="{{ r.marksA }}" as="m"><td style="border:1px solid #a9bfd4;vertical-align:middle;text-align:center;padding:2px 1px"><span style="display:inline-grid;place-items:center;width:16px;height:15px;font-size:9px;font-weight:800;color:{{ m.c }};background:{{ m.bg }}">{{ m.v }}</span></td></sc-for></tr></sc-for></tbody></table></div><div style="display:flex;flex-direction:column;flex-shrink:0"><div style="background:#1f5f9e;color:#fff;padding:7px 10px;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase">Convenciones</div><div style="flex-shrink:0;padding:8px 10px;border:1px solid #d6e1e9;background:#f7fafc;font-size:11px;color:#506a80;line-height:1.45"><strong>P</strong> Presente · <strong>A</strong> Ausente · <strong>T</strong> Atraso · <strong>J</strong> Justificado</div></div>
+            <div style="margin-top:auto;padding-top:10px;text-align:center;font-size:12px;font-weight:800;color:#245f98">{{ pL }}</div>
+          </section>
+        </sc-if>
+        <sc-if value="{{ showR }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zR }};flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px) clamp(14px,2.6vw,38px) 12px;overflow:auto;background:linear-gradient(270deg,#fffdf7,#fff 92%,#f3eee3);border:1px solid #cfd8df;border-radius:2px 12px 12px 2px;box-shadow:inset 18px 0 28px rgba(107,79,44,.08);transform-origin:{{ oR }};transform:{{ tR }};transition:{{ trans }};backface-visibility:hidden">
+            <h2 style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;text-align:center;color:#0f477d;font-size:clamp(17px,1.9vw,24px);font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance">Asistencia mensual · 16–31</h2>
+            <div style="flex-shrink:0;border:1px solid #a9bfd4;background:rgba(255,255,255,.6)"><sc-for list="{{ attInfo }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:minmax(110px,36%) 1fr;border-bottom:1px solid #d5e0ea;min-height:34px;align-items:center"><div style="font-size:10px;font-weight:800;color:#3f6e99;text-transform:uppercase;padding:7px">{{ r.k }}</div><div style="font-family:Georgia,serif;font-size:14px;color:#183a59;padding:6px 8px">{{ r.v }}</div></div></sc-for></div><div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:560px;border-collapse:collapse;font-size:10px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">N°</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Nombre del estudiante</th><sc-for list="{{ daysB }}" as="d" hint-placeholder-count="5"><th style="background:#e7f0f8;color:#235886;font-size:9px;border:1px solid #a9bfd4;padding:3px 1px;text-align:center">{{ d }}</th></sc-for><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">%</th></tr></thead><tbody><sc-for list="{{ attRows }}" as="r" hint-placeholder-count="8"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ r.n }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;white-space:nowrap">{{ r.name }}</td><sc-for list="{{ r.marksB }}" as="m"><td style="border:1px solid #a9bfd4;vertical-align:middle;text-align:center;padding:2px 1px"><span style="display:inline-grid;place-items:center;width:16px;height:15px;font-size:9px;font-weight:800;color:{{ m.c }};background:{{ m.bg }}">{{ m.v }}</span></td></sc-for><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle"><strong>{{ r.pct }}</strong></td></tr></sc-for></tbody></table></div><div style="display:flex;flex-direction:column;flex-shrink:0"><div style="background:#1f5f9e;color:#fff;padding:7px 10px;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase">Firma de la semana</div><div style="border:1px solid #a9bfd4;background:#effaf5;padding:10px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap"><span style="font-size:11px;color:#1c694b">✓ Asistencia validada y firmada</span><span style="font-family:'Brush Script MT','Segoe Script',cursive;font-size:24px;color:#225b91;border-bottom:1px solid #8aa8c1;min-width:140px">{{ jefeFirma }}</span></div></div>
+            <div style="margin-top:auto;padding-top:10px;text-align:center;font-size:12px;font-weight:800;color:#245f98">{{ pR }}</div>
+          </section>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ s.bCa }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ showL }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zL }};flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px) clamp(14px,2.6vw,38px) 12px;overflow:auto;background:linear-gradient(90deg,#fffdf7,#fff 92%,#f3eee3);border:1px solid #cfd8df;border-radius:12px 2px 2px 12px;box-shadow:inset -18px 0 28px rgba(107,79,44,.08);transform-origin:{{ oL }};transform:{{ tL }};transition:{{ trans }};backface-visibility:hidden">
+            <h2 style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;text-align:center;color:#0f477d;font-size:clamp(17px,1.9vw,24px);font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance">Registro de evaluaciones</h2>
+            <div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:440px;border-collapse:collapse;font-size:12px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">N°</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Fecha</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Asignatura</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Instrumento</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Pond.</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Prom.</th></tr></thead><tbody><sc-for list="{{ evalsB }}" as="e" hint-placeholder-count="6"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ e.n }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ e.date }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;font-family:'Segoe Print','Bradley Hand',cursive;font-size:12px;color:#265c93">{{ e.subject }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ e.inst }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ e.pond }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle"><strong>{{ e.avg }}</strong></td></tr></sc-for></tbody></table></div><div style="display:flex;flex-direction:column;flex-shrink:0"><div style="background:#1f5f9e;color:#fff;padding:7px 10px;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase">Resumen pedagógico</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:7px;padding-top:7px"><div style="border:1px solid #cad8e3;background:#fff;padding:8px;text-align:center;display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;color:#506a80">Promedio general</span><strong style="font-size:22px;color:#164e7b">5,7</strong></div><div style="border:1px solid #cad8e3;background:#fff;padding:8px;text-align:center;display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;color:#506a80">Evaluaciones</span><strong style="font-size:22px;color:#164e7b">5</strong></div><div style="border:1px solid #cad8e3;background:#fff;padding:8px;text-align:center;display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;color:#506a80">Pendientes</span><strong style="font-size:22px;color:#164e7b">2</strong></div><div style="border:1px solid #cad8e3;background:#fff;padding:8px;text-align:center;display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;color:#506a80">Cobertura</span><strong style="font-size:22px;color:#164e7b">94%</strong></div></div></div>
+            <div style="margin-top:auto;padding-top:10px;text-align:center;font-size:12px;font-weight:800;color:#245f98">{{ pL }}</div>
+          </section>
+        </sc-if>
+        <sc-if value="{{ showR }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zR }};flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px) clamp(14px,2.6vw,38px) 12px;overflow:auto;background:linear-gradient(270deg,#fffdf7,#fff 92%,#f3eee3);border:1px solid #cfd8df;border-radius:2px 12px 12px 2px;box-shadow:inset 18px 0 28px rgba(107,79,44,.08);transform-origin:{{ oR }};transform:{{ tR }};transition:{{ trans }};backface-visibility:hidden">
+            <h2 style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;text-align:center;color:#0f477d;font-size:clamp(17px,1.9vw,24px);font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance">Calificaciones del curso</h2>
+            <div style="font-size:11px;color:#4f6f8c;text-transform:uppercase;font-weight:800;letter-spacing:.08em">Matemática · Primer semestre</div><div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:380px;border-collapse:collapse;font-size:12px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">N°</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Estudiante</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">N1</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">N2</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">N3</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Prom.</th></tr></thead><tbody><sc-for list="{{ grades }}" as="g" hint-placeholder-count="6"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ g.n }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;font-family:'Segoe Print','Bradley Hand',cursive;font-size:12px;color:#265c93">{{ g.name }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ g.n1 }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ g.n2 }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ g.n3 }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle"><strong style="color:{{ g.c }}">{{ g.avg }}</strong></td></tr></sc-for></tbody></table></div>
+            <div style="margin-top:auto;padding-top:10px;text-align:center;font-size:12px;font-weight:800;color:#245f98">{{ pR }}</div>
+          </section>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ s.bLe }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ showL }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zL }};flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px) clamp(14px,2.6vw,38px) 12px;overflow:auto;background:linear-gradient(90deg,#fffdf7,#fff 92%,#f3eee3);border:1px solid #cfd8df;border-radius:12px 2px 2px 12px;box-shadow:inset -18px 0 28px rgba(107,79,44,.08);transform-origin:{{ oL }};transform:{{ tL }};transition:{{ trans }};backface-visibility:hidden">
+            <h2 style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;text-align:center;color:#0f477d;font-size:clamp(17px,1.9vw,24px);font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance">Registro del desarrollo de contenidos</h2>
+            <div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:460px;border-collapse:collapse;font-size:12px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Fecha</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Asignatura</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Profesor(a)</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Objetivo de aprendizaje / OA</th></tr></thead><tbody><sc-for list="{{ lessons }}" as="l" hint-placeholder-count="6"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;white-space:nowrap">{{ l.date }}<br><span style="font-size:10px;opacity:.7">{{ l.block }}</span></td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;font-family:'Segoe Print','Bradley Hand',cursive;font-size:12px;color:#265c93">{{ l.subject }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ l.teacher }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;font-family:'Segoe Print','Bradley Hand',cursive;font-size:12px;color:#265c93">{{ l.oa }}</td></tr></sc-for></tbody></table></div>
+            <div style="margin-top:auto;padding-top:10px;text-align:center;font-size:12px;font-weight:800;color:#245f98">{{ pL }}</div>
+          </section>
+        </sc-if>
+        <sc-if value="{{ showR }}" hint-placeholder-val="{{ true }}">
+          <section style="position:relative;z-index:{{ zR }};flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px) clamp(14px,2.6vw,38px) 12px;overflow:auto;background:linear-gradient(270deg,#fffdf7,#fff 92%,#f3eee3);border:1px solid #cfd8df;border-radius:2px 12px 12px 2px;box-shadow:inset 18px 0 28px rgba(107,79,44,.08);transform-origin:{{ oR }};transform:{{ tR }};transition:{{ trans }};backface-visibility:hidden">
+            <h2 style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;text-align:center;color:#0f477d;font-size:clamp(17px,1.9vw,24px);font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance">Actividades y firmas</h2>
+            <div style="overflow-x:auto;flex-shrink:0"><table style="width:100%;min-width:380px;border-collapse:collapse;font-size:12px;color:#234b6d;background:rgba(255,255,255,.6)"><thead><tr><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Actividades desarrolladas</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Estado</th><th style="background:#e7f0f8;color:#235886;font-size:10px;text-transform:uppercase;letter-spacing:.02em;border:1px solid #a9bfd4;padding:5px 6px;text-align:left;font-weight:800">Firma</th></tr></thead><tbody><sc-for list="{{ lessons }}" as="l" hint-placeholder-count="6"><tr><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;font-family:'Segoe Print','Bradley Hand',cursive;font-size:12px;color:#265c93">{{ l.act }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle">{{ l.status }}</td><td style="border:1px solid #a9bfd4;padding:5px 6px;vertical-align:middle;font-family:'Brush Script MT','Segoe Script',cursive;font-size:22px;color:#225b91;white-space:nowrap">{{ l.sign }}</td></tr></sc-for></tbody></table></div><div style="flex-shrink:0;padding:8px 10px;border:1px solid #d6e1e9;background:#f7fafc;font-size:11px;color:#506a80;line-height:1.45">Cada clase queda firmada por el docente responsable. Las clases sin firma aparecen como pendientes.</div>
+            <div style="margin-top:auto;padding-top:10px;text-align:center;font-size:12px;font-weight:800;color:#245f98">{{ pR }}</div>
+          </section>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;left:50%;top:6px;bottom:6px;width:28px;transform:translateX(-50%);z-index:8;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.12),transparent 36%,rgba(255,255,255,.5) 48%,transparent 60%,rgba(0,0,0,.12))"></div>
+      </sc-if>
+      <sc-if value="{{ showSideTabs }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;right:-30px;top:60px;z-index:12;display:flex;flex-direction:column;gap:5px">
+          <sc-for list="{{ sideTabs }}" as="t" hint-placeholder-count="5">
+            <button onClick="{{ t.go }}" style="width:30px;min-height:100px;border:1px solid #adc1d3;border-left:0;border-radius:0 7px 7px 0;background:{{ t.bg }};color:{{ t.fg }};writing-mode:vertical-rl;padding:8px 4px;font:inherit;font-size:10px;font-weight:800;letter-spacing:.04em;cursor:pointer">{{ t.label }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+      <button onClick="{{ prev }}" disabled="{{ atStart }}" aria-label="Página anterior" style="flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:#183a59;font-size:22px;font-weight:900;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35);opacity:{{ prevOp }}">‹</button>
+      <div style="font-size:12px;background:rgba(0,0,0,.5);color:#fff;padding:10px 16px;border-radius:999px;text-align:center;min-width:0">{{ spreadLabel }}</div>
+      <button onClick="{{ next }}" disabled="{{ atEnd }}" aria-label="Página siguiente" style="flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:#183a59;font-size:22px;font-weight:900;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35);opacity:{{ nextOp }}">›</button>
+    </div>
+  </div>
+  </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = (() => { const p = new URLSearchParams(typeof location !== 'undefined' ? location.search : ''); const book = p.get('modo') === 'libro'; return { mode: book ? 'book' : 'admin', tab: book ? 'bCo' : (p.get('tab') || 'ini'), cid: p.get('curso') || '2MB', side: 'R', turn: null, anim: false, menu: false, narrow: typeof window !== 'undefined' && window.innerWidth < 900 }; })();
+  componentDidMount() {
+    this.onR = () => this.setState({ narrow: window.innerWidth < 900 });
+    this.onK = e => { if (this.state.mode !== 'book') return; if (e.key === 'ArrowRight') this.turn(1); if (e.key === 'ArrowLeft') this.turn(-1); };
+    window.addEventListener('resize', this.onR); window.addEventListener('keydown', this.onK); this.onR();
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onR); window.removeEventListener('keydown', this.onK); clearTimeout(this.tm); }
+  static BOOK = [['bCo','Portada'],['bId','Identificación'],['bNo','Nómina'],['bAs','Asistencia'],['bCa','Calificaciones'],['bLe','Leccionario']];
+  turn(dir) {
+    const B = Component.BOOK, { tab, side, narrow, turn } = this.state;
+    if (turn) return;
+    const bi = B.findIndex(t => t[0] === tab);
+    let nbi = bi, nside = 'L';
+    if (narrow) {
+      if (dir > 0) { if (bi === 0) { nbi = 1; nside = 'L'; } else if (side === 'L') nside = 'R'; else { nbi = bi + 1; nside = 'L'; } }
+      else { if (side === 'R' && bi > 0) nside = 'L'; else if (bi === 1) { nbi = 0; nside = 'R'; } else { nbi = bi - 1; nside = 'R'; } }
+    } else { nbi = bi + dir; nside = nbi === 0 ? 'R' : 'L'; }
+    if (nbi < 0 || nbi >= B.length) return;
+    this.setState({ turn: dir > 0 ? 'next' : 'prev', anim: true });
+    this.tm = setTimeout(() => this.setState({ tab: B[nbi][0], side: nside, turn: null, anim: false }), 540);
+  }
+  renderVals() {
+    const { mode, tab, narrow, menu, side, turn, anim, cid } = this.state;
+    const CUR = { '1BA':['1° Básico A','Paula Fernández Ruiz'],'2BA':['2° Básico A','Rocío Medina Lara'],'3BA':['3° Básico A','Claudio Pinto Vega'],'4BA':['4° Básico A','Ana María Rojas'],'5BA':['5° Básico A','Héctor Salinas Mora'],'6BA':['6° Básico A','Valeria Ortiz Cid'],'7BA':['7° Básico A','Gonzalo Peña Ríos'],'8BA':['8° Básico A','Francisca León Díaz'],'1MA':['1° Medio A','Javier Morales Pérez'],'1MB':['1° Medio B','Daniela Fuentes Ríos'],'2MA':['2° Medio A','Camila Rojas Torres'],'2MB':['2° Medio B','Marcela Soto Muñoz'],'3MA':['3° Medio A','Rodrigo Vera Lagos'],'4MA':['4° Medio A','Lorena Díaz Peña'] };
+    const [curso, jefe] = CUR[cid] || CUR['2MB'];
+    const jp = jefe.split(' '); const jefeFirma = jp[0][0] + '. ' + jp[jp.length - 2];
+    const I = {
+      ini: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
+      est: 'M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2 M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2 M10 6h4 M10 10h4 M10 14h4 M10 18h4',
+      doc: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',
+      cur: 'M12 2 2 7l10 5 10-5-10-5Z M2 17l10 5 10-5 M2 12l10 5 10-5',
+      ant: 'M22 10 12 5 2 10l10 5 10-5Z M6 12v5c3 3 9 3 12 0v-5',
+      asi: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z',
+      ast: 'M8 2v4 M16 2v4 M3 10h18 M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z M9 16l2 2 4-4',
+      cal: 'M9 11l3 3L22 4 M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11',
+      fir: 'M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z'
+    };
+    const groupsDef = [
+      ['General', [['ini','Inicio']]],
+      ['Institución', [['est','Establecimiento'],['doc','Docentes'],['cur','Cursos']]],
+      ['Académico', [['ant','Estudiantes'],['asi','Asignaturas']]],
+      ['Registro diario', [['ast','Asistencia'],['cal','Calificaciones'],['fir','Firmas y leccionario']]]
+    ];
+    const go = k => () => this.setState({ tab: k, menu: false });
+    const groups = groupsDef.map(([title, items]) => ({ title, items: items.map(([k, label]) => ({ label, d: I[k], bg: k === tab ? 'var(--color-accent)' : 'transparent', go: go(k) })) }));
+    const adminLabels = Object.fromEntries(groupsDef.flatMap(g => g[1]));
+    const B = Component.BOOK;
+    const isBook = mode === 'book', wide = !narrow;
+    const keys = isBook ? B.map(t => t[0]) : groupsDef.flatMap(g => g[1].map(i => i[0]));
+    const s = {}; keys.forEach(k => s[k] = k === tab);
+    const bi = Math.max(0, B.findIndex(t => t[0] === tab));
+    const names = ['Antonia Rojas','Benjamín Pérez','Catalina Silva','Diego Muñoz','Emilia Torres','Francisco Díaz','Gabriela Vargas','Ignacio Herrera','Javiera Soto','Matías Contreras','Nicole Araya','Pablo Ramírez','Sofía Navarro','Tomás Fuentes','Valentina Sepúlveda'];
+    const gd = ['María','Luis','Carolina','Patricia','Andrés','Natalia'];
+    const plain = t => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ /g, '');
+    const students = names.map((name, i) => ({ n: i + 1, name, g: i % 2 ? 'F' : 'M', run: `22.${345+i}.${600+i*7}-${(i*7)%10}`, birth: `${String(i%27+1).padStart(2,'0')}/${String(i%11+1).padStart(2,'0')}/2011`, guardian: `${gd[i%6]} ${name.split(' ')[1]}`, phone: `+56 9 ${6123+i*137} ${4567+i*83}`, mail: plain(name) + '@demo.cl' }));
+    const MC = { P: ['#1f5f9e','#e7f0f8'], A: ['#b42318','#fde8e8'], T: ['#b36b14','#fff3e0'], J: ['#217a57','#e6f4ee'] };
+    const days = Array.from({ length: 31 }, (_, i) => i + 1);
+    const attRows = students.map((st, i) => {
+      let p = 0;
+      const marks = days.map((d, j) => {
+        let v = 'P';
+        if ((i + d) % 23 === 0) v = 'A'; else if ((i * 3 + d) % 29 === 0) v = 'T'; else if ((i + d * 2) % 37 === 0) v = 'J';
+        if (v === 'P' || v === 'T') p++;
+        return { v, c: MC[v][0], bg: MC[v][1], cls: v === 'P' ? '' : v === 'A' ? 'tag tag-accent' : 'tag tag-neutral' };
+      });
+      return { n: st.n, name: st.name, marks: marks.slice(0, 10), marksA: marks.slice(0, 15), marksB: marks.slice(15), pct: Math.round(p / days.length * 100) + '%' };
+    });
+    const f = x => x.toFixed(1).replace('.', ',');
+    const grades = students.map((st, i) => {
+      const a = 4 + ((i*7)%30)/10, b = 3.6 + ((i*11)%34)/10, c = 4.2 + ((i*5)%28)/10;
+      const avg = (a + b + c) / 3;
+      return { n: st.n, name: st.name, n1: f(a), n2: f(b), n3: f(c), avg: f(avg), cls: avg < 4 ? 'tag tag-accent' : '', c: avg < 4 ? '#b42318' : '#183a59' };
+    });
+    const signed = { cls: 'tag tag-neutral', status: 'Firmado' }, pend = { cls: 'tag tag-outline', status: 'Pendiente' };
+    const week = [['Lun 08',93],['Mar 09',91],['Mié 10',94],['Jue 11',89],['Vie 12',86],['Lun 15',92],['Mar 16',90]].map(([day, p]) => ({ day, pct: p + '%', h: ((p - 70) / 30 * 100) + '%', bg: p < 88 ? 'var(--color-accent)' : 'var(--color-text)' }));
+    const subjects = [
+      { name: 'Lengua y Literatura', teacher: 'Javier Morales Pérez', hours: 6 },
+      { name: 'Matemática', teacher: 'Marcela Soto Muñoz', hours: 7 },
+      { name: 'Historia, Geografía y Cs. Sociales', teacher: 'Camila Rojas Torres', hours: 4 },
+      { name: 'Ciencias Naturales', teacher: 'Rodrigo Vera Lagos', hours: 6 },
+      { name: 'Inglés', teacher: 'Daniela Fuentes Ríos', hours: 4 },
+      { name: 'Educación Física y Salud', teacher: 'Pablo Núñez Soto', hours: 2 },
+      { name: 'Artes Visuales', teacher: 'Lorena Díaz Peña', hours: 2 },
+      { name: 'Música', teacher: 'Lorena Díaz Peña', hours: 2 },
+      { name: 'Tecnología', teacher: 'Rodrigo Vera Lagos', hours: 1 },
+      { name: 'Orientación', teacher: 'Marcela Soto Muñoz', hours: 1 }
+    ].map((x, i) => ({ ...x, i: i + 1, pg: 3 + i * 5 }));
+    // page turn
+    const showL = wide || side === 'L', showR = wide || side === 'R';
+    let tL = 'none', tR = 'none', oL = 'right center', oR = 'left center', zL = 1, zR = 1;
+    if (wide) {
+      if (turn === 'next') { tR = 'rotateY(-170deg)'; zR = 10; }
+      if (turn === 'prev') { tL = 'rotateY(170deg)'; zL = 10; }
+    } else if (turn) {
+      const t = turn === 'next' ? 'rotateY(-100deg)' : 'rotateY(100deg)', o = turn === 'next' ? 'left center' : 'right center';
+      tL = tR = t; oL = oR = o;
+    }
+    const atStart = bi === 0, atEnd = bi === B.length - 1 && (wide || side === 'R');
+    const pageNo = bi * 2 - (side === 'L' ? 1 : 0);
+    return {
+      s, isBook, isAdmin: !isBook, wide,
+      sideDesktop: !isBook && !narrow, sideDrawer: !isBook && narrow && menu, showMenuBtn: !isBook && narrow,
+      showBrand: isBook || narrow, showTopTabs: isBook && narrow, showSideTabs: isBook && wide && bi > 0,
+      curso, jefe, jefeFirma, headTitle: isBook ? 'Libro de Clases · ' + curso : adminLabels[tab] || 'Inicio',
+      openMenu: () => this.setState({ menu: true }), closeMenu: () => this.setState({ menu: false }),
+      goAsistencia: go('ast'), goFirmas: go('fir'),
+      groups,
+      modes: [['admin','Administrador'],['book','Libro de clases']].map(([k, label]) => ({ label, cls: mode === k ? 'btn-primary' : '', go: () => this.setState({ mode: k, tab: k === 'admin' ? 'ini' : 'bCo', side: 'R', menu: false }) })),
+      tabs: B.map(([k, label]) => ({ label, cls: k === tab ? 'btn btn-primary' : 'btn btn-secondary', go: () => this.setState({ tab: k, side: k === 'bCo' ? 'R' : 'L' }) })),
+      sideTabs: B.slice(1).map(([k, label]) => ({ label, bg: k === tab ? '#1f5f9e' : '#dde8f2', fg: k === tab ? '#fff' : '#315d86', go: () => this.setState({ tab: k, side: 'L' }) })),
+      showL, showR, tL, tR, oL, oR, zL, zR, trans: anim ? 'transform .54s cubic-bezier(.42,.05,.21,.98)' : 'none',
+      pL: bi * 2 - 1, pR: bi * 2,
+      bookH: wide ? 'max(560px, min(780px, calc(100vh - 190px)))' : 'auto', coverMinH: wide ? 'auto' : '560px', deskPadR: wide ? '64px' : '10px',
+      prev: () => this.turn(-1), next: () => this.turn(1), atStart, atEnd, prevOp: atStart ? 0.4 : 1, nextOp: atEnd ? 0.4 : 1,
+      spreadLabel: bi === 0 ? 'Portada cerrada' : wide ? `${B[bi][1]} · páginas ${bi*2-1}–${bi*2}` : `${B[bi][1]} · página ${pageNo}`,
+      stats: [
+        { label: 'Estudiantes matriculados', value: '412', note: '14 cursos activos', d: I.ant },
+        { label: 'Asistencia promedio', value: '90,7%', note: 'Últimos 7 días', d: I.ast },
+        { label: 'Clases sin firma', value: '6', note: 'Pendientes de docentes', d: I.fir },
+        { label: 'Promedio general', value: '5,6', note: 'Primer semestre', d: I.cal }
+      ],
+      week,
+      byCourse: [['1° Medio A',93],['2° Medio B',90],['3° Medio A',88],['4° Medio A',84]].map(([name, p]) => ({ name, pct: p + '%', bg: p < 85 ? 'var(--color-accent)' : 'var(--color-text)' })),
+      alerts: [
+        { title: 'Historia · 2° Medio B', detail: 'Clase del 14/03 sin firma del docente', tag: 'Firma', cls: 'tag tag-outline' },
+        { title: 'Asistencia 3° Medio A', detail: '2° bloque sin registrar', tag: 'Asistencia', cls: 'tag tag-accent' },
+        { title: 'Francisco Díaz', detail: 'Asistencia bajo 85% en marzo', tag: 'Estudiante', cls: 'tag tag-neutral' },
+        { title: 'Inglés · 4° Medio A', detail: 'N2 sin calificaciones ingresadas', tag: 'Notas', cls: 'tag tag-neutral' }
+      ],
+      teachers: [
+        { run: '13.456.789-2', name: 'Marcela Soto Muñoz', spec: 'Matemática', mail: 'msoto@liceo.cl', head: '2° Medio B' },
+        { run: '14.567.890-3', name: 'Javier Morales Pérez', spec: 'Lengua y Literatura', mail: 'jmorales@liceo.cl', head: '1° Medio A' },
+        { run: '15.678.901-4', name: 'Camila Rojas Torres', spec: 'Historia', mail: 'crojas@liceo.cl', head: '—' },
+        { run: '16.789.012-5', name: 'Rodrigo Vera Lagos', spec: 'Ciencias', mail: 'rvera@liceo.cl', head: '3° Medio A' },
+        { run: '17.890.123-6', name: 'Daniela Fuentes Ríos', spec: 'Inglés', mail: 'dfuentes@liceo.cl', head: '—' }
+      ],
+      courses: [
+        { name: '2° Medio B', shift: 'Completa', head: 'Marcela Soto Muñoz', n: 15 },
+        { name: '1° Medio A', shift: 'Completa', head: 'Javier Morales Pérez', n: 32 },
+        { name: '3° Medio A', shift: 'Completa', head: 'Rodrigo Vera Lagos', n: 28 },
+        { name: '4° Medio A', shift: 'Completa', head: 'Daniela Fuentes Ríos', n: 30 }
+      ],
+      subjects, students, days: days.slice(0, 10), daysA: days.slice(0, 15), daysB: days.slice(15), attRows, grades,
+      evals: [
+        { k: 'N1', date: '22/03', inst: 'Prueba escrita', pond: '30%' },
+        { k: 'N2', date: '05/04', inst: 'Trabajo práctico', pond: '30%' },
+        { k: 'N3', date: '12/04', inst: 'Prueba escrita', pond: '40%' }
+      ],
+      evalsB: [
+        { n: 1, date: '08/03', subject: 'Matemática', inst: 'Prueba escrita', pond: '25%', avg: '5,8' },
+        { n: 2, date: '15/03', subject: 'Lengua y Literatura', inst: 'Control de lectura', pond: '20%', avg: '5,4' },
+        { n: 3, date: '22/03', subject: 'Historia', inst: 'Exposición oral', pond: '20%', avg: '6,1' },
+        { n: 4, date: '29/03', subject: 'Ciencias', inst: 'Trabajo práctico', pond: '25%', avg: '5,6' },
+        { n: 5, date: '05/04', subject: 'Inglés', inst: 'Guía evaluada', pond: '10%', avg: '5,2' }
+      ],
+      idRows: [
+        { k: 'Establecimiento', v: 'Liceo Bicentenario Nueva Araucanía' }, { k: 'RBD', v: '12345-6' },
+        { k: 'Curso', v: curso }, { k: 'Jornada', v: 'Jornada completa' },
+        { k: 'Año escolar', v: '2027' }, { k: 'Profesor(a) jefe', v: jefe }
+      ],
+      team: [
+        { k: 'Asistentes de la educación', v: 'Fernanda Rojas Pérez · Luis Carrasco Vidal' },
+        { k: 'Inspectoría', v: 'Daniel Muñoz Paredes' },
+        { k: 'Orientador(a)', v: 'Carolina Álvarez Riquelme' }
+      ],
+      matricula: [{ k: 'Inicial', h: 8, m: 7, t: 15 }, { k: 'Incorporaciones', h: 0, m: 0, t: 0 }, { k: 'Retiros', h: 0, m: 0, t: 0 }, { k: 'Final', h: 8, m: 7, t: 15 }],
+      resumen: [{ k: 'Promovidos', h: 7, m: 7, t: 14 }, { k: 'En evaluación', h: 1, m: 0, t: 1 }, { k: 'Total', h: 8, m: 7, t: 15 }],
+      attInfo: [{ k: 'Curso / Mes', v: curso + ' · Marzo 2027' }, { k: 'Profesor(a) jefe', v: jefe }],
+      lessons: [
+        { date: '15/03', block: '1° bloque', subject: 'Matemática', teacher: 'Marcela Soto Muñoz', oa: 'OA 2: Proporcionalidad y porcentajes.', act: 'Resolución guiada de problemas en parejas.', sign: 'M. Soto', ...signed },
+        { date: '15/03', block: '2° bloque', subject: 'Lengua y Literatura', teacher: 'Javier Morales Pérez', oa: 'OA 8: Textos argumentativos, tesis y evidencias.', act: 'Lectura breve y organizador gráfico.', sign: 'J. Morales', ...signed },
+        { date: '14/03', block: '3° bloque', subject: 'Historia', teacher: 'Camila Rojas Torres', oa: 'OA 5: Transformaciones sociales del siglo XX.', act: 'Línea de tiempo colaborativa.', sign: '—', ...pend },
+        { date: '14/03', block: '1° bloque', subject: 'Ciencias Naturales', teacher: 'Rodrigo Vera Lagos', oa: 'OA 12: Reacciones químicas.', act: 'Trabajo práctico de laboratorio.', sign: 'R. Vera', ...signed }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

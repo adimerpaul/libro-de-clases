@@ -1,0 +1,1 @@
+import{Dt as e,at as t}from"./QSpinner-BVeVv9ms.js";import{f as n}from"./use-dark-8VWBYdLQ.js";function r(){let r=e(!n.value);return r.value||t(()=>{r.value=!0}),{isHydrated:r}}export{r as t};

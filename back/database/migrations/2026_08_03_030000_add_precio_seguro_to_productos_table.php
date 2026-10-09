@@ -1,0 +1,23 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('productos', function (Blueprint $table) {
+            // Precio preferencial para pacientes con seguro/convenio (arancel: "P. SEGURO")
+            $table->decimal('precio_seguro', 12, 2)->nullable()->after('precio');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('productos', function (Blueprint $table) {
+            $table->dropColumn('precio_seguro');
+        });
+    }
+};

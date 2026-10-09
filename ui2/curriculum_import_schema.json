@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0-demo",
+  "description": "Esquema propuesto para ingestión/versionado del catálogo curricular oficial.",
+  "fields": {
+    "country": "CL",
+    "authority": "Ministerio de Educación",
+    "level": "2° Medio",
+    "subject": "Matemática",
+    "oa_code": "código oficial",
+    "oa_statement": "texto oficial del objetivo de aprendizaje",
+    "unit_or_axis": "unidad/eje",
+    "skills": ["habilidad 1", "habilidad 2"],
+    "attitudes": ["actitud"],
+    "indicators": ["indicador de evaluación"],
+    "source_url": "https://curriculumnacional.mineduc.cl/",
+    "curriculum_version": "versión/vigencia",
+    "effective_from": "YYYY-MM-DD",
+    "effective_to": null,
+    "source_hash": "hash del documento/fuente para auditoría"
+  }
+}

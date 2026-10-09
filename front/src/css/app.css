@@ -1,0 +1,19 @@
+/* app global css */
+
+/* Rangos de referencia en HTML (editor WYSIWYG) */
+.html-rango p,
+.html-rango div,
+.html-rango ul,
+.html-rango ol,
+.html-rango blockquote {
+  margin: 0;
+}
+.html-rango ul,
+.html-rango ol {
+  padding-left: 16px;
+}
+span.html-rango,
+span.html-rango p,
+span.html-rango div {
+  display: inline;
+}

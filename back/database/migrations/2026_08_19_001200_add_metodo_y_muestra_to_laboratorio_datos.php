@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('producto_laboratorio_datos', function (Blueprint $table) {
+            $table->string('metodo', 100)->nullable()->after('unidad');
+            $table->string('muestra', 100)->nullable()->after('metodo');
+        });
+
+        Schema::table('solicitud_laboratorio_resultados', function (Blueprint $table) {
+            $table->string('metodo', 100)->nullable()->after('unidad');
+            $table->string('muestra', 100)->nullable()->after('metodo');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('solicitud_laboratorio_resultados', function (Blueprint $table) {
+            $table->dropColumn(['metodo', 'muestra']);
+        });
+
+        Schema::table('producto_laboratorio_datos', function (Blueprint $table) {
+            $table->dropColumn(['metodo', 'muestra']);
+        });
+    }
+};

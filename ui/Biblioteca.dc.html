@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-e0ee8877-56a2-498b-bf40-b514218f2e86/styles.css">
+<script src="_ds/modernist-e0ee8877-56a2-498b-bf40-b514218f2e86/_ds_bundle.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-divider);background:var(--color-bg)">
+    <div style="display:flex;align-items:center;gap:var(--space-2);margin-right:auto;min-width:0">
+      <div style="width:32px;height:32px;background:var(--color-accent);color:var(--color-bg);display:grid;place-items:center;font-weight:700;font-family:var(--font-heading);flex:0 0 auto">L</div>
+      <div style="display:flex;flex-direction:column;min-width:0">
+        <strong style="font-family:var(--font-heading);font-size:17px;line-height:1.1">Biblioteca</strong>
+        <span style="font-size:12px;opacity:.7">Liceo Bicentenario Nueva Araucanía · 2027</span>
+      </div>
+    </div>
+    <a class="btn btn-secondary" href="Libro%20de%20Clases.dc.html" style="white-space:nowrap;text-decoration:none">Administrador</a>
+  </header>
+
+  <div style="flex:1;display:flex;flex-direction:column;gap:clamp(20px,3vw,36px);padding:clamp(16px,3vw,40px) clamp(12px,3vw,48px) 48px;background:radial-gradient(circle at 18% 12%,rgba(201,146,97,.55),transparent 38%),repeating-linear-gradient(92deg,rgba(255,255,255,.03) 0 2px,rgba(20,8,3,.04) 2px 6px),linear-gradient(120deg,#6b432b,#a76f45 48%,#6b432b)">
+    <div style="width:100%;max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-3)">
+      <div style="display:flex;flex-direction:column;gap:6px;color:#fff">
+        <span style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.8">Año escolar 2027</span>
+        <h1 style="margin:0;font-size:clamp(28px,4.5vw,46px);line-height:1;text-transform:uppercase">Libros de clases</h1>
+        <span style="font-size:14px;opacity:.85">Selecciona un curso para abrir su libro.</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center">
+        <input class="input" placeholder="Buscar curso o profesor(a)" onInput="{{ onSearch }}" style="min-width:220px;flex:1 1 220px;background:var(--color-bg)">
+        <div class="seg" style="background:var(--color-bg)">
+          <sc-for list="{{ levels }}" as="l" hint-placeholder-count="3">
+            <button class="{{ l.cls }}" onClick="{{ l.go }}" style="border:0;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap">{{ l.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <sc-for list="{{ shelves }}" as="sh" hint-placeholder-count="3">
+      <section style="width:100%;max-width:1320px;margin:0 auto;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:baseline;gap:var(--space-2);color:#fff;padding:0 4px 10px"><strong style="font-size:15px;letter-spacing:.06em;text-transform:uppercase">{{ sh.title }}</strong><span style="font-size:12px;opacity:.75">{{ sh.count }}</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:clamp(12px,2vw,24px);padding:18px clamp(10px,2vw,22px) 0;background:rgba(40,22,12,.35);box-shadow:inset 0 10px 18px rgba(0,0,0,.25)">
+          <sc-for list="{{ sh.books }}" as="b" hint-placeholder-count="6">
+            <a href="{{ b.href }}" style="display:flex;flex-direction:column;text-decoration:none;color:#fff;transition:transform .2s ease" style-hover="transform:translateY(-6px)">
+              <div style="aspect-ratio:.72;display:flex;flex-direction:column;gap:6px;padding:12px 12px 12px 18px;background:{{ b.bg }};border-radius:3px 8px 8px 3px;box-shadow:inset 6px 0 0 rgba(0,0,0,.28),inset -1px -1px 0 rgba(255,255,255,.25),8px 10px 18px rgba(0,0,0,.45);overflow:hidden">
+                <span style="font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.9">{{ b.kicker }}</span>
+                <strong style="font-size:clamp(18px,1.8vw,22px);line-height:1;text-transform:uppercase">{{ b.name }}</strong>
+                <span style="font-size:11px;font-weight:700">2027</span>
+                <div style="margin-top:auto;background:rgba(248,250,252,.94);color:#17324d;padding:6px 8px;display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:10px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.line1 }}</span>
+                  <span style="font-size:10px;opacity:.7">{{ b.line2 }}</span>
+                </div>
+              </div>
+            </a>
+          </sc-for>
+        </div>
+        <div style="height:16px;background:linear-gradient(#7a4b2c,#4a2c19);box-shadow:0 8px 14px rgba(0,0,0,.4)"></div>
+      </section>
+    </sc-for>
+
+    <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+      <div style="width:100%;max-width:1320px;margin:0 auto;color:#fff;font-size:15px">No hay libros que coincidan con la búsqueda.</div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { q: '', level: 'all' };
+  renderVals() {
+    const { q, level } = this.state;
+    const C = [
+      ['1BA','1° Básico A','Paula Fernández Ruiz',28],['2BA','2° Básico A','Rocío Medina Lara',30],['3BA','3° Básico A','Claudio Pinto Vega',29],['4BA','4° Básico A','Ana María Rojas',31],
+      ['5BA','5° Básico A','Héctor Salinas Mora',30],['6BA','6° Básico A','Valeria Ortiz Cid',27],['7BA','7° Básico A','Gonzalo Peña Ríos',32],['8BA','8° Básico A','Francisca León Díaz',30],
+      ['1MA','1° Medio A','Javier Morales Pérez',32],['1MB','1° Medio B','Daniela Fuentes Ríos',31],['2MA','2° Medio A','Camila Rojas Torres',30],['2MB','2° Medio B','Marcela Soto Muñoz',15],
+      ['3MA','3° Medio A','Rodrigo Vera Lagos',28],['4MA','4° Medio A','Lorena Díaz Peña',30]
+    ];
+    const cover = (a, b) => `linear-gradient(145deg,${a} 0 58%,#e5e7eb 58% 70%,${b} 70%)`;
+    const book = ([id, name, head, n]) => ({ name, href: `Libro%20de%20Clases.dc.html?modo=libro&curso=${id}`, kicker: 'Libro de clases', line1: head, line2: `${n} estudiantes`, bg: id.includes('B') && id[1] === 'B' ? cover('#1f5f9e', '#0f477d') : cover('#c81e1e', '#9d151c') });
+    const qq = q.trim().toLowerCase();
+    const match = c => !qq || (c[1] + ' ' + c[2]).toLowerCase().includes(qq);
+    const basica = C.filter(c => c[0][1] === 'B' && match(c)).map(book);
+    const media = C.filter(c => c[0][1] === 'M' && match(c)).map(book);
+    const G = [['ini','Panel de gestión','Indicadores del establecimiento'],['doc','Docentes','Registro del personal'],['ant','Matrícula','Antecedentes de estudiantes'],['fir','Firmas','Leccionario y pendientes']]
+      .filter(g => !qq || g[1].toLowerCase().includes(qq))
+      .map(([t, name, l1]) => ({ name, href: `Libro%20de%20Clases.dc.html?tab=${t}`, kicker: 'Gestión', line1: l1, line2: 'Administración', bg: cover('#2b2f36', '#1f2937') }));
+    const all = [
+      { k: 'basica', title: 'Enseñanza Básica', books: basica },
+      { k: 'media', title: 'Enseñanza Media', books: media },
+      { k: 'gestion', title: 'Gestión', books: G }
+    ].filter(s => (level === 'all' || s.k === level) && s.books.length).map(s => ({ ...s, count: `${s.books.length} libros` }));
+    return {
+      shelves: all, empty: all.length === 0,
+      onSearch: e => this.setState({ q: e.target.value }),
+      levels: [['all','Todos'],['basica','Básica'],['media','Media'],['gestion','Gestión']].map(([k, label]) => ({ label, cls: level === k ? 'btn-primary' : '', go: () => this.setState({ level: k }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

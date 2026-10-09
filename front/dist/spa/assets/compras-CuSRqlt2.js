@@ -1,0 +1,92 @@
+import{B as e,Dt as t,I as n,K as r,L as i,M as a,Mt as o,R as s,U as c,W as l,Yt as u,_t as ee,dt as d,i as f,lt as p,t as m,vt as h,yt as g,z as _}from"./QSpinner-BVeVv9ms.js";import{t as v}from"./QBtn-8_FdTKg1.js";import{t as y}from"./QInput-Ck23QcZK.js";import{P as te,d as ne,l as b,u as x}from"./index-DrC3oyDL.js";import{r as re}from"./dateTime-Cgturobw.js";import{t as S}from"./QSpace-crdZKEBU.js";import{_ as C,v as w,y as T}from"./format-BXkCJb0x.js";import{t as ie}from"./QBtnDropdown-BYHsy3j9.js";import{t as ae}from"./QBadge-Dsv9Kfak.js";import{t as oe}from"./QList-BxkDoOg1.js";import{t as E}from"./ClosePopup-KqAR8uZp.js";import{t as D}from"./QTooltip-DGc9CV1f.js";import{t as se}from"./QPage-DS70S47m.js";import{t as O}from"./QSelect-CeJve_ng.js";import{t as k}from"./QMarkupTable-BB7mXDO0.js";import{t as A}from"./printd-CI3YqDZj.js";import{t as ce}from"./QPagination-C2RN3laf.js";var j=A(),M={nombre:`CLÍNICA URME`,direccion:`Calle Cochabamba entre Soria Galvarro y 6 de Octubre`,celular:`70431083`,pie:[`"CLÍNICA URME" Al servicio de Oruro, Atención de Emergencias`,`las 24 horas los 365 días del año.`,`Atención en todas las Especialidades`]},N=`
+  @page { size: 5.5in 8.5in; margin: 10mm; }
+  body { margin: 0; }
+  .proforma { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #000; line-height: 1.35; }
+  .titulo-doc { display: inline-block; border: 1.5px solid #000; padding: 2px 10px; font-weight: bold; font-size: 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { vertical-align: top; }
+  .head { margin-top: 8px; }
+  .logo { width: 90px; }
+  .bold { font-weight: bold; }
+  .center { text-align: center; }
+  .right { text-align: right; }
+  .dashed { border: none; border-top: 1.5px dashed #000; margin: 6px 0; }
+  .detalle-title { text-align: center; font-weight: bold; text-decoration: underline; font-size: 13px; margin: 8px 0 6px; }
+  .items th { text-align: left; border-bottom: 1.5px solid #000; padding: 2px 4px; }
+  .items td { padding: 2px 4px; }
+  .items th.precio, .items td.precio { border-left: 1.5px solid #000; }
+  .totales td { font-weight: bold; padding: 2px 4px; }
+  .totales .monto { border-top: 1.5px solid #000; }
+  .son { text-align: center; font-weight: bold; margin-top: 6px; }
+  .obs { margin-top: 6px; }
+  .pie { text-align: center; font-size: 10px; margin-top: 16px; }
+`;function P(e){return String(e??``).replace(/&/g,`&amp;`).replace(/</g,`&lt;`).replace(/>/g,`&gt;`)}function F(e){return Number(e||0).toFixed(2).replace(`.`,`,`)}function I(e){let t=Number(e||0);return Number.isInteger(t)?String(t):t.toFixed(2).replace(`.`,`,`)}function L(e,t=`BOLIVIANOS`){let n=Math.floor(Math.abs(e)),r=Math.round((Math.abs(e)-n)*100),i=R(n).toUpperCase();return r>0?`${i} ${t} CON ${String(r).padStart(2,`0`)}/100`:`${i} ${t} EXACTOS`}function R(e){if(e===0)return`cero`;let t=[``,`uno`,`dos`,`tres`,`cuatro`,`cinco`,`seis`,`siete`,`ocho`,`nueve`,`diez`,`once`,`doce`,`trece`,`catorce`,`quince`,`dieciséis`,`diecisiete`,`dieciocho`,`diecinueve`,`veinte`],n=[``,`veintiuno`,`veintidós`,`veintitrés`,`veinticuatro`,`veinticinco`,`veintiséis`,`veintisiete`,`veintiocho`,`veintinueve`],r=[``,``,``,`treinta`,`cuarenta`,`cincuenta`,`sesenta`,`setenta`,`ochenta`,`noventa`],i=[``,`ciento`,`doscientos`,`trescientos`,`cuatrocientos`,`quinientos`,`seiscientos`,`setecientos`,`ochocientos`,`novecientos`];if(e<=20)return t[e];if(e<30)return n[e-20];if(e<100){let n=Math.floor(e/10),i=e%10;return i===0?r[n]:`${r[n]} y ${t[i]}`}if(e===100)return`cien`;if(e<1e3){let t=Math.floor(e/100),n=e%100;return i[t]+(n>0?` `+R(n):``)}if(e<2e3){let t=e%1e3;return`mil`+(t>0?` `+R(t):``)}if(e<1e6){let t=Math.floor(e/1e3),n=e%1e3;return R(t)+` mil`+(n>0?` `+R(n):``)}if(e<2e6){let t=e%1e6;return`un millón`+(t>0?` `+R(t):``)}if(e<1e9){let t=Math.floor(e/1e6),n=e%1e6;return R(t)+` millones`+(n>0?` `+R(n):``)}return String(e)}function z(e){let t=window.location.origin+`/logo.png`,n=(e.fecha_hora||``).replace(`T`,` `).slice(0,19)||`—`,r=e.detalles||[],i=r.length?r.map(e=>`
+        <tr>
+          <td>${P(e.nombre||e.producto?.nombre||`—`)}</td>
+          <td class="right">${I(e.cantidad)}</td>
+          <td class="right precio">${F(e.precio)}</td>
+          <td class="right">${F(e.total)}</td>
+        </tr>`).join(``):`<tr><td colspan="4" class="center">Sin detalles</td></tr>`;return`
+    <div class="proforma">
+      <div class="titulo-doc">COMPRA DE FARMACIA</div>
+
+      <table class="head">
+        <tr>
+          <td style="width:30%" class="center">
+            <img class="logo" src="${t}" alt="Logo" onerror="this.style.display='none'">
+          </td>
+          <td style="width:70%">
+            <span class="bold">${P(M.nombre)}</span><br>
+            <span class="bold">Dirección:</span> ${P(M.direccion)}<br>
+            <span class="bold">Celular:</span> ${P(M.celular)}<br>
+            <span class="bold">COMPRA N° ${String(e.id).padStart(6,`0`)}</span>
+          </td>
+        </tr>
+      </table>
+
+      <hr class="dashed">
+
+      <table>
+        <tr>
+          <td style="width:65%">
+            <span class="bold">Usuario:</span> ${P(e.user?.name||`—`)}<br>
+            <span class="bold">Fecha:</span> ${P(n)}<br>
+            <span class="bold">Proveedor:</span> ${P(e.proveedor?.nombre||`SIN PROVEEDOR`)}<br>
+            <span class="bold">Pago:</span> ${P(e.tipo_pago||`—`)}
+          </td>
+          <td style="width:35%">
+            <span class="bold">Factura N°:</span> ${P(e.nro_factura||`—`)}<br>
+            <span class="bold">Estado:</span> ${P(e.estado||`—`)}
+          </td>
+        </tr>
+      </table>
+
+      <div class="detalle-title">DETALLE DE COMPRA</div>
+
+      <table class="items">
+        <thead>
+          <tr>
+            <th style="width:56%">Descripción</th>
+            <th style="width:12%" class="right">Cant.</th>
+            <th style="width:16%" class="right precio">Precio</th>
+            <th style="width:16%" class="right">Total</th>
+          </tr>
+        </thead>
+        <tbody>${i}</tbody>
+      </table>
+
+      <table class="totales">
+        <tr>
+          <td style="width:68%" class="right">TOTAL Bs. :</td>
+          <td style="width:32%" class="right monto">${F(e.total)}</td>
+        </tr>
+      </table>
+
+      <div class="son">SON: ${P(L(Number(e.total||0)))}</div>
+
+      ${e.comentario?`<div class="obs"><span class="bold">Obs.:</span> ${P(e.comentario)}</div>`:``}
+
+      <hr class="dashed" style="margin-top:16px">
+      <div class="pie">${M.pie.map(P).join(`<br>`)}</div>
+    </div>
+  `}function le(e){let t=document.createElement(`div`);t.innerHTML=z(e),new j.Printd().print(t,[N],[],({launchPrint:e})=>e())}var ue={key:0,class:`column items-center justify-center q-gutter-sm`,style:{"min-height":`320px`}},de={class:`row items-center q-mb-md`},fe={class:`row q-col-gutter-md q-mb-md`},pe={class:`col-12 col-sm-4`},me={class:`text-h5 text-weight-bold`},he={class:`col-12 col-sm-4`},ge={class:`text-h5 text-weight-bold text-negative`},_e={class:`col-12 col-sm-4`},ve={class:`text-h5 text-weight-bold`},ye={class:`row items-center q-col-gutter-xs q-mb-xs`},be={class:`col-auto`},xe={class:`col-auto`},Se={class:`col-auto`},Ce={class:`col-auto`},we={class:`col-auto`},Te={key:0},Ee={colspan:`8`,class:`text-center q-pa-md`},De={key:1},Oe={class:`q-pa-xs`},ke={class:`text-center`},Ae={class:`text-right`},je={class:`row items-center justify-between q-mt-xs q-px-xs`},Me={class:`text-caption text-grey-6`},Ne={class:`text-subtitle1 text-weight-bold`},Pe={class:`text-right`},Fe={class:`text-right`},Ie={class:`text-right`},B=15,V=te({__name:`index`,setup(te){let{proxy:A}=r(),j=n(()=>A.$store.hasPermission(`Ver Compras`)),M=n(()=>A.$store.hasPermission(`Crear Compras`)),N=n(()=>A.$store.hasPermission(`Eliminar Compras`)),P=t({total_compras:0,total_anuladas:0,cantidad:0}),F=t([]);function I(e){return Number(e||0).toFixed(2)}function L(e){return re(e)}let R=t([]),z=t(!1),V=t(1),H=t(0),U=t(!1);function W(e){return e.toISOString().slice(0,10)}function G(){let e=new Intl.DateTimeFormat(`en-CA`,{timeZone:`America/La_Paz`,year:`numeric`,month:`2-digit`,day:`2-digit`}).formatToParts(new Date),t=Object.fromEntries(e.filter(e=>e.type!==`literal`).map(e=>[e.type,Number(e.value)])),n=new Date(Date.UTC(t.year,t.month-1,t.day)),r=(n.getUTCDay()+6)%7,i=new Date(n);i.setUTCDate(n.getUTCDate()-r);let a=new Date(i);return a.setUTCDate(i.getUTCDate()+6),{fecha_inicio:W(i),fecha_fin:W(a)}}let K=t({...G(),proveedor_id:null,estado:null}),q=n(()=>Math.max(1,Math.ceil(H.value/B))),J=null;function Y(){clearTimeout(J),J=setTimeout(()=>{V.value=1,X()},350)}function Le(){let e=G();K.value.fecha_inicio=e.fecha_inicio,K.value.fecha_fin=e.fecha_fin,V.value=1,X()}async function X(){z.value=!0;try{let e=(await A.$axios.get(`compras`,{params:{page:V.value,per_page:B,fecha_inicio:K.value.fecha_inicio,fecha_fin:K.value.fecha_fin,proveedor_id:K.value.proveedor_id,estado:K.value.estado}})).data||{};P.value=e.resumen||{total_compras:0,total_anuladas:0,cantidad:0},R.value=e.compras?.data||[],H.value=e.compras?.total||0}catch(e){A.$alert.error(e.response?.data?.message||`Error al cargar compras`)}finally{z.value=!1}}async function Re(){try{let e=await A.$axios.get(`proveedores`);F.value=e.data||[]}catch{}}let Z=t(!1),Q=t(null);async function ze(e){try{let t=await A.$axios.get(`compras/`+e.id);Q.value=t.data,Z.value=!0}catch{A.$alert.error(`Error al cargar el detalle`)}}async function Be(e){try{le((await A.$axios.get(`compras/`+e.id)).data)}catch{A.$alert.error(`Error al imprimir la compra`)}}let $=t(null);async function Ve(e){$.value=e.id;try{let t=await A.$axios.get(`compras/`+e.id+`/export-excel`,{responseType:`blob`}),n=window.URL.createObjectURL(new Blob([t.data],{type:`application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`})),r=document.createElement(`a`);r.href=n,r.download=`compra_`+e.id+`_`+new Date().toISOString().slice(0,10)+`.xlsx`,r.click(),window.URL.revokeObjectURL(n)}catch(e){A.$alert.error(e.response?.data?.message||`Error al generar el Excel de la compra`)}finally{$.value=null}}function He(e){A.$alert.dialog(`¿Desea anular la compra #`+e.id+`? Esto revertirá el stock generado.`).onOk(()=>{A.$axios.delete(`compras/`+e.id).then(()=>{A.$alert.success(`Compra anulada`),X()}).catch(e=>A.$alert.error(e.response?.data?.message||`Error al anular`))})}async function Ue(){U.value=!0;try{let e=await A.$axios.get(`compras/export-excel`,{params:{...K.value},responseType:`blob`}),t=window.URL.createObjectURL(new Blob([e.data],{type:`application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`})),n=document.createElement(`a`);n.href=t,n.download=`compras_`+new Date().toISOString().slice(0,10)+`.xlsx`,n.click(),window.URL.revokeObjectURL(t)}catch{A.$alert.error(`Error al generar Excel`)}finally{U.value=!1}}function We(){X(),Re()}return ee(()=>A.$store.isLogged,e=>{e&&We()},{immediate:!0}),(t,n)=>(p(),s(se,{class:`q-pa-md compras-compactas`},{default:h(()=>[o(A).$store.isLogged&&!j.value?(p(),e(`div`,ue,[l(f,{name:`lock`,size:`72px`,color:`grey-4`}),n[7]||=i(`div`,{class:`text-h6 text-grey-5`},`Sin acceso`,-1),n[8]||=i(`div`,{class:`text-body2 text-grey-6`},`No tiene permiso para ver compras`,-1)])):o(A).$store.isLogged?(p(),e(a,{key:1},[i(`div`,de,[n[10]||=i(`div`,null,[i(`div`,{class:`text-h5 text-weight-bold`},`Compras`),i(`div`,{class:`text-body2 text-grey-6`},`Historial de compras a proveedores`)],-1),l(S),l(v,{rounded:``,outline:``,color:`grey-7`,icon:`local_shipping`,label:`Proveedores`,"no-caps":``,class:`q-mr-sm`,to:`/proveedores`},{default:h(()=>[l(D,null,{default:h(()=>[...n[9]||=[c(`Administrar proveedores`,-1)]]),_:1})]),_:1}),M.value?(p(),s(v,{key:0,rounded:``,unelevated:``,color:`primary`,icon:`add_shopping_cart`,label:`Nueva compra`,"no-caps":``,to:`/compras/crear`})):_(``,!0)]),i(`div`,fe,[i(`div`,pe,[l(x,{flat:``,class:`bg-primary text-white q-pa-md rounded-borders full-height`},{default:h(()=>[n[12]||=i(`div`,{class:`text-caption text-teal-2 text-uppercase text-weight-bold`},`Compras activas`,-1),i(`div`,me,[c(u(I(P.value.total_compras))+` `,1),n[11]||=i(`span`,{class:`text-caption text-teal-2`},`Bs`,-1)])]),_:1})]),i(`div`,he,[l(x,{flat:``,bordered:``,class:`q-pa-md rounded-borders full-height`},{default:h(()=>[n[14]||=i(`div`,{class:`text-caption text-grey-6 text-uppercase text-weight-bold`},`Anuladas`,-1),i(`div`,ge,[c(u(I(P.value.total_anuladas))+` `,1),n[13]||=i(`span`,{class:`text-caption text-grey-6`},`Bs`,-1)])]),_:1})]),i(`div`,_e,[l(x,{flat:``,bordered:``,class:`q-pa-md rounded-borders full-height`},{default:h(()=>[n[15]||=i(`div`,{class:`text-caption text-grey-6 text-uppercase text-weight-bold`},`Total registros`,-1),i(`div`,ve,u(P.value.cantidad),1)]),_:1})])]),i(`div`,ye,[i(`div`,be,[l(v,{dense:``,outline:``,"no-caps":``,color:`primary`,icon:`date_range`,label:`Esta semana`,onClick:Le})]),i(`div`,xe,[l(y,{modelValue:K.value.fecha_inicio,"onUpdate:modelValue":[n[0]||=e=>K.value.fecha_inicio=e,Y],label:`Fecha inicio`,dense:``,outlined:``,type:`date`,style:{width:`150px`}},null,8,[`modelValue`])]),i(`div`,Se,[l(y,{modelValue:K.value.fecha_fin,"onUpdate:modelValue":[n[1]||=e=>K.value.fecha_fin=e,Y],label:`Fecha fin`,dense:``,outlined:``,type:`date`,style:{width:`150px`}},null,8,[`modelValue`])]),i(`div`,Ce,[l(O,{modelValue:K.value.proveedor_id,"onUpdate:modelValue":[n[2]||=e=>K.value.proveedor_id=e,Y],label:`Proveedor`,dense:``,outlined:``,clearable:``,options:F.value,"option-value":`id`,"option-label":`nombre`,"emit-value":``,"map-options":``,style:{width:`170px`}},null,8,[`modelValue`,`options`])]),i(`div`,we,[l(O,{modelValue:K.value.estado,"onUpdate:modelValue":[n[3]||=e=>K.value.estado=e,Y],label:`Estado`,dense:``,outlined:``,clearable:``,options:[`ACTIVO`,`ANULADO`],style:{width:`130px`}},null,8,[`modelValue`])]),l(S),l(v,{outline:``,rounded:``,"no-caps":``,color:`grey-7`,icon:`table_view`,label:`Excel`,loading:U.value,onClick:Ue},{default:h(()=>[l(D,null,{default:h(()=>[...n[16]||=[c(`Exportar Excel`,-1)]]),_:1})]),_:1},8,[`loading`])]),l(k,{dense:``,flat:``,bordered:``,separator:`horizontal`,class:`full-width rounded-borders tabla-compacta`},{default:h(()=>[n[21]||=i(`thead`,null,[i(`tr`,{class:`bg-grey-1 text-grey-7 text-uppercase`},[i(`th`,{class:`text-left`,style:{width:`64px`}}),i(`th`,{class:`text-left`},`ID`),i(`th`,{class:`text-left`},`Fecha`),i(`th`,{class:`text-left`},`Proveedor`),i(`th`,{class:`text-left`},`Usuario`),i(`th`,{class:`text-center`},`Estado`),i(`th`,{class:`text-left`},`Pago`),i(`th`,{class:`text-right`},`Total`)])],-1),i(`tbody`,null,[z.value?(p(),e(`tr`,Te,[i(`td`,Ee,[l(m,{color:`primary`,size:`24px`})])])):R.value.length?(p(!0),e(a,{key:2},d(R.value,t=>(p(),e(`tr`,{key:t.id},[i(`td`,Oe,[l(ie,{label:`Opciones`,"no-caps":``,size:`10px`,dense:``,rounded:``,unelevated:``,color:`primary`},{default:h(()=>[l(oe,{dense:``},{default:h(()=>[g((p(),s(C,{clickable:``,onClick:e=>ze(t)},{default:h(()=>[l(T,{avatar:``},{default:h(()=>[l(f,{name:`visibility`,color:`primary`})]),_:1}),l(T,null,{default:h(()=>[l(w,null,{default:h(()=>[c(`Ver detalle (`+u(t.detalles_count)+`)`,1)]),_:2},1024)]),_:2},1024)]),_:2},1032,[`onClick`])),[[E]]),g((p(),s(C,{clickable:``,onClick:e=>Be(t)},{default:h(()=>[l(T,{avatar:``},{default:h(()=>[l(f,{name:`print`,color:`primary`})]),_:1}),l(T,null,{default:h(()=>[l(w,null,{default:h(()=>[...n[18]||=[c(`Imprimir`,-1)]]),_:1})]),_:1})]),_:1},8,[`onClick`])),[[E]]),g((p(),s(C,{clickable:``,onClick:e=>Ve(t)},{default:h(()=>[l(T,{avatar:``},{default:h(()=>[$.value===t.id?(p(),s(m,{key:1,color:`green-8`,size:`20px`})):(p(),s(f,{key:0,name:`table_view`,color:`green-8`}))]),_:2},1024),l(T,null,{default:h(()=>[l(w,null,{default:h(()=>[...n[19]||=[c(`Exportar Excel con fórmulas`,-1)]]),_:1})]),_:1})]),_:2},1032,[`onClick`])),[[E]]),N.value?g((p(),s(C,{key:0,disable:t.estado===`ANULADO`,clickable:``,onClick:e=>He(t)},{default:h(()=>[l(T,{avatar:``},{default:h(()=>[l(f,{name:`block`,color:`negative`})]),_:1}),l(T,null,{default:h(()=>[l(w,{class:`text-negative`},{default:h(()=>[...n[20]||=[c(`Anular`,-1)]]),_:1})]),_:1})]),_:1},8,[`disable`,`onClick`])),[[E]]):_(``,!0)]),_:2},1024)]),_:2},1024)]),i(`td`,null,u(t.id),1),i(`td`,null,u(L(t.fecha_hora)),1),i(`td`,null,u(t.proveedor?t.proveedor.nombre:`—`),1),i(`td`,null,u(t.user?t.user.name:`—`),1),i(`td`,ke,[l(ae,{rounded:``,color:t.estado===`ANULADO`?`red-1`:`green-1`,"text-color":t.estado===`ANULADO`?`negative`:`positive`,class:`text-weight-bold`},{default:h(()=>[c(u(t.estado),1)]),_:2},1032,[`color`,`text-color`])]),i(`td`,null,u(t.tipo_pago),1),i(`td`,Ae,u(I(t.total)),1)]))),128)):(p(),e(`tr`,De,[...n[17]||=[i(`td`,{colspan:`8`,class:`text-center text-grey-5 q-pa-md`},`Sin datos`,-1)]]))])]),_:1}),i(`div`,je,[i(`div`,Me,` Total: `+u(H.value)+` | Página `+u(V.value)+` de `+u(q.value),1),l(ce,{modelValue:V.value,"onUpdate:modelValue":[n[4]||=e=>V.value=e,X],max:q.value,"max-pages":6,"boundary-links":``,"direction-links":``,size:`sm`},null,8,[`modelValue`,`max`])])],64)):_(``,!0),l(ne,{modelValue:Z.value,"onUpdate:modelValue":n[6]||=e=>Z.value=e},{default:h(()=>[l(x,{style:{width:`min(96vw,700px)`}},{default:h(()=>[l(b,{class:`row items-center bg-primary text-white q-py-sm`},{default:h(()=>[l(f,{name:`receipt_long`,size:`20px`,class:`q-mr-sm`}),i(`span`,Ne,`Detalle de compra #`+u(Q.value?.id),1),l(S),l(v,{icon:`close`,flat:``,round:``,dense:``,color:`white`,onClick:n[5]||=e=>Z.value=!1})]),_:1}),l(b,{style:{"max-height":`70vh`,"overflow-y":`auto`}},{default:h(()=>[l(k,{dense:``,flat:``,bordered:``,separator:`horizontal`},{default:h(()=>[n[22]||=i(`thead`,null,[i(`tr`,{class:`bg-grey-1 text-grey-7 text-uppercase`},[i(`th`,{class:`text-left`},`Producto`),i(`th`,{class:`text-right`},`Cantidad`),i(`th`,{class:`text-right`},`Precio`),i(`th`,{class:`text-right`},`Total`),i(`th`,{class:`text-left`},`Lote`),i(`th`,{class:`text-left`},`Vencimiento`)])],-1),i(`tbody`,null,[(p(!0),e(a,null,d(Q.value?.detalles||[],t=>(p(),e(`tr`,{key:t.id},[i(`td`,null,u(t.nombre),1),i(`td`,Pe,u(t.cantidad),1),i(`td`,Fe,u(I(t.precio)),1),i(`td`,Ie,u(I(t.total)),1),i(`td`,null,u(t.lote||`—`),1),i(`td`,null,u(t.fecha_vencimiento?t.fecha_vencimiento.slice(0,10):`—`),1)]))),128))])]),_:1})]),_:1})]),_:1})]),_:1},8,[`modelValue`])]),_:1}))}},[[`__scopeId`,`data-v-b34f7b87`]]);export{V as default};

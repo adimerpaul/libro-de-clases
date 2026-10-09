@@ -1,0 +1,1 @@
+import{T as e,Y as t}from"./QSpinner-BVeVv9ms.js";var n=e({name:`QSpace`,setup(){let e=t(`div`,{class:`q-space`});return()=>e}});export{n as t};
