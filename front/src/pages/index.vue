@@ -32,7 +32,7 @@
         <div class="navLabel">{{ grupo.title }}</div>
         <router-link
           v-for="item in grupo.links" :key="item.link" :to="item.link"
-          class="navItem" active-class="active"
+          class="navItem" :active-class="item.link === '/' ? '' : 'active'" exact-active-class="active"
         >
           <q-icon :name="item.icon" class="navIcon" />
           <span>{{ item.title }}</span>
@@ -65,6 +65,7 @@ const menu = [
     title: 'Trabajo diario',
     links: [
       { title: 'Inicio', icon: 'fas fa-house', link: '/' },
+      { title: 'Libro de clases', icon: 'fas fa-book', link: '/libros', permiso: ['libros.ver', 'clases.dictar'] },
       { title: 'Planificador', icon: 'far fa-calendar-days', link: '/planificador', permiso: 'clases.dictar' },
       { title: 'Evaluaciones', icon: 'fas fa-file-pen', link: '/evaluaciones', permiso: 'clases.dictar' },
     ],

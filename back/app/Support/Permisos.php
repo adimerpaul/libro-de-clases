@@ -15,6 +15,9 @@ class Permisos
     /** Puede tener asignaturas y jefatura de curso (es docente). */
     public const DICTAR_CLASES = 'clases.dictar';
 
+    /** Abre el libro de cualquier curso (UTP, Dirección); sin él, el docente ve solo los de su carga o jefatura. */
+    public const VER_LIBROS = 'libros.ver';
+
     public const VER = 'ver';
 
     public const CREAR = 'crear';
@@ -70,6 +73,10 @@ class Permisos
             'grupo' => 'Trabajo docente',
             'modulo' => null,
             'permisos' => [['name' => self::DICTAR_CLASES, 'label' => 'Dictar clases (docente)', 'accion' => null]],
+        ], [
+            'grupo' => 'Libro de clases',
+            'modulo' => null,
+            'permisos' => [['name' => self::VER_LIBROS, 'label' => 'Ver los libros de todos los cursos', 'accion' => null]],
         ]];
 
         foreach (self::MODULOS as $modulo => [$titulo, $complemento]) {
@@ -89,7 +96,7 @@ class Permisos
 
     public static function todos(): array
     {
-        return array_merge([self::DICTAR_CLASES], ...array_map(fn ($m) => self::crud($m), array_keys(self::MODULOS)));
+        return array_merge([self::DICTAR_CLASES, self::VER_LIBROS], ...array_map(fn ($m) => self::crud($m), array_keys(self::MODULOS)));
     }
 
     /** Crea en BD los permisos del catálogo que falten. */
