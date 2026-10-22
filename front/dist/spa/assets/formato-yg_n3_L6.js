@@ -1,0 +1,1 @@
+function e(e){if(!e)return`—`;let[t,n]=e.split(`-`);return t.replace(/\B(?=(\d{3})+(?!\d))/g,`.`)+(n?`-`+n:``)}export{e as t};

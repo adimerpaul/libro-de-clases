@@ -11,11 +11,12 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('username')->nullable();
-            $table->string('email')->nullable();
+            $table->string('email')->unique();
+            $table->string('run', 12)->nullable()->unique();
+            $table->string('telefono', 50)->nullable();
             $table->string('avatar')->nullable();
-            $table->string('celular', 50)->nullable();
-            $table->string('ci', 50)->nullable();
+            $table->boolean('bloqueado')->default(false);
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->softDeletes();

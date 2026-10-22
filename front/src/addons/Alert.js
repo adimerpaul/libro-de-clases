@@ -11,10 +11,10 @@ export class Alert{
       message,
       caption: subTitle,
       timeout: 3000,
-      icon: 'warning',
+      icon: 'fas fa-triangle-exclamation',
       iconColor: 'warning',
       actions: [
-        { icon: 'close', color: 'black', round: true, size: 'xs' }
+        { icon: 'fas fa-xmark', color: 'black', round: true, size: 'xs' }
       ],
       progressClass: 'bg.jpg-warning',
       classes: 'bg.jpg-white text-black text-bold left-yellow-border'
@@ -29,10 +29,10 @@ export class Alert{
       message,
       caption: subTitle,
       timeout: 3000,
-      icon: 'info',
+      icon: 'fas fa-circle-info',
       iconColor: 'info',
       actions: [
-        { icon: 'close', color: 'black', round: true, size: 'xs' }
+        { icon: 'fas fa-xmark', color: 'black', round: true, size: 'xs' }
       ],
       progressClass: 'bg.jpg-info',
       classes: 'bg.jpg-white text-black text-bold left-blue-border'
@@ -47,10 +47,10 @@ export class Alert{
       message,
       caption: subTitle,
       timeout: 3000,
-      icon: 'check_circle',
+      icon: 'fas fa-circle-check',
       iconColor: 'positive',
       actions: [
-        { icon: 'close', color: 'black', round: true, size: 'xs' }
+        { icon: 'fas fa-xmark', color: 'black', round: true, size: 'xs' }
       ],
       progressClass: 'bg.jpg-positive',
       classes: 'bg.jpg-white text-black text-bold left-green-border'
@@ -65,10 +65,10 @@ export class Alert{
       message,
       caption: subTitle,
       timeout: 3000,
-      icon: 'error',
+      icon: 'fas fa-circle-xmark',
       iconColor: 'negative',
       actions: [
-        { icon: 'close', color: 'black', round: true, size: 'xs' }
+        { icon: 'fas fa-xmark', color: 'black', round: true, size: 'xs' }
       ],
       progressClass: 'bg.jpg-negative',
       classes: 'bg.jpg-white text-black text-bold left-red-border'
@@ -102,7 +102,7 @@ export class Alert{
       componentProps: {
         title: title,
         message: message,
-        icon: 'warning',
+        icon: 'fas fa-triangle-exclamation',
         color: 'negative',
       }
     })

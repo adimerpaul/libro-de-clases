@@ -34,7 +34,6 @@ export default defineConfig((ctx) => {
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: [
       'axios',
-      'uppercase',
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
@@ -46,15 +45,13 @@ export default defineConfig((ctx) => {
     extras: [
       // 'ionicons-v4',
       // 'mdi-v7',
-      // 'fontawesome-v7',
       // 'eva-icons',
       // 'themify',
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
       'roboto-font', // optional, you are not bound to it
-      'material-icons', // optional, you are not bound to it
-      'material-icons-outlined'
+      'fontawesome-v7' // íconos de toda la app (QIcon name="fas fa-…")
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
@@ -95,18 +92,18 @@ export default defineConfig((ctx) => {
     framework: {
       config: {
         brand: {
-          primary: '#0e7a5f',
-          secondary: '#12996f',
-          accent: '#19b88a',
-          dark: '#0a4038',
-          positive: '#1a7f45',
-          negative: '#b3453f',
-          info: '#0e7a5f',
-          warning: '#a86a12'
+          primary: '#0f4f85',
+          secondary: '#0b2440',
+          accent: '#bd1f2d',
+          dark: '#10263b',
+          positive: '#21865f',
+          negative: '#bd1f2d',
+          info: '#1c8aa8',
+          warning: '#c27a17'
         }
       },
 
-      // iconSet: 'material-icons', // Quasar icon set
+      iconSet: 'fontawesome-v7', // Quasar icon set
       lang: 'es', // Quasar language pack
 
       // For special cases outside of where the auto-import strategy can have an impact
@@ -217,7 +214,7 @@ export default defineConfig((ctx) => {
       builder: {
         // https://www.electron.build/configuration
 
-        appId: 'urme'
+        appId: 'libro-de-clases'
       }
     },
 

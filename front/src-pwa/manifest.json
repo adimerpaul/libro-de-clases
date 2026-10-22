@@ -1,7 +1,7 @@
 {
   "orientation": "portrait",
   "background_color": "#ffffff",
-  "theme_color": "#0E5C50",
+  "theme_color": "#0c3b66",
   "display_override": ["fullscreen", "minimal-ui"],
   "display": "standalone",
   "icons": [

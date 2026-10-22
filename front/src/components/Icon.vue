@@ -2,7 +2,7 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide">
     <q-card class="q-dialog-plugin q-pa-lg text-center">
       <!-- Icono de verificación -->
-      <!--      <q-icon name="check_circle" color="green" size="xl" class="q-mb-md" />-->
+      <!--      <q-icon name="fas fa-circle-check" color="green" size="xl" class="q-mb-md" />-->
       <!--      icon de confimacion-->
       <q-icon :name="icon" :color="color" size="120px" class="q-mb-md" />
       <!-- Mensaje principal -->
