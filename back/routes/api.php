@@ -14,6 +14,7 @@ use App\Http\Controllers\Docente\CurriculoController;
 use App\Http\Controllers\Docente\InstrumentoController;
 use App\Http\Controllers\Docente\MisAsignacionesController;
 use App\Http\Controllers\Docente\PlanificacionController;
+use App\Http\Controllers\LibroController;
 use App\Support\Permisos;
 use Illuminate\Support\Facades\Route;
 
@@ -59,6 +60,12 @@ Route::middleware('auth:sanctum')->group(function () {
         // Docentes = usuarios que dictan clases; sin permisos de "usuarios" el controlador limita a ellos
         $crud('usuarios', UsuarioController::class, 'usuario', 'usuarios', ['cursos.crear', 'cursos.editar', 'asignaciones.ver'], 'docentes');
         $crud('roles', RolController::class, 'rol', 'roles', ['usuarios.ver']);
+    });
+
+    // ── Libro de clases: todos con "libros.ver"; el docente, los de su carga o jefatura ──
+    Route::prefix('libros')->middleware('permiso:'.Permisos::VER_LIBROS.','.Permisos::DICTAR_CLASES)->group(function () {
+        Route::get('/', [LibroController::class, 'index']);
+        Route::get('/{curso}', [LibroController::class, 'show'])->whereNumber('curso');
     });
 
     // ── Trabajo docente: planificador y creador de evaluaciones (datos propios) ──
