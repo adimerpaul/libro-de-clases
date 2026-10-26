@@ -18,7 +18,7 @@ import { MODULOS_ADMIN } from '../../composables/adminModulos'
 definePage({
   meta: {
     title: 'Administrador',
-    permiso: ['cursos.ver', 'asignaturas.ver', 'docentes.ver', 'asignaciones.ver', 'usuarios.ver', 'roles.ver'],
+    permiso: ['cursos.ver', 'asignaturas.ver', 'docentes.ver', 'asignaciones.ver', 'usuarios.ver', 'roles.ver', 'recursos.ver'],
   },
 })
 

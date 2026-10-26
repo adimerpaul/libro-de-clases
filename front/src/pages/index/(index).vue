@@ -1,66 +1,90 @@
 <template>
   <q-page class="page">
-    <div class="pageHead">
+    <div class="roleBanner">
       <div>
-        <h1>Hola, {{ $auth.user.name || '...' }}</h1>
+        <h2>{{ perfil.titulo }}</h2>
+        <p>{{ perfil.desc }}</p>
+      </div>
+      <span class="roleBadge">{{ perfil.rol }}</span>
+    </div>
+
+    <div class="heroPanel">
+      <div>
+        <span class="eyebrow heroEyebrow">Ecosistema educativo 4.2</span>
+        <h2>La misma información sirve para enseñar, acompañar, gestionar y comunicar.</h2>
         <p>
-          Desde aquí accederás al Libro de Clases y a los módulos del ecosistema a medida que estén
-          disponibles. En el menú lateral verás las secciones para las que tienes permiso.
+          La arquitectura evita registros paralelos: el OA alimenta planificación y evaluación; la asistencia
+          nutre libro e Inspectoría; PIE adapta la experiencia; UTP monitorea; la familia recibe solo lo que corresponde.
         </p>
+        <div class="flow">
+          <template v-for="(paso, i) in flujo" :key="paso">
+            <span v-if="i" class="flowArrow">→</span>
+            <span class="flowStep">{{ paso }}</span>
+          </template>
+        </div>
+      </div>
+      <div class="heroQuick">
+        <div class="quick"><b>{{ disponibles }}</b><small>módulos disponibles para ti</small></div>
+        <div class="quick"><b>{{ pendientes }}</b><small>módulos pendientes</small></div>
+        <div class="quick"><b>{{ $auth.user.permisos?.length || 0 }}</b><small>permisos activos</small></div>
+        <div class="quick"><b>1</b><small>fuente de datos compartida</small></div>
       </div>
     </div>
 
-    <div class="moduleGrid">
-      <div v-for="m in modulos" :key="m.title" class="card module" :style="{ background: m.bg }">
-        <div class="moduleTop">
-          <q-icon :name="m.icon" :style="{ color: m.color }" class="moduleIcon" />
-          <span class="badge">{{ m.tag }}</span>
+    <h3 class="tituloTareas">Lo que requiere tu rol</h3>
+    <div class="taskGrid">
+      <div v-for="t in tareas" :key="t.titulo" class="taskCard">
+        <div class="taskTop">
+          <q-icon :name="t.icon" class="ticon" />
+          <span v-if="t.pendiente" class="badge">Pendiente</span>
         </div>
-        <h3>{{ m.title }}</h3>
-        <p>{{ m.text }}</p>
+        <h3>{{ t.titulo }}</h3>
+        <p>{{ t.desc }}</p>
         <q-btn
-          v-if="m.link && $auth.hasPermission(m.permiso)" :to="m.link" label="Abrir" no-caps unelevated dense
+          v-if="t.puede" :to="t.link" :label="t.pendiente ? 'Ver' : 'Abrir'" no-caps unelevated dense
           class="btnPrimary btnAbrir" icon-right="fas fa-arrow-right"
         />
-        <span v-else class="soon">{{ m.link ? 'Requiere permiso' : 'Próximamente' }}</span>
+        <span v-else class="soon">Requiere permiso</span>
       </div>
     </div>
   </q-page>
 </template>
 
 <script setup>
+import { computed, getCurrentInstance } from 'vue'
+import { MENU, MODULOS, perfilDe } from '../../composables/menu'
+
 defineOptions({ name: 'InicioPage' })
 definePage({ meta: { title: 'Inicio' } })
 
-// Módulos de ui2/app.js (homePage); se irán habilitando uno a uno
-const modulos = [
-  { icon: 'fas fa-book-open', color: '#0f4f85', title: 'Libro de Clases 3.0', text: 'Núcleo oficial: asistencia, leccionario, evaluaciones, observaciones y firma.', bg: '#eaf3fb', tag: 'Núcleo' },
-  { icon: 'far fa-calendar-days', color: '#1f8a5b', title: 'Planificador', link: '/planificador', permiso: 'clases.dictar', text: 'Semana, OA, inicio/desarrollo/cierre, evidencia y adecuaciones.', bg: '#eef8f2', tag: 'Docente' },
-  { icon: 'fas fa-bullseye', color: '#6b4fbb', title: 'Currículum + OA', text: 'Catálogo curricular versionado y conectado con la planificación.', bg: '#f1edff', tag: 'Mineduc' },
-  { icon: 'fas fa-file-pen', color: '#e07a1f', title: 'Evaluaciones', link: '/evaluaciones', permiso: 'clases.dictar', text: 'Instrumentos por asignatura, OA, puntaje y escala de notas.', bg: '#fff1e8', tag: 'Docente' },
-  { icon: 'fas fa-door-open', color: '#bd1f2d', title: 'Retiro de estudiantes', text: 'Quién retira, relación, autorización, motivo, hora y firma.', bg: '#fdeef0', tag: 'Inspectoría' },
-  { icon: 'fas fa-chart-line', color: '#0f4f85', title: 'Reportes', text: 'Asistencia, incidencias, cumplimiento y auditoría.', bg: '#eef4f8', tag: 'Gestión' },
-]
+const { proxy } = getCurrentInstance()
+
+const flujo = ['OA', 'Planificación', 'Clase', 'Evaluación', 'Libro', 'Familia / Gestión']
+
+const perfil = computed(() => perfilDe(proxy.$auth.user))
+
+// Tareas del perfil (ui3/app.js homePage), enlazadas a su módulo del menú
+const tareas = computed(() => perfil.value.tareas.map(([key, titulo, desc]) => {
+  const m = MODULOS[key]
+  return { titulo, desc, icon: m.icon, link: m.link, pendiente: m.pendiente, puede: !m.permiso || proxy.$auth.hasPermission(m.permiso) }
+}))
+
+const modulos = MENU.flatMap(g => g.links).filter(l => l.key !== 'inicio')
+const disponibles = computed(() => modulos.filter(l => !l.pendiente && (!l.permiso || proxy.$auth.hasPermission(l.permiso))).length)
+const pendientes = modulos.filter(l => l.pendiente).length
 </script>
 
 <style scoped>
-.page { padding: 24px; max-width: 1580px; margin: auto; color: #15324a }
-.pageHead { margin-bottom: 18px }
-.pageHead h1 { font-size: 30px; font-weight: 800; letter-spacing: -.035em; line-height: 1.2; margin: 0 }
-.pageHead p { margin: 5px 0 0; color: #6d8090; max-width: 840px; line-height: 1.5 }
-.moduleGrid { display: grid; gap: 15px; grid-template-columns: repeat(3, 1fr) }
-.card { border: 1px solid #d9e3ec; border-radius: 18px; box-shadow: 0 7px 22px rgba(22, 52, 80, .055); padding: 17px }
-.moduleTop { display: flex; justify-content: space-between; align-items: center }
-.moduleIcon { font-size: 26px }
-.badge { font-size: 10px; font-weight: 800; background: #fff; border: 1px solid #d9e3ec; border-radius: 999px; padding: 4px 9px }
-.module h3 { font-size: 16px; font-weight: 800; margin: 12px 0 4px; line-height: 1.3 }
-.module p { font-size: 12px; color: #486477; line-height: 1.5; margin: 0 0 10px }
-.btnAbrir { padding: 2px 12px; font-size: 12px }
-.soon { font-size: 11px; font-weight: 700; color: #6d8090 }
-
-@media (max-width: 1023px) { .moduleGrid { grid-template-columns: repeat(2, 1fr) } }
-@media (max-width: 720px) {
-  .page { padding: 14px }
-  .moduleGrid { grid-template-columns: 1fr }
-}
+.heroEyebrow { color: #ffd6dc }
+.heroPanel h2 { font-weight: 800 }
+.flow { margin-top: 14px }
+.flowStep { color: #15324a }
+.flowArrow { color: #cbdbe8 }
+.tituloTareas { font-size: 17px; font-weight: 800; margin: 18px 0 10px; line-height: 1.3 }
+.taskTop { display: flex; justify-content: space-between; align-items: center }
+.ticon { font-size: 22px; color: var(--role) }
+.taskCard { display: flex; flex-direction: column }
+.taskCard p { flex: 1 }
+.btnAbrir { align-self: flex-start; margin-top: 10px; padding: 2px 12px; font-size: 12px }
+.soon { margin-top: 10px; font-size: 11px; font-weight: 700; color: #6d8090 }
 </style>

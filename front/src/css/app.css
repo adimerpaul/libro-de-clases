@@ -1,12 +1,23 @@
-/* app global css — paleta y tipografía de ui2/index.html */
+/* app global css — paleta y tipografía de ui3/index.html (Ecosistema 4.2) */
+
+/* Color de acento por perfil: el layout pone .role-<perfil> (src/composables/menu.js perfilDe) */
+:root { --role: #1f6fb2; --roleSoft: #eaf3fb }
+.role-docente { --role: #1f6fb2; --roleSoft: #eaf3fb }
+.role-sostenedor { --role: #6d4cc7; --roleSoft: #f0edff }
+.role-diferencial { --role: #16866b; --roleSoft: #e8f8f3 }
+.role-utp { --role: #b56b12; --roleSoft: #fff5e7 }
+.role-inspectoria { --role: #b52a36; --roleSoft: #fff0f1 }
+.role-convivencia { --role: #b04a90; --roleSoft: #fff0fa }
+.role-apoderado { --role: #1685a0; --roleSoft: #e8f8fb }
 
 body {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #15324a;
-  background: linear-gradient(180deg, #f7fafc, #edf3f8 60%, #e8eff5);
+  background: radial-gradient(circle at 80% -10%, #d7e9f9 0, transparent 32%), linear-gradient(180deg, #f7fafc, #edf3f8 60%, #e8eff5);
+  background-attachment: fixed;
 }
 
-/* ── Piezas compartidas por las páginas internas (ui2: .page, .pageHead, .card, .badge) ── */
+/* ── Piezas compartidas por las páginas internas (ui3: .page, .pageHead, .card, .badge) ── */
 .page { padding: 24px; max-width: 1580px; margin: auto; color: #15324a }
 .pageHead { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 18px }
 .pageHead h1 { font-size: 30px; font-weight: 800; letter-spacing: -.035em; line-height: 1.2; margin: 0 }
@@ -20,6 +31,49 @@ body {
 .badge.red { background: #fdeef0; border-color: #f3c9cf; color: #bd1f2d }
 .subtle { color: #6d8090; font-size: 12px }
 .btnPrimary { background: #0f4f85; color: #fff; border-radius: 11px; font-weight: 800 }
+.eyebrow { font-size: 10px; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; color: #bd1f2d }
+
+/* Banner del perfil, panel hero y tareas (ui3: .roleBanner, .heroPanel, .taskCard) */
+.roleBanner {
+  border: 1px solid color-mix(in srgb, var(--role) 24%, #d9e3ec);
+  background: linear-gradient(135deg, var(--roleSoft), #fff);
+  border-radius: 18px; padding: 16px 18px; margin-bottom: 15px;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+.roleBanner h2 { margin: 0; font-size: 20px; font-weight: 800; line-height: 1.3 }
+.roleBanner p { margin: 4px 0 0; color: #6d8090; font-size: 12px; line-height: 1.5 }
+.roleBadge { padding: 7px 10px; border-radius: 999px; background: var(--role); color: #fff; font-size: 10px; font-weight: 900; white-space: nowrap }
+.heroPanel {
+  background: linear-gradient(135deg, #0d3c66, #155b8e 58%, #7e2130); color: #fff;
+  border-radius: 22px; padding: 24px; display: grid; grid-template-columns: 1.25fr .75fr; gap: 20px;
+  overflow: hidden; position: relative;
+}
+.heroPanel:after {
+  content: ""; position: absolute; right: -90px; top: -100px; width: 330px; height: 330px;
+  border-radius: 50%; background: #ffffff0b; box-shadow: 0 0 0 55px #ffffff05;
+}
+.heroPanel h2 { font-size: 31px; line-height: 1.05; margin: 8px 0 9px; letter-spacing: -.035em }
+.heroPanel p { color: #d9e7f2; line-height: 1.55; font-size: 13px; max-width: 760px; margin: 0 }
+.heroQuick { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; align-content: center; position: relative; z-index: 2 }
+.quick { background: #ffffff12; border: 1px solid #ffffff1c; border-radius: 14px; padding: 12px }
+.quick b { display: block; font-size: 22px }
+.quick small { color: #cbdbe8 }
+.flow { display: flex; align-items: center; gap: 7px; flex-wrap: wrap }
+.flowStep { background: #fff; border: 1px solid #d9e3ec; border-radius: 12px; padding: 8px 10px; font-size: 11px; font-weight: 800 }
+.flowArrow { color: #8aa0b1; font-weight: 900 }
+.taskGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px }
+.taskCard {
+  background: #fff; border: 1px solid #d9e3ec; border-radius: 16px; padding: 14px 14px 14px 18px;
+  position: relative; overflow: hidden; min-height: 130px;
+}
+.taskCard:before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--role) }
+.taskCard h3 { font-size: 14px; font-weight: 800; margin: 8px 0 4px; line-height: 1.3 }
+.taskCard p { font-size: 12px; color: #6d8090; line-height: 1.45; margin: 0 }
+.sourceStrip { border: 1px dashed #b9cad7; background: #f5f9fc; padding: 10px; border-radius: 12px; font-size: 11px; color: #587184; line-height: 1.45 }
+.scopeNotice {
+  padding: 10px 12px; border: 1px dashed color-mix(in srgb, var(--role) 50%, #cfd8e3);
+  background: var(--roleSoft); border-radius: 12px; font-size: 11px; line-height: 1.5; color: #415c72;
+}
 
 /* Tablas de administración */
 .adminTable { background: transparent }
@@ -32,8 +86,17 @@ body {
 .formGrid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr }
 .formGrid .full { grid-column: 1 / -1 }
 
+@media (max-width: 1200px) {
+  .taskGrid { grid-template-columns: repeat(2, 1fr) }
+}
+@media (max-width: 1000px) {
+  .heroPanel { grid-template-columns: 1fr }
+}
 @media (max-width: 720px) {
   .page { padding: 14px }
+  .taskGrid { grid-template-columns: 1fr }
+  .roleBanner { flex-direction: column; align-items: flex-start; gap: 10px }
+  .heroPanel h2 { font-size: 24px }
   .pageHead h1 { font-size: 24px }
   .formGrid { grid-template-columns: 1fr }
 }

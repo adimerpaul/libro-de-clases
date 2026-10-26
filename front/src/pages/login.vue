@@ -4,32 +4,32 @@
       <div class="brandLock">
         <div class="brandMark"><q-icon name="fas fa-book-open" size="30px" /></div>
         <div class="brandText">
-          <b>LIBRO DE CLASES 3.0</b>
-          <small>Libro · Currículum · Evaluación · Recursos · Comunidad</small>
+          <b>ECOSISTEMA EDUCATIVO 4.2</b>
+          <small>Libro · Currículum · Evaluación · Inclusión · Convivencia · Familia</small>
         </div>
       </div>
 
       <div class="heroCopy">
-        <span class="eyebrow">Ecosistema educativo · Chile</span>
-        <h1>Una plataforma.<br><span>Toda la comunidad educativa.</span></h1>
+        <span class="eyebrow">Comunidad educativa completa · Chile</span>
+        <h1>Una plataforma.<br><span>Un rol, tareas claras.</span></h1>
         <p>
-          El Libro de Clases 3.0 evoluciona hacia un ecosistema: planifica con OA, crea y corrige
-          evaluaciones, accede a recursos, automatiza asistencia, registra retiros y convierte datos
-          cotidianos en acciones útiles.
+          El ecosistema adapta la experiencia a cada integrante de la comunidad. Docencia trabaja con currículum
+          y evaluación; PIE con apoyos y PACI; UTP con cobertura y acompañamiento; Inspectoría con operación y
+          protocolos; Convivencia con prevención; la familia con información exclusiva de sus hijos.
         </p>
         <div class="heroPills">
           <span v-for="p in pills" :key="p.text" class="heroPill"><q-icon :name="p.icon" size="13px" class="q-mr-xs" />{{ p.text }}</span>
         </div>
       </div>
 
-      <div class="heroFoot">© {{ year }} Libro de Clases 3.0 · v{{ $version }}</div>
+      <div class="heroFoot">© {{ year }} Ecosistema Educativo 4.2 · Libro de Clases 3.0 · v{{ $version }}</div>
     </section>
 
     <section class="loginPane">
       <div class="loginCard">
         <span class="eyebrow">Acceso</span>
-        <h2>Entrar al Libro de Clases</h2>
-        <p class="muted">Ingresa con tu correo institucional y tu clave.</p>
+        <h2>Entrar al Ecosistema 4.2</h2>
+        <p class="muted">Ingresa con tu correo institucional y tu clave: el menú y las tareas se adaptan a tu rol.</p>
 
         <q-form @submit.prevent="login">
           <label for="email">Correo</label>
@@ -77,11 +77,11 @@ const { proxy } = getCurrentInstance()
 
 const pills = [
   { icon: 'fas fa-book-open', text: 'Libro físico-digital' },
-  { icon: 'fas fa-bullseye', text: 'Currículum/OA' },
-  { icon: 'fas fa-flask', text: 'Evaluaciones' },
-  { icon: 'fas fa-tower-broadcast', text: 'Asistencia' },
-  { icon: 'fas fa-toolbox', text: 'Recursos' },
-  { icon: 'fas fa-chart-line', text: 'Control Tower' },
+  { icon: 'fas fa-bullseye', text: 'OA + competencias' },
+  { icon: 'fas fa-puzzle-piece', text: 'PIE / DUA / PACI' },
+  { icon: 'fas fa-shield-halved', text: 'Inspectoría' },
+  { icon: 'fas fa-handshake', text: 'Convivencia' },
+  { icon: 'fas fa-book-bookmark', text: 'Libreta del estudiante' },
 ]
 
 const email = ref('')

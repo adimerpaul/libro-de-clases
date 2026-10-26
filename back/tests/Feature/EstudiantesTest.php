@@ -129,3 +129,24 @@ test('los cursos informan sus estudiantes activos y se exige el permiso', functi
     app('auth')->forgetGuards();
     $this->withToken($token)->getJson('/api/admin/estudiantes')->assertForbidden();
 });
+
+test('da de baja una matrícula activa con motivo obligatorio y la lista en los retiros del año', function () {
+    $e = Estudiante::create(estudiante());
+    $m = Matricula::create(['estudiante_id' => $e->id, 'curso_id' => $this->primeroA->id, 'numero_lista' => 1, 'fecha_matricula' => '2026-03-01']);
+
+    comoAdminEst()->postJson("/api/admin/matriculas/{$m->id}/baja", ['estado' => 'retirada', 'fecha_retiro' => '2026-06-10'])
+        ->assertUnprocessable()->assertJsonValidationErrors('motivo_retiro');
+    comoAdminEst()->postJson("/api/admin/matriculas/{$m->id}/baja", ['estado' => 'retirada', 'fecha_retiro' => '2026-02-01', 'motivo_retiro' => 'X'])
+        ->assertUnprocessable()->assertJsonValidationErrors('fecha_retiro');
+
+    comoAdminEst()->postJson("/api/admin/matriculas/{$m->id}/baja", [
+        'estado' => 'trasladada', 'fecha_retiro' => '2026-06-10', 'motivo_retiro' => 'Cambio de domicilio',
+    ])->assertOk()->assertJsonPath('estado', 'trasladada');
+
+    comoAdminEst()->postJson("/api/admin/matriculas/{$m->id}/baja", ['estado' => 'retirada', 'fecha_retiro' => '2026-06-11', 'motivo_retiro' => 'Otro'])
+        ->assertUnprocessable();
+
+    comoAdminEst()->getJson('/api/admin/matriculas/retiros?anio=2026')->assertOk()
+        ->assertJsonCount(1)->assertJsonPath('0.motivo_retiro', 'Cambio de domicilio')->assertJsonPath('0.curso.nombre', '1° Medio A');
+    comoAdminEst()->getJson('/api/admin/matriculas/retiros?anio=2027')->assertOk()->assertJsonCount(0);
+});

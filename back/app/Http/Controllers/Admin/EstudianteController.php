@@ -104,7 +104,6 @@ class EstudianteController extends Controller
             'apoderado_run' => ['nullable', new RunValido],
             'apoderado_telefono' => ['nullable', 'string', 'max:50'],
             'apoderado_email' => ['nullable', 'email', 'max:150'],
-            'pie' => ['boolean'],
             'observaciones' => ['nullable', 'string', 'max:2000'],
         ], ['run.unique' => 'Ya existe un estudiante con ese RUN.'], [
             'run' => 'RUN', 'apoderado_run' => 'RUN del apoderado', 'apoderado_email' => 'correo del apoderado',

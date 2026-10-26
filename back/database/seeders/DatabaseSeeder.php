@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             ['Marcela Soto Muñoz', 'docente@demo.cl', ['Docente']],
             ['Carolina Méndez', 'utp@demo.cl', ['UTP']],
             ['Alejandro Rivas', 'direccion@demo.cl', ['Dirección']],
+            ['Valentina Torres', 'pie@demo.cl', ['Educadora diferencial']],
             ['Daniela Paredes', 'inspectoria@demo.cl', []],
             ['Paula Contreras', 'sostenedor@demo.cl', []],
             ['Administrador del Sistema', 'admin@demo.cl', ['Administrador']],
@@ -31,6 +32,6 @@ class DatabaseSeeder extends Seeder
             ])->syncRoles($roles);
         }
 
-        $this->call([DatosAcademicosSeeder::class, CurriculoSeeder::class, TrabajoDocenteSeeder::class, EstudiantesSeeder::class]);
+        $this->call([DatosAcademicosSeeder::class, CurriculoSeeder::class, TrabajoDocenteSeeder::class, EstudiantesSeeder::class, BibliotecaSeeder::class, TarjetasRfidSeeder::class, PieSeeder::class]);
     }
 }

@@ -18,6 +18,9 @@ class Permisos
     /** Abre el libro de cualquier curso (UTP, Dirección); sin él, el docente ve solo los de su carga o jefatura. */
     public const VER_LIBROS = 'libros.ver';
 
+    /** Panel en vivo de las marcas de las tarjetas RFID (servidor sockets/). */
+    public const VER_RFID = 'rfid.ver';
+
     public const VER = 'ver';
 
     public const CREAR = 'crear';
@@ -43,6 +46,12 @@ class Permisos
         'asignaciones' => ['Asignación docente', 'asignaciones docentes'],
         'usuarios' => ['Usuarios y permisos', 'usuarios (roles y permisos)'],
         'roles' => ['Roles', 'roles'],
+        'recursos' => ['Biblioteca', 'recursos de la biblioteca pedagógica'],
+    ];
+
+    /** Módulos con CRUD que tienen página propia en el menú lateral (no son pestañas de Administrador). */
+    public const MODULOS_MENU = [
+        'pie' => ['PIE / Inclusión', 'casos PIE (diagnóstico, expediente y bitácora)'],
     ];
 
     /** "cursos", "ver" → "cursos.ver" */
@@ -77,9 +86,13 @@ class Permisos
             'grupo' => 'Libro de clases',
             'modulo' => null,
             'permisos' => [['name' => self::VER_LIBROS, 'label' => 'Ver los libros de todos los cursos', 'accion' => null]],
+        ], [
+            'grupo' => 'Asistencia RFID',
+            'modulo' => null,
+            'permisos' => [['name' => self::VER_RFID, 'label' => 'Ver las marcas RFID en tiempo real', 'accion' => null]],
         ]];
 
-        foreach (self::MODULOS as $modulo => [$titulo, $complemento]) {
+        foreach (self::MODULOS + self::MODULOS_MENU as $modulo => [$titulo, $complemento]) {
             $grupos[] = [
                 'grupo' => $titulo,
                 'modulo' => $modulo,
@@ -96,7 +109,7 @@ class Permisos
 
     public static function todos(): array
     {
-        return array_merge([self::DICTAR_CLASES, self::VER_LIBROS], ...array_map(fn ($m) => self::crud($m), array_keys(self::MODULOS)));
+        return array_merge([self::DICTAR_CLASES, self::VER_LIBROS, self::VER_RFID], ...array_map(fn ($m) => self::crud($m), array_keys(self::MODULOS + self::MODULOS_MENU)));
     }
 
     /** Crea en BD los permisos del catálogo que falten. */

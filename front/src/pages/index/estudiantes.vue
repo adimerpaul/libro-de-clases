@@ -77,7 +77,6 @@
             <q-input v-model="form.apellido_paterno" label="Apellido paterno" outlined dense :rules="[v => !!v || 'Requerido']" hide-bottom-space />
             <q-input v-model="form.apellido_materno" label="Apellido materno" outlined dense />
             <q-select v-model="form.sexo" :options="sexos" emit-value map-options clearable label="Sexo" outlined dense />
-            <q-toggle v-model="form.pie" label="Programa de Integración (PIE)" />
             <q-input v-model="form.direccion" label="Dirección" outlined dense class="full" />
 
             <div class="full seccion">Apoderado</div>
@@ -145,7 +144,7 @@ const { rows, loading, dialog, saving, form, cargar, nuevo, editar, guardar, eli
   'admin/estudiantes',
   () => ({
     run: '', nombres: '', apellido_paterno: '', apellido_materno: '', fecha_nacimiento: '', sexo: null, direccion: '',
-    apoderado_nombre: '', apoderado_run: '', apoderado_telefono: '', apoderado_email: '', pie: false, observaciones: '', curso_id: null,
+    apoderado_nombre: '', apoderado_run: '', apoderado_telefono: '', apoderado_email: '', observaciones: '', curso_id: null,
   }),
   {
     nombre: 'Estudiante',

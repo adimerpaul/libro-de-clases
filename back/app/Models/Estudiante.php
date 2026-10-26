@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Pie;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,7 +27,10 @@ class Estudiante extends Model implements Auditable
     /** La FK borra en cascada solo en un DELETE real; con soft delete se replica aquí. */
     protected static function booted(): void
     {
-        static::deleting(fn (Estudiante $e) => $e->matriculas()->get()->each->delete());
+        static::deleting(function (Estudiante $e) {
+            $e->matriculas()->get()->each->delete();
+            $e->pieCasos()->get()->each->delete();
+        });
     }
 
     protected function casts(): array
@@ -46,5 +50,20 @@ class Estudiante extends Model implements Auditable
     public function matriculas(): HasMany
     {
         return $this->hasMany(Matricula::class);
+    }
+
+    public function pieCasos(): HasMany
+    {
+        return $this->hasMany(PieCaso::class);
+    }
+
+    /** "pie" = su caso del año más reciente sigue vigente (en evaluación o activo). */
+    public function sincronizarPie(): void
+    {
+        if ($this->trashed()) {
+            return;
+        }
+        $ultimo = $this->pieCasos()->orderByDesc('anio')->first();
+        $this->forceFill(['pie' => $ultimo && in_array($ultimo->estado, Pie::VIGENTES, true)])->saveQuietly();
     }
 }

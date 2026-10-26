@@ -1,0 +1,1 @@
+import{M as e,g as t,u as n}from"./runtime-core.esm-bundler-Bzd4vjQp.js";import{t as r}from"./adminModulos-qmoS6I_P.js";var i={__name:`index`,setup(i){let{proxy:a}=t(),o=r.find(e=>a.$auth.hasPermission(`${e.modulo}.ver`));return a.$router.replace(o?o.to:`/`),(t,r)=>(e(),n(`div`))}};export{i as default};

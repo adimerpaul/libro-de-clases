@@ -81,6 +81,36 @@ class MatriculaController extends Controller
         return $matricula->load('estudiante');
     }
 
+    /** Bajas del año escolar (retiros y traslados), la más reciente primero. */
+    public function retiros(Request $request)
+    {
+        $anio = (int) ($request->validate(['anio' => ['nullable', 'integer']])['anio'] ?? now()->year);
+
+        return Matricula::with(['estudiante', 'curso'])
+            ->where('estado', '!=', 'activa')
+            ->whereHas('curso', fn ($q) => $q->where('anio', $anio))
+            ->orderByDesc('fecha_retiro')->orderByDesc('updated_at')
+            ->get();
+    }
+
+    /** Da de baja una matrícula activa: retiro o traslado, con fecha y motivo obligatorio. */
+    public function baja(Request $request, Matricula $matricula)
+    {
+        abort_if($matricula->estado !== 'activa', 422, 'La matrícula ya está dada de baja.');
+
+        $datos = $request->validate([
+            'estado' => ['required', Rule::in(['retirada', 'trasladada'])],
+            'fecha_retiro' => ['required', 'date', 'after_or_equal:'.$matricula->fecha_matricula->toDateString()],
+            'motivo_retiro' => ['required', 'string', 'max:200'],
+        ], [
+            'fecha_retiro.after_or_equal' => 'La fecha de baja no puede ser anterior a la matrícula ('.$matricula->fecha_matricula->format('d-m-Y').').',
+        ], ['fecha_retiro' => 'fecha de baja', 'motivo_retiro' => 'motivo']);
+
+        $matricula->update($datos);
+
+        return $matricula->load(['estudiante', 'curso']);
+    }
+
     public function destroy(Matricula $matricula)
     {
         $matricula->delete();

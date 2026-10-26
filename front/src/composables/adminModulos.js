@@ -7,6 +7,7 @@ export const MODULOS_ADMIN = [
   { modulo: 'asignaciones', label: 'Asignación docente', icon: 'fas fa-list-check', to: '/admin/asignaciones' },
   { modulo: 'usuarios', label: 'Usuarios y permisos', icon: 'fas fa-user-shield', to: '/admin/usuarios' },
   { modulo: 'roles', label: 'Roles', icon: 'fas fa-id-badge', to: '/admin/roles' },
+  { modulo: 'recursos', label: 'Biblioteca', icon: 'fas fa-toolbox', to: '/admin/recursos' },
 ]
 
 /** Basta ver un módulo para entrar al menú Administrador. */
