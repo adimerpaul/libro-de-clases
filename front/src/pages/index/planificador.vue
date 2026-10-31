@@ -147,13 +147,17 @@
 import { ref, computed, watch, onMounted, getCurrentInstance } from 'vue'
 import { mensajeError } from '../../composables/useCrud'
 import { iso, lunesDe, sumarDias } from '../../composables/fechas'
+import { oaDesdeRuta } from '../../composables/oaPreseleccion'
+import { useRoute, useRouter } from 'vue-router'
 
 definePage({ meta: { title: 'Planificador', permiso: 'clases.dictar' } })
 
 const { proxy } = getCurrentInstance()
+const route = useRoute()
+const router = useRouter()
 
 const estadoTxt = { borrador: 'Borrador', planificada: 'Planificada', realizada: 'Realizada' }
-const NOMBRES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
+const NOMBRES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 
 const hoyIso = iso(new Date())
 const lunes = ref(lunesDe(new Date()))
@@ -169,7 +173,7 @@ const dias = computed(() => NOMBRES.map((nombre, i) => {
 
 const rangoTexto = computed(() => {
   const fmt = d => d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long' })
-  return `${fmt(lunes.value)} al ${fmt(sumarDias(lunes.value, 4))}`
+  return `${fmt(lunes.value)} al ${fmt(sumarDias(lunes.value, 5))}`
 })
 
 const opcionesCarga = computed(() => carga.value.map(a => ({
@@ -304,7 +308,19 @@ function copiarSiguiente () {
 
 onMounted(() => {
   proxy.$axios.get('docente/asignaciones')
-    .then(res => { carga.value = res.data })
+    .then(res => {
+      carga.value = res.data
+      // Viene de Currículum y OA ("Usar en planificación"): abre una clase nueva con ese OA
+      const desdeOa = oaDesdeRuta(route, carga.value)
+      if (desdeOa?.asignacion) {
+        nueva()
+        form.value.asignacion_id = desdeOa.asignacion.id
+        form.value.objetivo_aprendizaje_id = desdeOa.oa
+      } else if (desdeOa) {
+        proxy.$alert.error('No tienes carga en el nivel y la asignatura de ese OA')
+      }
+      if (desdeOa) router.replace({ query: {} })
+    })
     .catch(err => proxy.$alert.error(mensajeError(err)))
     .finally(() => { cargando.value = false })
   cargarSemana()
@@ -317,7 +333,7 @@ onMounted(() => {
 .semanaTxt b { display: block; font-size: 15px }
 .semanaTxt small { color: #6d8090 }
 
-.semana { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px }
+.semana { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px }
 .dia { background: #fff; border: 1px solid #d9e3ec; border-radius: 18px; padding: 12px; min-height: 260px; box-shadow: 0 7px 22px rgba(22, 52, 80, .055) }
 .dia.hoy { border-color: #0f4f85; box-shadow: 0 0 0 2px #0f4f8522 }
 .diaHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px }
@@ -351,7 +367,8 @@ onMounted(() => {
 .oaBox { background: #f6f3ff; border: 1px solid #e2dafb; border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.45 }
 .fieldLabel { font-size: 12px; font-weight: 700; color: #486477; margin-bottom: 4px }
 
-@media (max-width: 1100px) { .semana { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (max-width: 1300px) { .semana { grid-template-columns: repeat(3, minmax(0, 1fr)) } }
+@media (max-width: 900px) { .semana { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
 @media (max-width: 720px) {
   .semana { grid-template-columns: 1fr }
   .dia { min-height: 0 }

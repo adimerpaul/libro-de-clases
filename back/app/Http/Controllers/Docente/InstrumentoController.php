@@ -7,11 +7,13 @@ use App\Models\Instrumento;
 use App\Models\InstrumentoPregunta;
 use App\Models\ObjetivoAprendizaje;
 use App\Support\EscalaNotas;
+use App\Support\GeneradorIa;
 use App\Support\GeneradorInstrumento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
+use RuntimeException;
 
 /** Instrumentos de evaluación del docente que consulta (solo los propios). */
 class InstrumentoController extends Controller
@@ -76,18 +78,35 @@ class InstrumentoController extends Controller
         return response()->json(['message' => 'Instrumento eliminado']);
     }
 
-    /** Borrador de preguntas desde un OA (plantillas determinísticas, no se guarda). */
+    /**
+     * Borrador de preguntas desde un OA; no se guarda. motor "ia" = Google Gemini
+     * (GeneradorIa), "plantillas" = plantillas determinísticas sin IA.
+     */
     public function generar(Request $request)
     {
         $datos = $request->validate([
             'objetivo_aprendizaje_id' => ['required', 'integer', 'exists:objetivos_aprendizaje,id,deleted_at,NULL'],
             'cantidad' => ['required', 'integer', 'between:1,30'],
             'mezcla' => ['required', Rule::in(['mixto', ...InstrumentoPregunta::TIPOS])],
+            'motor' => ['nullable', Rule::in(['ia', 'plantillas'])],
+            'dificultad' => ['nullable', Rule::in(GeneradorIa::DIFICULTADES)],
+            'proposito' => ['nullable', Rule::in(GeneradorIa::PROPOSITOS)],
+            'criterios' => ['nullable', 'string', 'max:2000'],
+            'flexibilizada' => ['nullable', 'boolean'],
+            'tipo_instrumento' => ['nullable', 'string', 'max:60'],
         ], [], ['objetivo_aprendizaje_id' => 'OA']);
 
-        $oa = ObjetivoAprendizaje::find($datos['objetivo_aprendizaje_id']);
+        $oa = ObjetivoAprendizaje::with('asignatura:id,nombre')->find($datos['objetivo_aprendizaje_id']);
 
-        return GeneradorInstrumento::generar($oa, $datos['cantidad'], $datos['mezcla']);
+        if (($datos['motor'] ?? 'plantillas') !== 'ia') {
+            return GeneradorInstrumento::generar($oa, $datos['cantidad'], $datos['mezcla']);
+        }
+
+        try {
+            return GeneradorIa::generar($oa, $datos);
+        } catch (RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 503);
+        }
     }
 
     /** Tabla de conversión puntaje → nota (1,0 – 7,0). */

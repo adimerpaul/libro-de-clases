@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -16,7 +17,8 @@ class ObjetivoAprendizaje extends Model implements Auditable
     protected $table = 'objetivos_aprendizaje';
 
     protected $fillable = [
-        'codigo', 'nivel', 'asignatura_id', 'unidad', 'texto', 'habilidades', 'indicadores',
+        'codigo', 'nivel', 'asignatura_id', 'unidad', 'texto', 'contenidos', 'habilidades', 'actitudes', 'indicadores',
+        'instrumentos', 'estrategias', 'inicio', 'desarrollo', 'cierre', 'recursos', 'tiempo_espacio',
         'fuente', 'fuente_url', 'version_curricular', 'vigente_desde', 'vigente_hasta', 'fuente_hash', 'es_demo',
     ];
 
@@ -24,9 +26,12 @@ class ObjetivoAprendizaje extends Model implements Auditable
     {
         return [
             'habilidades' => 'array',
+            'actitudes' => 'array',
             'indicadores' => 'array',
-            'vigente_desde' => 'date',
-            'vigente_hasta' => 'date',
+            'instrumentos' => 'array',
+            'recursos' => 'array',
+            'vigente_desde' => 'date:Y-m-d',
+            'vigente_hasta' => 'date:Y-m-d',
             'es_demo' => 'boolean',
         ];
     }
@@ -34,6 +39,21 @@ class ObjetivoAprendizaje extends Model implements Auditable
     public function asignatura(): BelongsTo
     {
         return $this->belongsTo(Asignatura::class);
+    }
+
+    public function planificaciones(): HasMany
+    {
+        return $this->hasMany(Planificacion::class, 'objetivo_aprendizaje_id');
+    }
+
+    public function instrumentosEvaluacion(): HasMany
+    {
+        return $this->hasMany(Instrumento::class, 'objetivo_aprendizaje_id');
+    }
+
+    public function recursosBiblioteca(): HasMany
+    {
+        return $this->hasMany(Recurso::class, 'objetivo_aprendizaje_id');
     }
 
     /** OA vigentes a hoy. */

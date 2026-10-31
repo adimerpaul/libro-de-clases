@@ -54,6 +54,25 @@
             </template>
           </q-input>
 
+          <label for="perfil">Perfil</label>
+          <q-select
+            v-model="perfil" for="perfil" :options="opcionesPerfil" emit-value map-options outlined dense
+            :loading="cargandoRoles" @update:model-value="elegirPerfil"
+          >
+            <template #prepend><q-icon name="fas fa-id-badge" size="18px" /></template>
+            <template #option="{ itemProps, opt }">
+              <q-item v-bind="itemProps">
+                <q-item-section avatar>
+                  <span class="perfilDot" :class="`role-${opt.clave}`" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ opt.label }}</q-item-label>
+                  <q-item-label caption>{{ opt.tag }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+
           <q-btn
             type="submit" label="Ingresar" color="accent" class="full-width btnLogin"
             no-caps unelevated :loading="loading"
@@ -61,8 +80,9 @@
         </q-form>
 
         <div class="loginNote">
-          Cada usuario ve solo los módulos para los que tiene permiso.
-          Todas las acciones quedan registradas en auditoría.
+          Elige el perfil con el que trabajarás: la sesión tendrá solo los permisos de ese rol.
+          Con «Todos mis perfiles» se suman todos tus roles. Todas las acciones quedan registradas en auditoría.
+          <template v-if="esDemo"><br><b>Demo:</b> al elegir un perfil se completa su usuario demo; clave <b>demo123</b>.</template>
         </div>
       </div>
     </section>
@@ -70,8 +90,9 @@
 </template>
 
 <script setup>
-import { ref, computed, getCurrentInstance } from 'vue'
+import { ref, computed, onMounted, getCurrentInstance } from 'vue'
 import { TOKEN_KEY } from '../stores/auth'
+import { perfilDeRol } from '../composables/menu'
 
 const { proxy } = getCurrentInstance()
 
@@ -89,13 +110,58 @@ const password = ref('')
 const showPassword = ref(false)
 const loading = ref(false)
 
+// Perfil (rol de Spatie) con que se abre la sesión, como el selector de ui3; null = todos sus roles
+const TODOS = { value: null, label: 'Todos mis perfiles', tag: 'Suma los permisos de todos tus roles', clave: 'sostenedor' }
+const PERFIL_KEY = 'perfilLibro'
+const perfil = ref(leerPerfil())
+const roles = ref([])
+const cargandoRoles = ref(false)
+const opcionesPerfil = computed(() => [
+  TODOS,
+  ...roles.value.map(r => { const p = perfilDeRol(r); return { value: r, label: r, tag: p.tag, clave: p.clave } }),
+])
+
+// Solo en desarrollo: usuarios demo del seeder (clave demo123)
+const esDemo = import.meta.env.DEV
+const DEMO = {
+  Administrador: 'admin@demo.cl',
+  'Dirección': 'direccion@demo.cl',
+  UTP: 'utp@demo.cl',
+  'Educadora diferencial': 'pie@demo.cl',
+  Docente: 'docente@demo.cl',
+}
+
+function leerPerfil () {
+  try { return localStorage.getItem(PERFIL_KEY) || null } catch { return null }
+}
+
+function elegirPerfil (rol) {
+  if (!esDemo || !DEMO[rol]) return
+  if (!email.value || email.value.endsWith('@demo.cl')) {
+    email.value = DEMO[rol]
+    if (!password.value) password.value = 'demo123'
+  }
+}
+
+onMounted(() => {
+  cargandoRoles.value = true
+  proxy.$axios.get('login/roles')
+    .then(res => {
+      roles.value = res.data
+      if (perfil.value && !roles.value.includes(perfil.value)) perfil.value = null
+    })
+    .catch(() => {})
+    .finally(() => { cargandoRoles.value = false })
+})
+
 const year = computed(() => new Date().getFullYear())
 
 function login () {
   loading.value = true
-  proxy.$axios.post('login', { email: email.value, password: password.value })
+  proxy.$axios.post('login', { email: email.value, password: password.value, rol: perfil.value })
     .then(res => {
       localStorage.setItem(TOKEN_KEY, res.data.token)
+      try { perfil.value ? localStorage.setItem(PERFIL_KEY, perfil.value) : localStorage.removeItem(PERFIL_KEY) } catch { /* sin storage */ }
       proxy.$auth.setSesion(res.data)
       proxy.$alert.success('Bienvenido(a) ' + res.data.user.name)
       proxy.$router.push('/')
@@ -172,6 +238,7 @@ function login () {
 .eyebrow { font-size: 10px; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; color: #bd1f2d }
 label { display: block; font-size: 12px; font-weight: 800; margin: 14px 0 6px }
 .loginCard :deep(.q-field--outlined .q-field__control) { border-radius: 11px }
+.perfilDot { width: 14px; height: 14px; border-radius: 50%; background: var(--role); box-shadow: 0 0 0 4px var(--roleSoft) }
 .btnLogin { margin-top: 18px; border-radius: 11px; padding: 6px 0; font-weight: 800 }
 .loginNote {
   margin-top: 17px;

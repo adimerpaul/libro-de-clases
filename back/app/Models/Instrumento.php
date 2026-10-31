@@ -26,7 +26,10 @@ class Instrumento extends Model implements Auditable
     /** Soft delete en cascada de sus preguntas. */
     protected static function booted(): void
     {
-        static::deleting(fn (Instrumento $instrumento) => $instrumento->preguntas()->delete());
+        static::deleting(function (Instrumento $instrumento) {
+            $instrumento->preguntas()->delete();
+            $instrumento->calificaciones()->get()->each->delete();
+        });
     }
 
     protected function casts(): array
@@ -50,6 +53,12 @@ class Instrumento extends Model implements Auditable
     public function objetivo(): BelongsTo
     {
         return $this->belongsTo(ObjetivoAprendizaje::class, 'objetivo_aprendizaje_id');
+    }
+
+    /** Notas registradas de los estudiantes del curso. */
+    public function calificaciones(): HasMany
+    {
+        return $this->hasMany(Calificacion::class);
     }
 
     public function preguntas(): HasMany

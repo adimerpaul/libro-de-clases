@@ -64,14 +64,17 @@ const flujo = ['OA', 'Planificación', 'Clase', 'Evaluación', 'Libro', 'Familia
 const perfil = computed(() => perfilDe(proxy.$auth.user))
 
 // Tareas del perfil (ui3/app.js homePage), enlazadas a su módulo del menú
-const tareas = computed(() => perfil.value.tareas.map(([key, titulo, desc]) => {
+// (las tareas de módulos que no están en el menú se omiten)
+const tareas = computed(() => perfil.value.tareas.filter(([key]) => MODULOS[key]).map(([key, titulo, desc]) => {
   const m = MODULOS[key]
   return { titulo, desc, icon: m.icon, link: m.link, pendiente: m.pendiente, puede: !m.permiso || proxy.$auth.hasPermission(m.permiso) }
 }))
 
-const modulos = MENU.flatMap(g => g.links).filter(l => l.key !== 'inicio')
-const disponibles = computed(() => modulos.filter(l => !l.pendiente && (!l.permiso || proxy.$auth.hasPermission(l.permiso))).length)
-const pendientes = modulos.filter(l => l.pendiente).length
+// Perfiles con `modulos` (apoderado) solo cuentan los suyos
+const modulos = computed(() => MENU.flatMap(g => g.links)
+  .filter(l => l.key !== 'inicio' && (!perfil.value.modulos || perfil.value.modulos.includes(l.key))))
+const disponibles = computed(() => modulos.value.filter(l => !l.pendiente && (!l.permiso || proxy.$auth.hasPermission(l.permiso))).length)
+const pendientes = computed(() => modulos.value.filter(l => l.pendiente).length)
 </script>
 
 <style scoped>

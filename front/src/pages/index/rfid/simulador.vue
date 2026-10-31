@@ -91,7 +91,7 @@ import { getCurrentInstance, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { crearSocket, EVENTO_RFID, URL_SOCKET } from '../../../composables/sockets'
 
-definePage({ meta: { title: 'Simulador RFID', permiso: 'rfid.ver' } })
+definePage({ meta: { title: 'Simulador RFID', permiso: ['rfid.ver', 'clases.dictar'] } })
 defineOptions({ name: 'SimuladorRfidPage' })
 
 const { proxy } = getCurrentInstance()

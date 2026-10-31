@@ -39,6 +39,10 @@
                     <q-item-section avatar><q-icon name="fas fa-pen" size="13px" /></q-item-section>
                     <q-item-section>Editar</q-item-section>
                   </q-item>
+                  <q-item clickable @click="notas.abrir(p.row.id)">
+                    <q-item-section avatar><q-icon name="fas fa-list-ol" size="13px" /></q-item-section>
+                    <q-item-section>Registrar notas</q-item-section>
+                  </q-item>
                   <q-item clickable :to="{ path: `/evaluaciones/${p.row.id}`, query: { imprimir: 1 } }">
                     <q-item-section avatar><q-icon name="fas fa-print" size="13px" /></q-item-section>
                     <q-item-section>Vista previa e impresión</q-item-section>
@@ -78,6 +82,8 @@
         </template>
       </q-table>
     </div>
+
+    <NotasInstrumento ref="notas" />
   </q-page>
 </template>
 
@@ -85,6 +91,7 @@
 import { ref, computed, onMounted, getCurrentInstance } from 'vue'
 import { useCrud } from '../../../composables/useCrud'
 import { fechaCl } from '../../../composables/fechas'
+import NotasInstrumento from '../../../components/NotasInstrumento.vue'
 
 definePage({ meta: { title: 'Evaluaciones', permiso: 'clases.dictar' } })
 
@@ -92,6 +99,7 @@ const { proxy } = getCurrentInstance()
 const filtro = ref('')
 const filtroAsignacion = ref(null)
 const carga = ref([])
+const notas = ref(null)
 
 const { rows, loading, cargar, eliminar } = useCrud('docente/instrumentos', () => ({}), { nombre: 'Instrumento' })
 

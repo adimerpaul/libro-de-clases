@@ -15,7 +15,7 @@ export const MENU = [
     links: [
       { key: 'libro', title: 'Libro de clases', icon: 'fas fa-book', link: '/libros', permiso: ['libros.ver', 'clases.dictar'], desc: 'Asistencia, leccionario, evaluaciones y observaciones en formato físico-digital.' },
       { key: 'planificador', title: 'Planificador', icon: 'far fa-calendar-days', link: '/planificador', permiso: 'clases.dictar', desc: 'Curso/nivel → asignatura → OA. El OA elegido precarga contenidos, indicadores, inicio, desarrollo y cierre.' },
-      { key: 'curriculum', title: 'Currículum y OA', icon: 'fas fa-bullseye', pendiente: true, desc: 'Navegación por Parvularia, Básica, Media HC y TP. OA → contenidos → competencias → indicadores → instrumentos, desde un catálogo versionado del Mineduc.' },
+      { key: 'curriculum', title: 'Currículum y OA', icon: 'fas fa-bullseye', link: '/curriculum', permiso: 'curriculum.ver', desc: 'Navegación por Parvularia, Básica, Media HC y TP. OA → contenidos → competencias → indicadores → instrumentos, desde un catálogo versionado del Mineduc.' },
       { key: 'evaluaciones', title: 'Evaluaciones + corrector', icon: 'fas fa-flask', link: '/evaluaciones', permiso: 'clases.dictar', desc: 'Crea instrumentos por asignatura y OA, y corrige con criterios vinculados al OA.' },
       { key: 'recursos', title: 'Biblioteca', icon: 'fas fa-toolbox', link: '/recursos', permiso: ['recursos.ver', 'clases.dictar'], desc: 'Actividades, presentaciones, guías, material didáctico, videos y apoyos DUA/PIE organizados por nivel, asignatura y OA.' },
     ],
@@ -24,32 +24,33 @@ export const MENU = [
     title: 'Apoyo',
     links: [
       { key: 'pie', title: 'PIE / Inclusión', icon: 'fas fa-puzzle-piece', link: '/pie', permiso: 'pie.ver', desc: 'Evaluación integral, barreras, co-docencia, DUA, PACI, flexibilización, aula de recursos y vinculación familiar.' },
+      { key: 'emocional', title: 'Educación emocional', icon: 'fas fa-heart-pulse', link: '/emocional', permiso: ['emocional.ver', 'emocional.reportar', 'clases.dictar'], desc: 'Plan socioemocional, sesiones por curso, seguimiento individual de bienestar, protocolo DEC y diagnóstico tipo DIA.' },
     ],
   },
-  {
-    title: 'Gestión',
-    links: [
-      { key: 'utp', title: 'Gestión UTP', icon: 'fas fa-chart-line', pendiente: true, desc: 'Alineación curricular, supervisión de planificaciones, cobertura, observación de aula, validación de instrumentos y coordinación PIE.' },
-      { key: 'inspectoria', title: 'Inspectoría', icon: 'fas fa-shield-halved', pendiente: true, desc: 'RIE, asistencia, puntualidad, horarios, reemplazos, retiros, PISE, infraestructura, recreos y atención a apoderados.' },
-      { key: 'convivencia', title: 'Convivencia', icon: 'fas fa-handshake', pendiente: true, desc: 'Plan de gestión, talleres, participación, prevención de violencia y ciberacoso, mediación, protocolos y redes externas.' },
-      { key: 'protocolos', title: 'Protocolos', icon: 'fas fa-triangle-exclamation', pendiente: true, desc: 'Rutas de actuación compartidas por Inspectoría y Convivencia: hechos, medidas de resguardo, responsables y seguimiento.' },
-      { key: 'reportes', title: 'Control Tower', icon: 'fas fa-table-cells-large', pendiente: true, desc: 'Vista agregada: cobertura, asistencia, inclusión, convivencia y cumplimiento.' },
-    ],
-  },
+  // {
+  //   title: 'Gestión',
+  //   links: [
+  //     { key: 'utp', title: 'Gestión UTP', icon: 'fas fa-chart-line', pendiente: true, desc: 'Alineación curricular, supervisión de planificaciones, cobertura, observación de aula, validación de instrumentos y coordinación PIE.' },
+  //     { key: 'inspectoria', title: 'Inspectoría', icon: 'fas fa-shield-halved', pendiente: true, desc: 'RIE, asistencia, puntualidad, horarios, reemplazos, retiros, PISE, infraestructura, recreos y atención a apoderados.' },
+  //     { key: 'convivencia', title: 'Convivencia', icon: 'fas fa-handshake', pendiente: true, desc: 'Plan de gestión, talleres, participación, prevención de violencia y ciberacoso, mediación, protocolos y redes externas.' },
+  //     { key: 'protocolos', title: 'Protocolos', icon: 'fas fa-triangle-exclamation', pendiente: true, desc: 'Rutas de actuación compartidas por Inspectoría y Convivencia: hechos, medidas de resguardo, responsables y seguimiento.' },
+  //     { key: 'reportes', title: 'Control Tower', icon: 'fas fa-table-cells-large', pendiente: true, desc: 'Vista agregada: cobertura, asistencia, inclusión, convivencia y cumplimiento.' },
+  //   ],
+  // },
   {
     title: 'Operación',
     links: [
-      { key: 'rfid', title: 'Asistencia RFID', icon: 'fas fa-tower-broadcast', link: '/rfid', permiso: 'rfid.ver', desc: 'El evento físico no es la asistencia oficial: el motor propone y los casos inciertos los valida una persona autorizada.' },
+      { key: 'rfid', title: 'Asistencia RFID', icon: 'fas fa-tower-broadcast', link: '/rfid', permiso: ['rfid.ver', 'clases.dictar'], desc: 'El evento físico no es la asistencia oficial: el motor propone y los casos inciertos los valida una persona autorizada.' },
       { key: 'retiros', title: 'Retiro estudiantes', icon: 'fas fa-door-open', link: '/retiros', permiso: 'matriculas.ver', desc: 'Baja de estudiantes del año escolar (retiro o traslado) con fecha, motivo y trazabilidad.' },
     ],
   },
   {
     title: 'Comunidad',
     links: [
-      { key: 'student360', title: 'Student 360', icon: 'fas fa-users', pendiente: true, desc: 'Vista longitudinal autorizada del estudiante; los dominios sensibles se muestran solo según finalidad y perfil.' },
+      { key: 'student360', title: 'Student 360', icon: 'fas fa-users', link: '/student360', permiso: ['student360.ver', 'clases.dictar'], desc: 'Vista longitudinal autorizada del estudiante; los dominios sensibles se muestran solo según finalidad y perfil.' },
       { key: 'comunidad', title: 'Comunidad', icon: 'far fa-comments', pendiente: true, desc: 'Comunicaciones segmentadas y autorizaciones según rol, curso, estudiante y finalidad.' },
-      { key: 'libreta', title: 'Libreta estudiante', icon: 'fas fa-book-bookmark', pendiente: true, desc: 'Identificación, reglamento abreviado, citaciones, justificaciones, retiros, firmas, calendario, portafolio y rúbricas visibles.' },
-      { key: 'familia', title: 'Mis hijos', icon: 'fas fa-house-chimney-user', pendiente: true, desc: 'Información exclusiva de los hijos del apoderado: asistencia, notas, anotaciones, citaciones y libreta.' },
+      { key: 'libreta', title: 'Libreta estudiante', icon: 'fas fa-book-bookmark', link: '/libreta', permiso: ['familia.ver', 'libreta.ver', 'clases.dictar'], desc: 'Identificación, reglamento abreviado, citaciones, justificaciones, retiros, firmas, calendario, portafolio y rúbricas visibles.' },
+      { key: 'familia', title: 'Mis hijos', icon: 'fas fa-house-chimney-user', link: '/familia', permiso: 'familia.ver', desc: 'Información exclusiva de los hijos del apoderado: asistencia, notas, anotaciones, citaciones y libreta.' },
     ],
   },
   {
@@ -68,15 +69,23 @@ MENU.forEach(g => g.links.forEach(l => { if (l.pendiente) l.link = `/${l.key}` }
 
 export const MODULOS = Object.fromEntries(MENU.flatMap(g => g.links).map(l => [l.key, l]))
 
-/** Grupos con los enlaces que el usuario puede ver; los pendientes los ve todo usuario. */
+/**
+ * Grupos con los enlaces que el usuario puede ver; los pendientes los ve todo usuario,
+ * salvo los perfiles con `modulos` (el apoderado solo ve inicio, sus hijos y la libreta).
+ */
 export function menuVisible (auth) {
+  const { modulos } = perfilDe(auth.user)
   return MENU
-    .map(g => ({ ...g, links: g.links.filter(l => !l.permiso || auth.hasPermission(l.permiso)) }))
+    .map(g => ({
+      ...g,
+      links: g.links.filter(l => (!modulos || modulos.includes(l.key)) && (!l.permiso || auth.hasPermission(l.permiso))),
+    }))
     .filter(g => g.links.length)
 }
 
 // Perfiles de ui3 (PROFILE_CONFIG): color de acento (clases .role-* de css/app.css) y tareas de inicio.
-// Se elige por el primer rol de Spatie del usuario que tenga perfil; sin rol conocido, "docente".
+// Se elige por el rol elegido en el login (rol_activo) o, si no, por el primer rol de Spatie
+// del usuario que tenga perfil; sin rol conocido, "docente".
 const PERFILES = {
   docente: {
     tag: 'Enseñanza, evaluación y libro',
@@ -127,10 +136,22 @@ const PERFILES = {
     titulo: 'Convivencia educativa',
     desc: 'Plan de gestión, participación, prevención, mediación, protocolos, redes externas y apoyo a docentes.',
     tareas: [
-      ['convivencia', 'Plan de convivencia', 'Planifica talleres, participación y acciones preventivas.'],
-      ['convivencia', 'Detección temprana', 'Indicadores de riesgo, exclusión, violencia y ciberacoso.'],
-      ['convivencia', 'Mediación', 'Registra acuerdos restaurativos y seguimientos.'],
-      ['protocolos', 'Protocolos', 'Coordina activación y seguimiento junto a Inspectoría.'],
+      ['emocional', 'Plan socioemocional', 'Competencias por nivel, sesiones y talleres por curso, con su cobertura.'],
+      ['emocional', 'Seguimiento de bienestar', 'Alertas individuales, intervenciones y derivación a la red de salud.'],
+      ['emocional', 'Protocolo DEC', 'Desregulación emocional y conductual: contención, intervención y cierre.'],
+      ['emocional', 'Diagnóstico socioemocional', 'Resultados tipo DIA por curso y estudiante (personal, comunitario, ciudadano).'],
+    ],
+  },
+  apoderado: {
+    tag: 'Información de sus hijos y libreta digital',
+    titulo: 'Portal de familia',
+    desc: 'Todo lo relativo exclusivamente a sus hijos, con la Libreta del Estudiante como canal principal.',
+    // Lo único que ve en el menú (ui3 PROFILE_CONFIG.apoderado.routes)
+    modulos: ['inicio', 'familia', 'libreta'],
+    tareas: [
+      ['familia', 'Notas y evaluaciones', 'Notas por asignatura y promedio de cada uno de sus hijos.'],
+      ['familia', 'Asistencia y atrasos', 'Entradas, atrasos y última marcación de sus hijos.'],
+      ['libreta', 'Libreta del estudiante', 'Citaciones, justificaciones, autorizaciones y comunicaciones con el establecimiento.'],
     ],
   },
   sostenedor: {
@@ -155,10 +176,17 @@ const PERFIL_DE_ROL = {
   'Inspectoría': 'inspectoria',
   Convivencia: 'convivencia',
   Docente: 'docente',
+  Apoderado: 'apoderado',
+}
+
+/** Perfil de ui3 de un rol de Spatie (para el selector del login). */
+export function perfilDeRol (rol) {
+  const clave = PERFIL_DE_ROL[rol] || 'docente'
+  return { clave, rol, ...PERFILES[clave] }
 }
 
 export function perfilDe (user) {
-  const rol = (user?.roles || []).find(r => PERFIL_DE_ROL[r])
+  const rol = user?.rol_activo || (user?.roles || []).find(r => PERFIL_DE_ROL[r])
   const clave = PERFIL_DE_ROL[rol] || 'docente'
   return { clave, rol: rol || user?.roles?.[0] || 'Usuario', ...PERFILES[clave] }
 }

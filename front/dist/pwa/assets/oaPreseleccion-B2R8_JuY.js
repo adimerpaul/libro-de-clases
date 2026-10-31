@@ -1,0 +1,1 @@
+function e(e,t){let n=Number(e.query.oa);return n?{oa:n,asignacion:t.find(t=>t.curso.nivel===e.query.nivel&&t.asignatura_id===Number(e.query.asignatura_id))||null}:null}export{e as t};

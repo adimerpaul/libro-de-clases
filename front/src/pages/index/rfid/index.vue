@@ -144,7 +144,7 @@ import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref } from 'v
 import { useRouter } from 'vue-router'
 import { crearSocket, EVENTO_RFID } from '../../../composables/sockets'
 
-definePage({ meta: { title: 'Asistencia RFID', permiso: 'rfid.ver' } })
+definePage({ meta: { title: 'Asistencia RFID', permiso: ['rfid.ver', 'clases.dictar'] } })
 defineOptions({ name: 'AsistenciaRfidPage' })
 
 const { proxy } = getCurrentInstance()
@@ -239,7 +239,7 @@ const quitarCaminante = key => { caminantes.value = caminantes.value.filter(w =>
 
 // El socket no trae nombres (es compartido y sin token): se completan con la nómina cargada
 function recibir (m) {
-  if (cursoId.value && m.curso_id !== cursoId.value) return
+  if (!cursoId.value || m.curso_id !== cursoId.value) return // solo el curso abierto (que es visible para quien mira)
   if (marcas.value.some(x => x.id === m.id)) return
   const e = estudiantes.value.find(x => x.id === m.estudiante_id)
   const curso = cursos.value.find(c => c.id === m.curso_id)

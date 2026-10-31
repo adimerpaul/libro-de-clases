@@ -30,6 +30,10 @@ class Estudiante extends Model implements Auditable
         static::deleting(function (Estudiante $e) {
             $e->matriculas()->get()->each->delete();
             $e->pieCasos()->get()->each->delete();
+            $e->vinculos()->get()->each->delete();
+            $e->calificaciones()->get()->each->delete();
+            $e->alertasBienestar()->get()->each->delete();
+            $e->diagnosticosSocioemocionales()->get()->each->delete();
         });
     }
 
@@ -50,6 +54,28 @@ class Estudiante extends Model implements Auditable
     public function matriculas(): HasMany
     {
         return $this->hasMany(Matricula::class);
+    }
+
+    /** Cuentas de apoderado/tutor que pueden ver al estudiante en el portal de familia. */
+    public function vinculos(): HasMany
+    {
+        return $this->hasMany(VinculoApoderado::class);
+    }
+
+    /** Educación Emocional: seguimiento de bienestar (confidencial) y diagnósticos tipo DIA. */
+    public function alertasBienestar(): HasMany
+    {
+        return $this->hasMany(AlertaBienestar::class);
+    }
+
+    public function diagnosticosSocioemocionales(): HasMany
+    {
+        return $this->hasMany(DiagnosticoSocioemocional::class);
+    }
+
+    public function calificaciones(): HasMany
+    {
+        return $this->hasMany(Calificacion::class);
     }
 
     public function pieCasos(): HasMany

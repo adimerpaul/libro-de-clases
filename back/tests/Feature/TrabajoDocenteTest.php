@@ -147,3 +147,46 @@ test('crea un instrumento con preguntas validadas y su escala', function () {
         ->assertJsonPath('puntaje_aprobacion', 5.4)
         ->assertJsonCount(10, 'tabla');
 });
+
+test('genera el borrador con IA (Gemini) y descarta ítems inválidos', function () {
+    config(['services.gemini.key' => 'clave-prueba', 'services.gemini.model' => 'modelo-a', 'services.gemini.respaldo' => 'modelo-b']);
+    $respuesta = ['preguntas' => [
+        ['tipo' => 'seleccion', 'enunciado' => '1. ¿Cuál es la pendiente de y = 2x + 1?', 'alternativas' => ['a) 1', 'b) 2', 'c) 3', 'd) 0'], 'indice_correcta' => 1],
+        ['tipo' => 'seleccion', 'enunciado' => 'Sin correcta válida', 'alternativas' => ['x', 'y'], 'indice_correcta' => 7],
+        ['tipo' => 'verdadero_falso', 'enunciado' => 'Toda función lineal pasa por el origen.', 'respuesta_vf' => 'F'],
+        ['tipo' => 'desarrollo', 'enunciado' => 'Explica qué representa la pendiente.', 'criterios' => 'Define (2 pts) · Ejemplo (2 pts)'],
+    ]];
+    // API Interactions: el modelo va en el cuerpo; el texto en los pasos "model_output"
+    Http::fake(fn ($r) => $r['model'] === 'modelo-a'
+        ? Http::response(['error' => ['message' => 'high demand']], 503)
+        : Http::response(['status' => 'completed', 'steps' => [
+            ['type' => 'thought', 'signature' => 'x'],
+            ['type' => 'model_output', 'content' => [['type' => 'text', 'text' => "```json\n".json_encode($respuesta)."\n```"]]],
+        ]]));
+
+    $preguntas = comoDocente()->postJson('/api/docente/instrumentos/generar', [
+        'objetivo_aprendizaje_id' => $this->oa->id, 'cantidad' => 10, 'mezcla' => 'mixto', 'motor' => 'ia',
+        'dificultad' => 'desafiante', 'proposito' => 'sumativa', 'flexibilizada' => true,
+    ])->assertOk()->assertJsonCount(3)->json();
+
+    expect($preguntas[0]['enunciado'])->toBe('¿Cuál es la pendiente de y = 2x + 1?')
+        ->and($preguntas[0]['alternativas'][(int) $preguntas[0]['respuesta_correcta']])->toBe('2')
+        ->and($preguntas[0]['puntaje'])->toBe(2)
+        ->and($preguntas[1]['respuesta_correcta'])->toBe('F')
+        ->and($preguntas[2]['criterios'])->toContain('Define');
+
+    Http::assertSent(fn ($r) => str_ends_with($r->url(), '/v1beta/interactions') && $r['model'] === 'modelo-b'
+        && $r->hasHeader('x-goog-api-key', 'clave-prueba')
+        && str_contains(json_encode($r->data(), JSON_UNESCAPED_UNICODE), 'FLEXIBILIZADA'));
+});
+
+test('sin clave de IA avisa en vez de inventar preguntas', function () {
+    config(['services.gemini.key' => null]);
+    Http::fake();
+
+    comoDocente()->postJson('/api/docente/instrumentos/generar', [
+        'objetivo_aprendizaje_id' => $this->oa->id, 'cantidad' => 3, 'mezcla' => 'mixto', 'motor' => 'ia',
+    ])->assertStatus(503)->assertJsonPath('message', fn ($m) => str_contains($m, 'GEMINI_API_KEY'));
+
+    Http::assertNothingSent();
+});
