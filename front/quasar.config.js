@@ -22,9 +22,14 @@ export default defineConfig((ctx) => {
     ...(ctx.dev ? parseEnvFile('.env.development') : parseEnvFile('.env.production')),
   }
   const apiOrigin = env.VITE_API_BACK ? new URL(env.VITE_API_BACK).origin : ''
+  // Socket.IO usa polling (https) y luego websocket (wss): ambos deben estar en connect-src
+  const socketOrigin = env.VITE_SOCKETS ? new URL(env.VITE_SOCKETS).origin : ''
+  const socketWsOrigin = socketOrigin.replace(/^http/, 'ws')
   return {
     htmlVariables: {
-      apiOrigin
+      apiOrigin,
+      socketOrigin,
+      socketWsOrigin
     },
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
