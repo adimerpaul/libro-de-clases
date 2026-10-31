@@ -4,7 +4,7 @@
       <div>
         <q-btn flat dense no-caps icon="fas fa-arrow-left" label="Mis instrumentos" to="/evaluaciones" class="q-mb-xs volver" />
         <h1>{{ esNuevo ? 'Nuevo instrumento' : form.nombre || 'Instrumento' }}</h1>
-        <p>Revisa y ajusta cada pregunta: el generador solo propone un borrador desde el OA, la versión final es tuya.</p>
+        <p>Genera el instrumento desde el OA con IA y revisa cada pregunta: la IA solo propone un borrador, la versión final es tuya.</p>
       </div>
       <div class="row q-gutter-sm">
         <q-btn flat no-caps icon="fas fa-print" label="Vista previa" :disable="!form.preguntas.length" @click="vistaPrevia = true" />
@@ -40,6 +40,10 @@
             <div v-if="oaSel" class="oaBox">
               <span v-if="oaSel.es_demo" class="badge red q-mb-xs">OA demo · no oficial</span>
               <div>{{ oaSel.texto }}</div>
+              <div v-if="oaSel.indicadores?.length" class="q-mt-xs">
+                <b>Indicadores:</b>
+                <ul class="oaIndicadores"><li v-for="i in oaSel.indicadores" :key="i">{{ i }}</li></ul>
+              </div>
             </div>
             <q-input v-model="form.nombre" label="Nombre" outlined dense placeholder="Ej. Control funciones lineales" />
             <div class="row q-col-gutter-sm">
@@ -63,20 +67,43 @@
 
         <div class="card">
           <div class="cardHead">
-            <h3>Generar borrador desde el OA</h3>
-            <span class="badge">Sin IA</span>
+            <h3>Generar desde el OA</h3>
+            <span class="badge" :class="gen.motor === 'ia' ? 'blue' : ''">{{ gen.motor === 'ia' ? 'IA · Gemini' : 'Sin IA' }}</span>
           </div>
           <div class="campos">
+            <q-btn-toggle
+              v-model="gen.motor" no-caps unelevated dense spread toggle-color="primary" color="grey-2" text-color="grey-9"
+              :options="[{ label: 'Con IA', value: 'ia', icon: 'fas fa-wand-magic-sparkles' }, { label: 'Plantillas', value: 'plantillas', icon: 'far fa-file-lines' }]"
+            />
             <div class="row q-col-gutter-sm">
               <div class="col-5"><q-input v-model.number="gen.cantidad" type="number" min="1" max="30" label="Preguntas" outlined dense /></div>
-              <div class="col-7"><q-select v-model="gen.mezcla" :options="mezclas" emit-value map-options label="Tipo" outlined dense /></div>
+              <div class="col-7"><q-select v-model="gen.mezcla" :options="mezclas" emit-value map-options label="Tipo de ítems" outlined dense /></div>
             </div>
+            <template v-if="gen.motor === 'ia'">
+              <div class="row q-col-gutter-sm">
+                <div class="col-6"><q-select v-model="gen.dificultad" :options="dificultades" emit-value map-options label="Dificultad" outlined dense /></div>
+                <div class="col-6"><q-select v-model="gen.proposito" :options="propositos" emit-value map-options label="Propósito" outlined dense /></div>
+              </div>
+              <q-input
+                v-model="gen.criterios" type="textarea" autogrow outlined dense label="Indicadores / criterios"
+                hint="Por defecto, los indicadores del OA. Puedes precisar contenidos o enfoques."
+              />
+              <q-checkbox v-model="gen.flexibilizada" dense label="Versión flexibilizada / adecuación evaluativa" />
+              <div v-if="gen.flexibilizada" class="aviso">
+                Reduce carga de lectura, segmenta instrucciones, usa lenguaje simple y 3 alternativas. Debe responder al perfil autorizado del estudiante.
+              </div>
+            </template>
             <q-btn
-              no-caps unelevated icon="fas fa-wand-magic-sparkles" label="Agregar preguntas sugeridas" class="btnSuave"
+              no-caps unelevated :icon="gen.motor === 'ia' ? 'fas fa-wand-magic-sparkles' : 'far fa-file-lines'"
+              :label="gen.motor === 'ia' ? 'Generar instrumento con IA' : 'Agregar preguntas sugeridas'" class="btnPrimary"
               :disable="!form.objetivo_aprendizaje_id" :loading="generando" @click="generar"
-            />
+            >
+              <template #loading><q-spinner class="q-mr-sm" />{{ gen.motor === 'ia' ? 'Redactando con IA…' : 'Generando…' }}</template>
+            </q-btn>
             <div class="subtle">
-              {{ form.objetivo_aprendizaje_id ? 'Se agregan al final; revísalas y edítalas antes de aplicar.' : 'Elige primero el OA evaluado.' }}
+              <template v-if="!form.objetivo_aprendizaje_id">Elige primero el OA evaluado.</template>
+              <template v-else-if="gen.motor === 'ia'">Solo se envía el OA y estos parámetros, nunca datos de estudiantes. Es un borrador: revisa cada pregunta y su respuesta antes de aplicar.</template>
+              <template v-else>Se agregan al final; revísalas y edítalas antes de aplicar.</template>
             </div>
           </div>
         </div>
@@ -238,6 +265,7 @@ import { ref, computed, watch, onMounted, getCurrentInstance } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { mensajeError } from '../../../composables/useCrud'
 import { fechaCl } from '../../../composables/fechas'
+import { oaDesdeRuta } from '../../../composables/oaPreseleccion'
 
 definePage({ meta: { title: 'Evaluaciones', permiso: 'clases.dictar' } })
 
@@ -340,16 +368,35 @@ function quitarAlternativa (p, j) {
   else if (p.respuesta_correcta !== null && c > j) p.respuesta_correcta = String(c - 1)
 }
 
-// ── Generador (plantillas del backend, sin IA) ──
-const gen = ref({ cantidad: 6, mezcla: 'mixto' })
+// ── Generador: IA (Gemini, en el backend) o plantillas sin IA ──
+const dificultades = [
+  { label: 'Inicial', value: 'inicial' },
+  { label: 'Intermedio', value: 'intermedio' },
+  { label: 'Desafiante', value: 'desafiante' },
+]
+const propositos = [
+  { label: 'Diagnóstica', value: 'diagnostica' },
+  { label: 'Formativa', value: 'formativa' },
+  { label: 'Sumativa', value: 'sumativa' },
+]
+const gen = ref({ motor: 'ia', cantidad: 10, mezcla: 'mixto', dificultad: 'intermedio', proposito: 'formativa', criterios: '', flexibilizada: false })
 const generando = ref(false)
+
+// Al cambiar de OA se proponen sus indicadores como criterios
+watch(oaSel, oa => { gen.value.criterios = (oa?.indicadores || []).join(' · ') })
 
 function generar () {
   generando.value = true
-  proxy.$axios.post('docente/instrumentos/generar', { objetivo_aprendizaje_id: form.value.objetivo_aprendizaje_id, ...gen.value })
+  const { motor, cantidad, mezcla } = gen.value
+  const datos = motor === 'ia'
+    ? { ...gen.value, tipo_instrumento: form.value.tipo }
+    : { motor, cantidad, mezcla }
+  proxy.$axios.post('docente/instrumentos/generar', { objetivo_aprendizaje_id: form.value.objetivo_aprendizaje_id, ...datos }, { timeout: 180000 })
     .then(res => {
       form.value.preguntas.push(...res.data.map(conClave))
-      if (!form.value.nombre && oaSel.value) form.value.nombre = `${form.value.tipo} ${oaSel.value.unidad || oaSel.value.codigo}`
+      if (!form.value.nombre && oaSel.value) {
+        form.value.nombre = `${gen.value.flexibilizada && motor === 'ia' ? 'Versión adaptada · ' : ''}${form.value.tipo} ${oaSel.value.unidad || oaSel.value.codigo}`
+      }
       proxy.$alert.success(`${res.data.length} preguntas agregadas`, 'Revísalas antes de aplicar')
     })
     .catch(err => proxy.$alert.error(mensajeError(err)))
@@ -429,6 +476,14 @@ function iniciar () {
   Promise.all(pedidos)
     .then(() => {
       if (esNuevo.value && carga.value.length === 1) form.value.asignacion_id = carga.value[0].id
+      // Viene de Currículum y OA con un OA elegido
+      const desdeOa = esNuevo.value && oaDesdeRuta(route, carga.value)
+      if (desdeOa?.asignacion) {
+        form.value.asignacion_id = desdeOa.asignacion.id
+        form.value.objetivo_aprendizaje_id = desdeOa.oa
+      } else if (desdeOa) {
+        proxy.$alert.error('No tienes carga en el nivel y la asignatura de ese OA')
+      }
       if (route.query.imprimir) vistaPrevia.value = true
     })
     .catch(err => {
@@ -449,8 +504,10 @@ onMounted(iniciar)
 .lateral { display: flex; flex-direction: column; gap: 15px; position: sticky; top: 86px }
 .campos { display: flex; flex-direction: column; gap: 10px }
 .oaBox { background: #f6f3ff; border: 1px solid #e2dafb; border-radius: 12px; padding: 9px 11px; font-size: 12px; line-height: 1.45 }
+.oaIndicadores { margin: 2px 0 0; padding-left: 17px }
 .fieldLabel { font-size: 12px; font-weight: 700; color: #486477; margin-bottom: 4px }
 .btnSuave { background: #f1edff; color: #5a3fb0; border-radius: 11px; font-weight: 800 }
+.aviso { background: #fff8e6; border: 1px solid #f3dfa8; color: #7a5a12; border-radius: 10px; padding: 8px 10px; font-size: 12px; line-height: 1.4 }
 
 .resumen { display: flex; flex-direction: column; gap: 6px }
 .resumenFila { display: flex; justify-content: space-between; font-size: 13px }

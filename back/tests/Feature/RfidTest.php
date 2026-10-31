@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Asignacion;
+use App\Models\Asignatura;
 use App\Models\Curso;
 use App\Models\Estudiante;
 use App\Models\MarcaRfid;
@@ -83,8 +85,36 @@ test('el GET de simulación marca sin sesión solo si está habilitado', functio
     expect(MarcaRfid::count())->toBe(1);
 });
 
-test('sin rfid.ver no se accede al panel', function () {
+test('sin rfid.ver ni clases.dictar no se accede al panel', function () {
     $otro = User::create(['name' => 'Otro', 'email' => 'otro@demo.cl', 'password' => 'demo123']);
     comoRfid($otro)->getJson('/api/rfid/cursos')->assertForbidden();
     comoRfid($otro)->postJson('/api/rfid/marcar', ['codigo' => 'RFID-000001'])->assertForbidden();
+});
+
+test('el docente solo ve y simula la asistencia RFID de sus cursos', function () {
+    $docente = User::create(['name' => 'Docente', 'email' => 'docente@demo.cl', 'password' => 'demo123'])->givePermissionTo(Permisos::DICTAR_CLASES);
+    $asignatura = Asignatura::create(['nombre' => 'Inglés', 'codigo' => 'ING']);
+    Asignacion::create(['curso_id' => $this->curso->id, 'asignatura_id' => $asignatura->id, 'docente_id' => $docente->id]);
+
+    // Otro curso, ajeno al docente, con su estudiante y su tarjeta
+    $ajeno = Curso::create(['anio' => now()->year, 'nivel' => '3° Medio', 'letra' => 'B']);
+    $otro = Estudiante::create(['run' => '22222222-2', 'nombres' => 'Luis', 'apellido_paterno' => 'Pérez', 'apellido_materno' => 'Mora']);
+    Matricula::create(['estudiante_id' => $otro->id, 'curso_id' => $ajeno->id, 'numero_lista' => 1, 'fecha_matricula' => now(), 'estado' => 'activa']);
+    TarjetaRfid::create(['estudiante_id' => $otro->id, 'codigo' => 'RFID-000002']);
+    comoRfid($this->utp)->postJson('/api/rfid/marcar', ['codigo' => 'RFID-000002'])->assertOk();
+
+    $api = comoRfid($docente);
+    $api->getJson('/api/rfid/cursos')->assertOk()->assertJsonCount(1, 'cursos')->assertJsonPath('cursos.0.id', $this->curso->id);
+    $api->getJson('/api/rfid/estudiantes?curso_id='.$this->curso->id)->assertOk()->assertJsonCount(1);
+    $api->getJson('/api/rfid/estudiantes?curso_id='.$ajeno->id)->assertForbidden();
+    $api->getJson('/api/rfid/marcas/hoy?curso_id='.$ajeno->id)->assertForbidden();
+    $api->getJson('/api/rfid/marcas/hoy')->assertOk()->assertJsonCount(0);
+
+    $api->postJson('/api/rfid/marcar', ['codigo' => 'RFID-000001'])->assertOk();
+    $api->postJson('/api/rfid/marcar', ['codigo' => 'RFID-000002'])->assertForbidden();
+    $api->postJson('/api/rfid/marcar', ['curso_id' => $ajeno->id])->assertForbidden();
+    $api->getJson('/api/rfid/marcas/hoy')->assertJsonCount(1)->assertJsonPath('0.estudiante_id', $this->est->id);
+
+    // UTP (rfid.ver) sigue viendo todo
+    comoRfid($this->utp)->getJson('/api/rfid/cursos')->assertJsonCount(2, 'cursos');
 });

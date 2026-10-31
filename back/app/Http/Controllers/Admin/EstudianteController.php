@@ -19,7 +19,17 @@ class EstudianteController extends Controller
         $anio = (int) ($request->anio ?: now()->year);
         $delAnio = fn ($q) => $q->whereHas('curso', fn ($c) => $c->where('anio', $anio));
 
-        $estudiantes = Estudiante::with(['matriculas' => fn ($q) => $delAnio($q)->with('curso')->orderByRaw("estado = 'activa' desc")])
+        $request->validate(['cuenta' => ['nullable', 'in:con,sin'], 'apoderado_id' => ['nullable', 'integer']]);
+        // Vínculo con cuenta de apoderado vigente (usuario no eliminado)
+        $conCuenta = fn ($v) => $v->whereHas('user');
+
+        $estudiantes = Estudiante::with([
+            'matriculas' => fn ($q) => $delAnio($q)->with('curso')->orderByRaw("estado = 'activa' desc"),
+            'vinculos' => fn ($q) => $conCuenta($q)->with('user:id,name,email,run,telefono'),
+        ])
+            ->when($request->cuenta === 'con', fn ($q) => $q->whereHas('vinculos', $conCuenta))
+            ->when($request->cuenta === 'sin', fn ($q) => $q->whereDoesntHave('vinculos', $conCuenta))
+            ->when($request->apoderado_id, fn ($q, $id) => $q->whereHas('vinculos', fn ($v) => $v->where('user_id', $id)))
             ->when($request->curso_id, fn ($q, $id) => $q->whereHas('matriculas', fn ($m) => $m->where('curso_id', $id)))
             // Sin matrícula activa en el año: candidatos para matricular
             ->when($request->boolean('sin_matricula'), fn ($q) => $q->whereDoesntHave('matriculas', fn ($m) => $delAnio($m)->activas()))
@@ -27,7 +37,7 @@ class EstudianteController extends Controller
                 ->where('nombres', 'like', "%{$texto}%")
                 ->orWhere('apellido_paterno', 'like', "%{$texto}%")
                 ->orWhere('apellido_materno', 'like', "%{$texto}%")
-                ->orWhere('run', 'like', '%'.preg_replace('/[^0-9kK]/', '', $texto).'%')))
+                ->when(strlen(preg_replace('/[^0-9kK]/', '', $texto)) >= 3, fn ($w) => $w->orWhere('run', 'like', '%'.preg_replace('/[^0-9kK]/', '', $texto).'%'))))
             ->orderBy('apellido_paterno')->orderBy('apellido_materno')->orderBy('nombres')
             ->get();
 
@@ -74,7 +84,13 @@ class EstudianteController extends Controller
     {
         $matricula = $e->matriculas->first();
 
-        return $e->makeHidden('matriculas')->toArray() + [
+        return $e->makeHidden(['matriculas', 'vinculos'])->toArray() + [
+            // Cuentas con acceso al portal de familia (se cargan solo en el listado)
+            'cuentas' => $e->relationLoaded('vinculos') ? $e->vinculos->map(fn ($v) => [
+                'vinculo_id' => $v->id,
+                'parentesco' => $v->parentesco,
+                'user' => $v->user->only('id', 'name', 'email', 'run', 'telefono'),
+            ])->values() : [],
             'matricula' => $matricula ? [
                 'id' => $matricula->id,
                 'estado' => $matricula->estado,

@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Curso;
+use App\Models\LibroRespaldo;
+use App\Support\LibroCurso;
 use App\Support\Permisos;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 /**
  * Libro de clases de cada curso. Con "libros.ver" se ven todos; un docente
@@ -33,7 +37,72 @@ class LibroController extends Controller
         return Curso::ordenar($cursos);
     }
 
+    /** El libro completo: datos del curso, nómina y todas las secciones (LibroCurso). */
     public function show(Request $request, int $curso)
+    {
+        $curso = $this->cargar($request, $curso);
+        $libro = new LibroCurso($curso, $request->user());
+        $secciones = $libro->secciones();
+
+        return $curso->toArray() + [
+            'secciones' => $secciones,
+            'firmas' => $libro->firmas($secciones),
+            'respaldos' => LibroRespaldo::where('curso_id', $curso->id)->with('user:id,name')->latest()->latest('id')->take(5)->get()
+                ->map(fn (LibroRespaldo $r) => ['folio' => $r->folio, 'hash' => $r->hash, 'usuario' => $r->user?->name, 'fecha' => $r->created_at->format('Y-m-d H:i')]),
+        ];
+    }
+
+    /**
+     * El libro completo en PDF: lo mismo que la vista (todas las secciones) más la hoja de
+     * firmas con el código de verificación. Cada PDF queda registrado como respaldo.
+     */
+    public function pdf(Request $request, int $curso)
+    {
+        $curso = $this->cargar($request, $curso);
+        $libro = new LibroCurso($curso, $request->user());
+        $secciones = $libro->secciones();
+        $firmas = $libro->firmas($secciones);
+
+        $numero = LibroRespaldo::withTrashed()->where('curso_id', $curso->id)->count() + 1;
+        $respaldo = LibroRespaldo::create([
+            'curso_id' => $curso->id,
+            'user_id' => $request->user()->id,
+            'hash' => $firmas['hash'],
+            'folio' => sprintf('LC-%d-%d-%03d', $curso->anio, $curso->id, $numero),
+            'secciones' => array_column($secciones, 'clave'),
+        ]);
+
+        $pdf = Pdf::loadView('pdf.libro', [
+            'curso' => $curso,
+            'activas' => $curso->matriculas->where('estado', 'activa'),
+            'tramos' => $curso->matriculas->chunk(22),
+            'secciones' => $secciones,
+            'firmas' => $firmas,
+            'respaldo' => $respaldo,
+            'establecimiento' => config('establecimiento'),
+            'generado' => now()->format('d-m-Y H:i'),
+            'usuario' => $request->user()->name,
+        ])->setPaper('letter', 'landscape')->setOption('isFontSubsettingEnabled', true);
+
+        return $pdf->download(Str::slug("libro {$curso->nombre} {$curso->anio} {$respaldo->folio}").'.pdf');
+    }
+
+    /** Verifica un código de respaldo impreso en un PDF firmado. */
+    public function verificar(Request $request, string $hash)
+    {
+        $respaldo = LibroRespaldo::where('hash', $hash)->with(['curso', 'user:id,name'])->latest()->first();
+        abort_unless($respaldo && $this->visibles($request)->whereKey($respaldo->curso_id)->exists(), 404, 'El código no corresponde a ningún respaldo de sus cursos.');
+
+        return [
+            'folio' => $respaldo->folio,
+            'curso' => $respaldo->curso->nombre.' '.$respaldo->curso->anio,
+            'generado_por' => $respaldo->user?->name,
+            'fecha' => $respaldo->created_at->format('Y-m-d H:i'),
+            'secciones' => $respaldo->secciones,
+        ];
+    }
+
+    private function cargar(Request $request, int $curso): Curso
     {
         $curso = $this->visibles($request)
             ->with([
@@ -51,11 +120,6 @@ class LibroController extends Controller
     /** Cursos que puede abrir quien consulta. */
     private function visibles(Request $request): Builder
     {
-        $user = $request->user();
-
-        return Curso::query()->when(! $user->tienePermiso(Permisos::VER_LIBROS), fn ($q) => $q->where(
-            fn ($q) => $q->where('profesor_jefe_id', $user->id)
-                ->orWhereHas('asignaciones', fn ($q) => $q->where('docente_id', $user->id))
-        ));
+        return Curso::visiblesPara($request->user(), Permisos::VER_LIBROS);
     }
 }

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Asignatura;
 use App\Models\ObjetivoAprendizaje;
+use App\Support\Niveles;
 use Illuminate\Database\Seeder;
 
 /**
@@ -36,6 +37,7 @@ class CurriculoSeeder extends Seeder
         ];
 
         $asignaturas = Asignatura::pluck('id', 'codigo');
+        $plantillas = self::plantillas();
 
         foreach ($oas as [$codigo, $nivel, $asignatura, $unidad, $texto, $habilidades]) {
             if (! isset($asignaturas[$asignatura])) {
@@ -50,6 +52,7 @@ class CurriculoSeeder extends Seeder
                     'unidad' => $unidad,
                     'texto' => $texto,
                     'habilidades' => $habilidades,
+                    ...$plantillas[Niveles::etapa($nivel)],
                     'fuente' => 'Resumen de demostración basado en la estructura del Currículum Nacional Mineduc (no es texto oficial)',
                     'fuente_url' => 'https://www.curriculumnacional.cl/',
                     'vigente_desde' => '2026-01-01',
@@ -57,5 +60,40 @@ class CurriculoSeeder extends Seeder
                 ],
             );
         }
+    }
+
+    /**
+     * Estructura pedagógica de demostración por etapa (ui3 STAGE_TEMPLATES): contenidos,
+     * indicadores, instrumentos sugeridos, estrategia y momentos de la clase.
+     */
+    private static function plantillas(): array
+    {
+        $comun = [
+            'actitudes' => ['Perseverancia ante desafíos', 'Trabajo colaborativo y respetuoso'],
+            'estrategias' => 'Modelado breve, práctica guiada, colaboración y retroalimentación formativa.',
+            'inicio' => 'Activación de conocimientos previos, propósito y criterios de éxito.',
+            'desarrollo' => 'Experiencia central con andamiaje, trabajo colaborativo y monitoreo.',
+            'cierre' => 'Síntesis, metacognición y evidencia breve de aprendizaje.',
+            'recursos' => ['Presentación breve', 'Guía u organizador gráfico', 'Material concreto o digital', 'Recurso audiovisual'],
+            'tiempo_espacio' => '90 min · aula flexible con momentos individual, en parejas y plenario',
+        ];
+
+        return [
+            Niveles::PARVULARIA => $comun + [
+                'contenidos' => 'Experiencias lúdicas, lenguaje, exploración y autonomía progresiva.',
+                'indicadores' => ['Participa con autonomía creciente', 'Comunica ideas y emociones', 'Resuelve desafíos mediante el juego'],
+                'instrumentos' => ['Registro anecdótico', 'Escala de apreciación', 'Portafolio'],
+            ],
+            Niveles::BASICA => $comun + [
+                'contenidos' => 'Conceptos, procedimientos y actitudes definidos para el nivel y la asignatura.',
+                'indicadores' => ['Explica con evidencia', 'Aplica estrategias pertinentes', 'Transfiere lo aprendido a una situación nueva'],
+                'instrumentos' => ['Rúbrica', 'Lista de cotejo', 'Prueba mixta', 'Ticket de salida'],
+            ],
+            Niveles::MEDIA => $comun + [
+                'contenidos' => 'Saberes disciplinares, habilidades y actitudes de formación general.',
+                'indicadores' => ['Relaciona conceptos', 'Justifica procedimientos', 'Usa evidencia disciplinar'],
+                'instrumentos' => ['Prueba mixta', 'Rúbrica analítica', 'Proyecto', 'Ensayo'],
+            ],
+        ];
     }
 }

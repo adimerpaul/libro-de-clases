@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Support\Niveles;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,8 @@ class Curso extends Model implements Auditable
         static::deleting(function (Curso $curso) {
             $curso->asignaciones()->get()->each->delete();
             $curso->matriculas()->get()->each->delete();
+            SesionSocioemocional::where('curso_id', $curso->id)->get()->each->delete();
+            DiagnosticoSocioemocional::where('curso_id', $curso->id)->get()->each->delete();
         });
     }
 
@@ -53,6 +56,18 @@ class Curso extends Model implements Auditable
     public function matriculas(): HasMany
     {
         return $this->hasMany(Matricula::class);
+    }
+
+    /**
+     * Cursos que ve $user: todos si tiene $permisoTodos; si no, solo donde es
+     * profesor(a) jefe o dicta alguna asignatura.
+     */
+    public function scopeVisiblesPara(Builder $query, User $user, string $permisoTodos): Builder
+    {
+        return $query->when(! $user->tienePermiso($permisoTodos), fn ($q) => $q->where(
+            fn ($q) => $q->where('profesor_jefe_id', $user->id)
+                ->orWhereHas('asignaciones', fn ($q) => $q->where('docente_id', $user->id))
+        ));
     }
 
     /** Ordena por nivel (Pre-kínder → 4° Medio) y letra. */

@@ -4,7 +4,9 @@ use App\Models\Asignacion;
 use App\Models\Asignatura;
 use App\Models\Curso;
 use App\Models\Estudiante;
+use App\Models\LibroRespaldo;
 use App\Models\Matricula;
+use App\Models\PieCaso;
 use App\Models\User;
 use App\Support\Permisos;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -66,4 +68,46 @@ it('no deja al docente abrir el libro de un curso ajeno', function () {
 it('exige libros.ver o clases.dictar', function () {
     $sin = User::create(['name' => 'Sin', 'email' => 'sin@demo.cl', 'password' => 'demo123']);
     $this->actingAs($sin, 'sanctum')->getJson('/api/libros')->assertForbidden();
+});
+
+it('exporta el libro en PDF solo para quien puede abrirlo', function () {
+    $res = $this->actingAs($this->docente, 'sanctum')->get("/api/libros/{$this->conCarga->id}/pdf")
+        ->assertOk()
+        ->assertHeader('content-type', 'application/pdf');
+    expect($res->headers->get('content-disposition'))->toContain('libro-2-medio-b-');
+    expect(substr($res->getContent(), 0, 4))->toBe('%PDF');
+
+    $this->actingAs($this->docente, 'sanctum')->getJson("/api/libros/{$this->conJefatura->id}/pdf")->assertNotFound();
+});
+
+it('el libro reúne todas las secciones y el PIE solo con pie.ver', function () {
+    $est = Matricula::where('curso_id', $this->conCarga->id)->where('numero_lista', 1)->first()->estudiante;
+    PieCaso::create(['estudiante_id' => $est->id, 'anio' => $this->conCarga->anio, 'estado' => 'activo',
+        'diagnostico' => 'Trastorno específico del lenguaje (TEL)', 'tipo_nee' => 'transitoria', 'fecha_ingreso' => now()->toDateString()]);
+
+    $libro = $this->actingAs($this->utp, 'sanctum')->getJson("/api/libros/{$this->conCarga->id}")->assertOk()->json();
+    $claves = array_column($libro['secciones'], 'clave');
+    expect($claves)->toContain('asistencia', 'leccionario', 'pie', 'socioemocional', 'bienestar', 'entrevistas')
+        ->and(strlen($libro['firmas']['hash']))->toBe(64);
+
+    $pie = collect($libro['secciones'])->firstWhere('clave', 'pie');
+    expect($pie['resumen'][0][1])->toBe(1)->and($pie['tablas'][0]['filas'])->toBe([]);
+
+    $this->utp->givePermissionTo('pie.ver');
+    $pie = collect($this->actingAs($this->utp->fresh(), 'sanctum')->getJson("/api/libros/{$this->conCarga->id}")->json('secciones'))->firstWhere('clave', 'pie');
+    expect($pie['tablas'][0]['filas'][0][2])->toBe('Trastorno específico del lenguaje (TEL)');
+});
+
+it('cada PDF queda registrado como respaldo con folio y huella verificable', function () {
+    $hash = $this->actingAs($this->utp, 'sanctum')->getJson("/api/libros/{$this->conCarga->id}")->json('firmas.hash');
+
+    $this->actingAs($this->utp, 'sanctum')->get("/api/libros/{$this->conCarga->id}/pdf")
+        ->assertOk()->assertHeader('content-type', 'application/pdf');
+
+    $respaldo = LibroRespaldo::first();
+    expect($respaldo->hash)->toBe($hash)->and($respaldo->folio)->toBe(sprintf('LC-%d-%d-001', $this->conCarga->anio, $this->conCarga->id));
+
+    $this->actingAs($this->utp, 'sanctum')->getJson("/api/libros/verificar/{$hash}")->assertOk()->assertJsonPath('folio', $respaldo->folio);
+    // El docente sin ese curso no puede verificarlo
+    $this->actingAs($this->jefe, 'sanctum')->getJson("/api/libros/verificar/{$hash}")->assertNotFound();
 });

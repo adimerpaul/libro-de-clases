@@ -29,6 +29,8 @@ body {
 .badge.blue { background: #eaf3fb; border-color: #c9def0; color: #0f4f85 }
 .badge.ok { background: #eaf8f1; border-color: #c4e8d5; color: #17703f }
 .badge.red { background: #fdeef0; border-color: #f3c9cf; color: #bd1f2d }
+.badge.warn { background: #fff5e7; border-color: #f2d9b5; color: #b56b12 }
+.badge.violeta { background: #f1edff; border-color: #ddd3fb; color: #5a3fb0 }
 .subtle { color: #6d8090; font-size: 12px }
 .btnPrimary { background: #0f4f85; color: #fff; border-radius: 11px; font-weight: 800 }
 .eyebrow { font-size: 10px; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; color: #bd1f2d }

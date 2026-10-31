@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduGestión · Módulo Educación Emocional / Socioemocional</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --primary-light: #8b5cf6;
+      --primary-dark: #6d28d9;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --info: #0284c7;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --sidebar: #1e1b4b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar);
+      color: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 50;
+    }
+    .sidebar-logo {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #312e81;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .sidebar-logo .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: white; font-size: 1.1rem;
+    }
+    .sidebar-logo span { font-weight: 600; font-size: 1.05rem; color: white; }
+    .sidebar-nav { flex: 1; padding: 1rem 0.75rem; overflow-y: auto; }
+    .nav-section { margin-bottom: 1.5rem; }
+    .nav-section-title {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
+      color: #818cf8; padding: 0 0.75rem; margin-bottom: 0.5rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.75rem; border-radius: 8px;
+      color: #a5b4fc; text-decoration: none; font-size: 0.9rem;
+      transition: all 0.15s; margin-bottom: 2px; cursor: pointer;
+    }
+    .nav-item:hover { background: #312e81; color: white; }
+    .nav-item.active { background: var(--primary); color: white; }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .sidebar-footer {
+      padding: 1rem 1.25rem; border-top: 1px solid #312e81;
+      font-size: 0.8rem; color: #818cf8;
+    }
+    .main { margin-left: 260px; flex: 1; min-height: 100vh; }
+    .demo-banner {
+      background: linear-gradient(90deg, #6d28d9, #8b5cf6);
+      color: white; padding: 0.6rem 1.75rem;
+      font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.75rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 40;
+    }
+    .topbar-title { font-size: 1.15rem; font-weight: 600; }
+    .topbar-actions { display: flex; align-items: center; gap: 1rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem;
+      font-weight: 500; border: none; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { background: var(--bg); }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #ede9fe; color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 0.85rem;
+    }
+    .content { padding: 1.5rem 1.75rem; }
+    .grid { display: grid; gap: 1.25rem; }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .card {
+      background: var(--card); border-radius: 12px;
+      border: 1px solid var(--border); padding: 1.25rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .stat-card { display: flex; flex-direction: column; gap: 0.35rem; }
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+    .stat-value { font-size: 1.75rem; font-weight: 700; }
+    .stat-trend { font-size: 0.75rem; display: flex; align-items: center; gap: 0.25rem; }
+    .stat-trend.up { color: var(--success); }
+    .stat-trend.down { color: var(--danger); }
+    .stat-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th {
+      text-align: left; padding: 0.75rem 1rem; font-weight: 600;
+      color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;
+      letter-spacing: 0.03em; border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+    }
+    td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:hover td { background: #f8fafc; }
+    .badge {
+      display: inline-flex; align-items: center; padding: 0.2rem 0.6rem;
+      border-radius: 999px; font-size: 0.75rem; font-weight: 500;
+    }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-yellow { background: #fef3c7; color: #92400e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-purple { background: #ede9fe; color: #5b21b6; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
+    .badge-pink { background: #fce7f3; color: #9d174d; }
+    .badge-cyan { background: #cffafe; color: #155e75; }
+    .progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 3px; }
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 0.35rem; color: var(--text-muted); }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.875rem; font-family: inherit;
+      background: white; color: var(--text);
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+    }
+    .section-title {
+      font-size: 1rem; font-weight: 600; margin-bottom: 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .page { display: none; }
+    .page.active { display: block; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.25rem 0.6rem; background: #f1f5f9; border-radius: 6px;
+      font-size: 0.8rem; color: var(--text);
+    }
+    .emotion-tag {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.3rem 0.7rem; border-radius: 999px; font-size: 0.8rem; font-weight: 500;
+    }
+    .emotion-alegria { background: #fef9c3; color: #854d0e; }
+    .emotion-tristeza { background: #dbeafe; color: #1e40af; }
+    .emotion-rabia { background: #fee2e2; color: #991b1b; }
+    .emotion-miedo { background: #ede9fe; color: #5b21b6; }
+    .emotion-calma { background: #d1fae5; color: #065f46; }
+    .filter-bar {
+      display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+      align-items: center;
+    }
+    .search-box { position: relative; flex: 1; min-width: 200px; }
+    .search-box input {
+      width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+      border: 1px solid var(--border); border-radius: 8px; font-size: 0.875rem;
+    }
+    .search-box svg {
+      position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%);
+      width: 16px; height: 16px; color: var(--text-muted);
+    }
+    .competency-card {
+      padding: 1rem; border: 1px solid var(--border); border-radius: 10px;
+      transition: all 0.15s;
+    }
+    .competency-card:hover { border-color: var(--primary-light); box-shadow: 0 2px 8px rgba(124,58,237,0.1); }
+    .alert-box {
+      padding: 0.85rem 1rem; border-radius: 8px; font-size: 0.85rem;
+      display: flex; gap: 0.75rem; align-items: flex-start;
+    }
+    .alert-warning { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .alert-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+    .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #065f46; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">E</div>
+      <span>EduGestión</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Principal</div>
+        <a class="nav-item" onclick="showPage('inicio')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg>
+          Inicio
+        </a>
+        <a class="nav-item" onclick="showPage('libro')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          Libro de Clases
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Educación Emocional</div>
+        <a class="nav-item active" onclick="showPage('ee-dash')" id="nav-ee">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+          Dashboard Emocional
+        </a>
+        <a class="nav-item" onclick="showPage('plan-ee')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          Plan Socioemocional
+        </a>
+        <a class="nav-item" onclick="showPage('sesiones')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Sesiones y Actividades
+        </a>
+        <a class="nav-item" onclick="showPage('seguimiento')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          Seguimiento Individual
+        </a>
+        <a class="nav-item" onclick="showPage('desregulacion')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          Protocolo Desregulación
+        </a>
+        <a class="nav-item" onclick="showPage('diagnostico')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          Diagnóstico (tipo DIA)
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Integración</div>
+        <a class="nav-item" onclick="showPage('orientacion')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/></svg>
+          Orientación (OA)
+        </a>
+        <a class="nav-item" onclick="showPage('vinculo')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+          Convivencia / FC
+        </a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">Colegio San Pedro · 2026</div>
+  </aside>
+
+  <div class="main">
+    <div class="demo-banner">
+      <span>💜 <strong>DEMO</strong> — Módulo Educación Emocional / Socioemocional · Ecosistema tipo Lirmi</span>
+      <span>Navega con el menú lateral →</span>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="ee-dash" class="page active">
+      <div class="topbar">
+        <div class="topbar-title">Dashboard · Educación Emocional / Socioemocional</div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm">Exportar reporte</button>
+          <button class="btn btn-primary btn-sm">+ Nueva sesión</button>
+          <div class="avatar">LP</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="grid grid-4" style="margin-bottom:1.5rem;">
+          <div class="card stat-card">
+            <div class="stat-icon" style="background:#ede9fe;color:#7c3aed;">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            </div>
+            <div class="stat-label">Sesiones realizadas 2026</div>
+            <div class="stat-value">86</div>
+            <div class="stat-trend up">↑ 22% vs 2025</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-icon" style="background:#d1fae5;color:#065f46;">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+            <div class="stat-label">Estudiantes alcanzados</div>
+            <div class="stat-value">478</div>
+            <div class="stat-trend up">94% del total</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-icon" style="background:#fef3c7;color:#92400e;">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <div class="stat-label">Alertas de bienestar activas</div>
+            <div class="stat-value">5</div>
+            <div class="stat-trend down">↓ 3 vs mes anterior</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-icon" style="background:#cffafe;color:#155e75;">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div class="stat-label">Cobertura Plan 2026</div>
+            <div class="stat-value">81%</div>
+            <div class="stat-trend up">Meta anual: 90%</div>
+          </div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="section-title">Competencias socioemocionales (avance global)</div>
+            <div style="margin-bottom:1rem;">
+              <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.35rem;">
+                <span>Autoconciencia (identificar emociones)</span><span>88%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:88%;background:#7c3aed;"></div></div>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.35rem;">
+                <span>Autorregulación / manejo emocional</span><span>72%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:72%;background:#8b5cf6;"></div></div>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.35rem;">
+                <span>Conciencia social / empatía</span><span>79%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:79%;background:#a78bfa;"></div></div>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.35rem;">
+                <span>Habilidades de relación</span><span>81%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:81%;background:#c4b5fd;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.35rem;">
+                <span>Toma de decisiones responsables</span><span>65%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:65%;background:#d97706;"></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title">Alertas de bienestar recientes</div>
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+              <div class="alert-box alert-warning">
+                <span>⚠️</span>
+                <div>
+                  <strong>Desregulación emocional</strong> · 7° Básico A<br>
+                  <span style="font-size:0.8rem;">Estudiante: M. Soto · Protocolo activado · 10/10/2026</span>
+                </div>
+              </div>
+              <div class="alert-box alert-info">
+                <span>ℹ️</span>
+                <div>
+                  <strong>Seguimiento post-intervención</strong> · 2° Medio B<br>
+                  <span style="font-size:0.8rem;">Estudiante: J. Vargas · 3 sesiones de acompañamiento</span>
+                </div>
+              </div>
+              <div class="alert-box alert-success">
+                <span>✅</span>
+                <div>
+                  <strong>Cierre de alerta</strong> · 5° Básico C<br>
+                  <span style="font-size:0.8rem;">Estudiante: A. Núñez · Evolución favorable</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-sm" style="width:100%;margin-top:1rem;" onclick="showPage('seguimiento')">Ver todos los seguimientos</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAN SOCIOEMOCIONAL -->
+    <div id="plan-ee" class="page">
+      <div class="topbar">
+        <div class="topbar-title">Plan de Educación Socioemocional 2026</div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm">Descargar PDF</button>
+          <button class="btn btn-primary btn-sm">Editar plan</button>
+          <div class="avatar">LP</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="card" style="margin-bottom:1.25rem;">
+          <div style="font-size:0.8rem;color:var(--text-muted);">Alineado a Currículum Nacional (Orientación + OAT) · PNCE 2024-2030 · Plan de Reactivación Educativa · Estrategia de Salud Mental</div>
+          <h3 style="margin:0.35rem 0;">Objetivo general</h3>
+          <p style="font-size:0.9rem;line-height:1.6;">
+            Desarrollar de manera gradual y sistemática las competencias socioemocionales de los y las estudiantes (autoconciencia, autorregulación, conciencia social, habilidades de relación y toma de decisiones responsables), promoviendo el bienestar, la salud mental y un clima escolar de cuidado colectivo.
+          </p>
+        </div>
+        <div class="grid grid-3" style="margin-bottom:1.25rem;">
+          <div class="card">
+            <div class="stat-label">Competencias prioritarias</div>
+            <div class="stat-value" style="font-size:1.5rem;">5</div>
+          </div>
+          <div class="card">
+            <div class="stat-label">Acciones planificadas</div>
+            <div class="stat-value" style="font-size:1.5rem;">42</div>
+          </div>
+          <div class="card">
+            <div class="stat-label">Avance global</div>
+            <div class="stat-value" style="font-size:1.5rem;">81%</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-title">Estructura por competencia y nivel</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Competencia</th>
+                <th>Parvularia – 4° B</th>
+                <th>5° – 8° B</th>
+                <th>1° – 4° M</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Autoconciencia</strong></td>
+                <td>Identificar emociones básicas (alegría, pena, rabia, miedo)</td>
+                <td>Reconocer emociones complejas y sus causas</td>
+                <td>Reflexión sobre identidad emocional y valores</td>
+              </tr>
+              <tr>
+                <td><strong>Autorregulación</strong></td>
+                <td>Estrategias simples (respirar, pedir ayuda)</td>
+                <td>Técnicas de manejo emocional y pausa</td>
+                <td>Autogestión en contextos de estrés y presión</td>
+              </tr>
+              <tr>
+                <td><strong>Conciencia social</strong></td>
+                <td>Empatía básica, reconocer emociones ajenas</td>
+                <td>Perspectiva del otro, inclusión</td>
+                <td>Empatía compleja, diversidad y cuidado colectivo</td>
+              </tr>
+              <tr>
+                <td><strong>Habilidades de relación</strong></td>
+                <td>Buen trato, turnos, compartir</td>
+                <td>Resolución de conflictos, colaboración</td>
+                <td>Comunicación asertiva, liderazgo positivo</td>
+              </tr>
+              <tr>
+                <td><strong>Decisiones responsables</strong></td>
+                <td>Autocuidado básico (higiene, descanso)</td>
+                <td>Hábitos saludables, prevención de riesgos</td>
+                <td>Proyecto de vida, bienestar y salud mental</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SESIONES Y ACTIVIDADES -->
+    <div id="sesiones" class="page">
+      <div class="topbar">
+        <div class="topbar-title">Sesiones y Actividades Socioemocionales</div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary btn-sm">+ Registrar sesión</button>
+          <div class="avatar">LP</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="filter-bar">
+          <div class="search-box">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" placeholder="Buscar sesión o actividad...">
+          </div>
+          <select class="form-select" style="width:auto;">
+            <option>Todas las competencias</option>
+            <option>Autoconciencia</option>
+            <option>Autorregulación</option>
+            <option>Conciencia social</option>
+            <option>Relaciones</option>
+            <option>Decisiones</option>
+          </select>
+          <select class="form-select" style="width:auto;">
+            <option>Todos los niveles</option>
+            <option>Básica</option>
+            <option>Media</option>
+          </select>
+        </div>
+        <div class="card">
+          <table>
+            <thead>
+              <tr>
+                <th>Sesión / Actividad</th>
+                <th>Competencia</th>
+                <th>Nivel / Curso</th>
+                <th>Fecha</th>
+                <th>Participantes</th>
+                <th>Estado</th>
+                <th>Evidencias</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Ruta Sana Mente: Emociones</strong></td>
+                <td><span class="badge badge-purple">Autoconciencia</span></td>
+                <td>3° y 4° Medio</td>
+                <td>08–12 oct</td>
+                <td>94</td>
+                <td><span class="badge badge-yellow">En curso</span></td>
+                <td>📷 🎥</td>
+              </tr>
+              <tr>
+                <td><strong>Círculo de diálogo emocional</strong></td>
+                <td><span class="badge badge-blue">Relaciones</span></td>
+                <td>6° Básico A-B</td>
+                <td>03 oct</td>
+                <td>52</td>
+                <td><span class="badge badge-green">Realizada</span></td>
+                <td>📷 📄</td>
+              </tr>
+              <tr>
+                <td><strong>Técnicas de respiración y pausa</strong></td>
+                <td><span class="badge badge-cyan">Autorregulación</span></td>
+                <td>1° Medio</td>
+                <td>25 sep</td>
+                <td>48</td>
+                <td><span class="badge badge-green">Realizada</span></td>
+                <td>📄</td>
+              </tr>
+              <tr>
+                <td><strong>¿Cómo me siento hoy? (bitácora)</strong></td>
+                <td><span class="badge badge-purple">Autoconciencia</span></td>
+                <td>3°–5° Básico</td>
+                <td>Semanal</td>
+                <td>180</td>
+                <td><span class="badge badge-blue">Permanente</span></td>
+                <td>📝</td>
+              </tr>
+              <tr>
+                <td><strong>Proyecto: Cuidado colectivo del aula</strong></td>
+                <td><span class="badge badge-pink">Conciencia social</span></td>
+                <td>7° y 8°</td>
+                <td>Sep–Nov</td>
+                <td>76</td>
+                <td><span class="badge badge-blue">En curso</span></td>
+                <td>📷 📄</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEGUIMIENTO INDIVIDUAL -->
+    <div id="seguimiento" class="page">
+      <div class="topbar">
+        <div class="topbar-title">Seguimiento Individual de Bienestar</div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm">Filtros</button>
+          <button class="btn btn-primary btn-sm">+ Nueva alerta</button>
+          <div class="avatar">LP</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="section-title">Ficha de seguimiento · Ejemplo</div>
+            <div style="text-align:center;padding:0.75rem 0 1rem;">
+              <div class="avatar" style="width:56px;height:56px;margin:0 auto 0.5rem;font-size:1.1rem;">MS</div>
+              <div style="font-weight:600;">Martina Soto R.</div>
+              <div style="font-size:0.8rem;color:var(--text-muted);">7° Básico A · Alerta activa desde 10/10/2026</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;font-size:0.875rem;margin-bottom:1rem;">
+              <div><span class="form-label">Tipo de alerta</span><div><span class="badge badge-yellow">Desregulación emocional</span></div></div>
+              <div><span class="form-label">Responsable</span><div>Psicóloga + Profesor jefe</div></div>
+              <div><span class="form-label">Última intervención</span><div>11/10/2026</div></div>
+              <div><span class="form-label">Estado</span><div><span class="badge badge-blue">En acompañamiento</span></div></div>
+            </div>
+            <div class="section-title" style="font-size:0.9rem;">Registro de intervenciones</div>
+            <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.85rem;">
+              <div style="padding:0.65rem;background:#f8fafc;border-radius:8px;">
+                <strong>10/10</strong> — Contención en aula · Protocolo DEC activado · Apoderada contactada
+              </div>
+              <div style="padding:0.65rem;background:#f8fafc;border-radius:8px;">
+                <strong>11/10</strong> — Sesión individual con psicóloga · Técnicas de regulación · Acuerdo de seguimiento semanal
+              </div>
+              <div style="padding:0.65rem;background:#f8fafc;border-radius:8px;">
+                <strong>Próxima</strong> — 17/10 · Evaluación de evolución y posible cierre de alerta
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title">Listado de alertas activas</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Estudiante</th>
+                  <th>Curso</th>
+                  <th>Tipo</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>M. Soto</td>
+                  <td>7° A</td>
+                  <td><span class="badge badge-yellow">Desregulación</span></td>
+                  <td><span class="badge badge-blue">Acompañamiento</span></td>
+                </tr>
+                <tr>
+                  <td>J. Vargas</td>
+                  <td>2° M B</td>
+                  <td><span class="badge badge-purple">Bienestar</span></td>
+                  <td><span class="badge badge-blue">Seguimiento</span></td>
+                </tr>
+                <tr>
+                  <td>C. Rojas</td>
+                  <td>8° B</td>
+                  <td><span class="badge badge-red">Riesgo</span></td>
+                  <td><span class="badge badge-yellow">Derivación</span></td>
+                </tr>
+                <tr>
+                  <td>L. Muñoz</td>
+                  <td>1° M A</td>
+                  <td><span class="badge badge-purple">Bienestar</span></td>
+                  <td><span class="badge badge-green">Estable</span></td>
+                </tr>
+                <tr>
+                  <td>P. Díaz</td>
+                  <td>5° C</td>
+                  <td><span class="badge badge-yellow">Desregulación</span></td>
+                  <td><span class="badge badge-green">Cierre próximo</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="alert-box alert-info" style="margin-top:1rem;">
+              <span>ℹ️</span>
+              <div>Las alertas de riesgo se articulan con el protocolo de derivación a red de salud (Estrategia de Salud Mental MINEDUC-MINSAL) y respetan confidencialidad.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROTOCOLO DESREGULACIÓN -->
+    <div id="desregulacion" class="page">
+      <div class="topbar">
+        <div class="topbar-title">Protocolo de Desregulación Emocional y Conductual (DEC)</div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm">Ver protocolo completo</button>
+          <button class="btn btn-primary btn-sm">Activar protocolo</button>
+          <div class="avatar">LP</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="section-title">Fases del protocolo</div>
+            <div style="display:flex;flex-direction:column;gap:0.85rem;">
+              <div style="padding:1rem;border-left:4px solid #7c3aed;background:#faf5ff;border-radius:0 8px 8px 0;">
+                <strong>1. Prevención</strong>
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.25rem;">Clima de aula, rutinas predecibles, estrategias preventivas socioemocionales, PAEC cuando corresponda.</div>
+              </div>
+              <div style="padding:1rem;border-left:4px solid #d97706;background:#fffbeb;border-radius:0 8px 8px 0;">
+                <strong>2. Contención inicial</strong>
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.25rem;">Adulto de referencia, espacio seguro, lenguaje calmado, no escalar. Registro inmediato.</div>
+              </div>
+              <div style="padding:1rem;border-left:4px solid #0284c7;background:#eff6ff;border-radius:0 8px 8px 0;">
+                <strong>3. Intervención</strong>
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.25rem;">Equipo de apoyo (psicólogo/a, orientador, convivencia). Técnicas de regulación. Contacto a familia.</div>
+              </div>
+              <div style="padding:1rem;border-left:4px solid #059669;background:#f0fdf4;border-radius:0 8px 8px 0;">
+                <strong>4. Seguimiento y cierre</strong>
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.25rem;">Plan de acompañamiento, evaluación de evolución, posible derivación a red de salud, aprendizaje para el equipo.</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title">Activar protocolo — Formulario rápido</div>
+            <div class="form-group">
+              <label class="form-label">Estudiante</label>
+              <input class="form-input" placeholder="Buscar estudiante...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nivel de intensidad</label>
+              <select class="form-select">
+                <option>Baja (contención en aula)</option>
+                <option>Media (requiere apoyo especializado)</option>
+                <option>Alta (riesgo, derivación inmediata)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Descripción breve de la situación</label>
+              <textarea class="form-textarea" rows="3" placeholder="Qué ocurrió, dónde, quiénes estaban presentes..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Adulto que reporta</label>
+              <input class="form-input" value="Prof. Jefe / Asistente de aula">
+            </div>
+            <button class="btn btn-primary" style="width:100%;">Registrar y notificar al equipo</button>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem;text-align:center;">
+              Se notificará automáticamente a Coordinación de Convivencia, Orientación y (según nivel) a Dirección.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIAGNÓSTICO TIPO DIA -->
+    <div id="diagnostico" class="page">
+      <div class="topbar">
+        <div class="topbar-title">Diagnóstico Socioemocional (tipo DIA)</div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm">Comparar periodos</button>
+          <button class="btn btn-primary btn-sm">Aplicar evaluación</button>
+          <div class="avatar">LP</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="card" style="margin-bottom:1.25rem;">
+          <div style="font-size:0.85rem;color:var(--text-muted);">Inspirado en el Diagnóstico Integral de Aprendizajes (DIA) — dimensión socioemocional. Uso interno del establecimiento para monitorear habilidades y orientar el Plan.</div>
+        </div>
+        <div class="grid grid-3" style="margin-bottom:1.25rem;">
+          <div class="card competency-card">
+            <div style="font-weight:600;margin-bottom:0.5rem;">Aprendizaje socioemocional personal</div>
+            <div class="stat-value" style="font-size:1.5rem;color:#7c3aed;">78%</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">Autoconciencia + Autorregulación</div>
+            <div class="progress-bar" style="margin-top:0.5rem;"><div class="progress-fill" style="width:78%;background:#7c3aed;"></div></div>
+          </div>
+          <div class="card competency-card">
+            <div style="font-weight:600;margin-bottom:0.5rem;">Aprendizaje socioemocional comunitario</div>
+            <div class="stat-value" style="font-size:1.5rem;color:#0284c7;">82%</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">Relaciones + Conciencia social</div>
+            <div class="progress-bar" style="margin-top:0.5rem;"><div class="progress-fill" style="width:82%;background:#0284c7;"></div></div>
+          </div>
+          <div class="card competency-card">
+            <div style="font-weight:600;margin-bottom:0.5rem;">Aprendizaje socioemocional ciudadano</div>
+            <div class="stat-value" style="font-size:1.5rem;color:#059669;">71%</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">Decisiones + Participación</div>
+            <div class="progress-bar" style="margin-top:0.5rem;"><div class="progress-fill" style="width:71%;background:#059669;"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-title">Resultados por curso (muestra)</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Curso</th>
+                <th>Personal</th>
+                <th>Comunitario</th>
+                <th>Ciudadano</th>
+                <th>Promedio</th>
+                <th>Tendencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>5° A</td>
+                <td>81%</td><td>85%</td><td>74%</td>
+                <td><strong>80%</strong></td>
+                <td><span class="badge badge-green">↑</span></td>
+              </tr>
+              <tr>
+                <td>7° B</td>
+                <td>72%</td><td>78%</td><td>68%</td>
+                <td><strong>73%</strong></td>
+                <td><span class="badge badge-yellow">→</span></td>
+              </tr>
+              <tr>
+                <td>2° Medio A</td>
+                <td>85%</td><td>88%</td><td>79%</td>
+                <td><strong>84%</strong></td>
+                <td><span class="badge badge-green">↑</span></td>
+              </tr>
+              <tr>
+                <td>4° Medio B</td>
+                <td>76%</td><td>80%</td><td>82%</td>
+                <td><strong>79%</strong></td>
+                <td><span class="badge badge-green">↑</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORIENTACIÓN OA -->
+    <div id="orientacion" class="page">
+      <div class="topbar">
+        <div class="topbar-title">Vinculación con Orientación (OA Currículum Nacional)</div>
+        <div class="topbar-actions"><div class="avatar">LP</div></div>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div class="section-title">Objetivos de Aprendizaje de Orientación vinculados a lo socioemocional</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Nivel</th>
+                <th>OA (ejemplo)</th>
+                <th>Competencia EE</th>
+                <th>Estado en Plan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1°–2° Básico</td>
+                <td>Identificar emociones propias y ajenas y formas de expresarlas</td>
+                <td><span class="badge badge-purple">Autoconciencia</span></td>
+                <td><span class="badge badge-green">Cubierto</span></td>
+              </tr>
+              <tr>
+                <td>3°–4° Básico</td>
+                <td>Aceptar emociones y practicar estrategias de manejo emocional</td>
+                <td><span class="badge badge-cyan">Autorregulación</span></td>
+                <td><span class="badge badge-green">Cubierto</span></td>
+              </tr>
+              <tr>
+                <td>5°–6° Básico</td>
+                <td>Manifestar empatía y promover relaciones positivas</td>
+                <td><span class="badge badge-pink">Conciencia social</span></td>
+                <td><span class="badge badge-green">Cubierto</span></td>
+              </tr>
+              <tr>
+                <td>7°–8° Básico</td>
+                <td>Desarrollar habilidades de resolución de conflictos</td>
+                <td><span class="badge badge-blue">Relaciones</span></td>
+                <td><span class="badge badge-yellow">Parcial</span></td>
+              </tr>
+              <tr>
+                <td>1°–2° Medio</td>
+                <td>Autocuidado, bienestar y toma de decisiones responsables</td>
+                <td><span class="badge badge-green">Decisiones</span></td>
+                <td><span class="badge badge-green">Cubierto</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:1rem;">
+            El módulo permite mapear cada acción del Plan Socioemocional a OA de Orientación y a OAT, facilitando la evidencia para el PME y la Priorización Curricular.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- VÍNCULO CONVIVENCIA / FC -->
+    <div id="vinculo" class="page">
+      <div class="topbar">
+        <div class="topbar-title">Integración con Convivencia Educativa y Formación Ciudadana</div>
+        <div class="topbar-actions"><div class="avatar">LP</div></div>
+      </div>
+      <div class="content">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="section-title">Con Convivencia Educativa (Ley 21.809)</div>
+            <ul style="font-size:0.875rem;line-height:1.8;padding-left:1.25rem;color:var(--text-muted);">
+              <li>El aprendizaje socioemocional es parte explícita del Plan de Gestión de Convivencia.</li>
+              <li>Las acciones formativas de EE alimentan los indicadores de bienestar del módulo de Convivencia.</li>
+              <li>Protocolos DEC se articulan con protocolos de acoso/violencia cuando corresponde.</li>
+              <li>Equipo de Convivencia y equipo socioemocional comparten alertas y seguimientos (con permisos).</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="section-title">Con Formación Ciudadana (Ley 20.911)</div>
+            <ul style="font-size:0.875rem;line-height:1.8;padding-left:1.25rem;color:var(--text-muted);">
+              <li>Empatía, respeto y toma de decisiones responsables son ejes comunes.</li>
+              <li>Proyectos de FC pueden incorporar componentes socioemocionales (ej. cuidado del espacio público + conciencia social).</li>
+              <li>Educación Ciudadana 3°–4° medio se potencia con Rutas Sana Mente y reflexiones emocionales.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card" style="margin-top:1.25rem;">
+          <div class="alert-box alert-success">
+            <span>💡</span>
+            <div>
+              <strong>En el ecosistema EduGestión</strong> los tres módulos (Convivencia, Formación Ciudadana y Educación Emocional) comparten la base de datos de estudiantes, generan evidencias firmadas y alimentan un dashboard institucional unificado de bienestar y formación integral.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Placeholders -->
+    <div id="inicio" class="page">
+      <div class="topbar"><div class="topbar-title">Inicio</div></div>
+      <div class="content" style="text-align:center;padding:3rem;color:var(--text-muted);">Selecciona una opción del menú de Educación Emocional.</div>
+    </div>
+    <div id="libro" class="page">
+      <div class="topbar"><div class="topbar-title">Libro de Clases</div></div>
+      <div class="content" style="text-align:center;padding:3rem;color:var(--text-muted);">Módulo Libro de Clases (existente). La Educación Emocional se integra con leccionario, anotaciones y ficha del estudiante.</div>
+    </div>
+  </div>
+
+  <script>
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const page = document.getElementById(id);
+      if (page) page.classList.add('active');
+      event?.target?.closest('.nav-item')?.classList.add('active');
+    }
+  </script>
+</body>
+</html>

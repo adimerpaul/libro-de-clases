@@ -28,6 +28,14 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // IA para borradores de instrumentos (App\Support\GeneradorIa). Si el modelo está saturado se prueban los de respaldo.
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-3.5-flash-lite'),
+        'respaldo' => env('GEMINI_MODELOS_RESPALDO', 'gemini-3.5-flash,gemini-flash-latest'),
+        'timeout' => (int) env('GEMINI_TIMEOUT', 90),
+    ],
+
     // Servidor Socket.IO compartido (proyecto socket/): POST {url}/notify { event, data }
     'socket' => [
         'url' => env('SOCKET_URL', 'http://localhost:3000'),

@@ -4,14 +4,39 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Asignatura;
+use App\Models\Curso;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class AsignaturaController extends Controller
 {
-    public function index()
+    /** Catálogo con los cursos del año que llevan cada asignatura (y quién la dicta). */
+    public function index(Request $request)
     {
-        return Asignatura::withCount('asignaciones')->orderBy('nombre')->get();
+        $request->validate(['anio' => ['nullable', 'integer', 'min:2000', 'max:2100']]);
+        $anio = $request->integer('anio') ?: (int) now()->year;
+
+        $asignaturas = Asignatura::withCount('asignaciones')
+            ->with(['asignaciones' => fn ($q) => $q->whereHas('curso', fn ($c) => $c->where('anio', $anio))
+                ->with(['curso:id,anio,nivel,letra', 'docente:id,name'])])
+            ->orderBy('nombre')
+            ->get();
+
+        return $asignaturas->map(function (Asignatura $a) {
+            $cursos = Curso::ordenar($a->asignaciones->pluck('curso')->filter())
+                ->map(function (Curso $c) use ($a) {
+                    $asig = $a->asignaciones->firstWhere('curso_id', $c->id);
+
+                    return [
+                        'id' => $c->id,
+                        'nombre' => $c->nombre,
+                        'docente' => $asig->docente?->name,
+                        'horas_semanales' => $asig->horas_semanales,
+                    ];
+                });
+
+            return collect($a->toArray())->except('asignaciones')->put('cursos', $cursos)->all();
+        });
     }
 
     public function store(Request $request)

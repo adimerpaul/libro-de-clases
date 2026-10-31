@@ -125,10 +125,10 @@ test('eliminar es lógico, en cascada y permite volver a crear', function () {
         ->assertCreated();
 
     // Un rol eliminado se recupera al crearlo con el mismo nombre
-    $rol = comoAdmin()->postJson('/api/admin/roles', ['name' => 'Convivencia', 'permisos' => ['cursos.ver']])->json();
+    $rol = comoAdmin()->postJson('/api/admin/roles', ['name' => 'Orientación', 'permisos' => ['cursos.ver']])->json();
     comoAdmin()->deleteJson("/api/admin/roles/{$rol['id']}")->assertOk();
     expect(Role::withTrashed()->find($rol['id'])->trashed())->toBeTrue();
-    comoAdmin()->postJson('/api/admin/roles', ['name' => 'Convivencia', 'permisos' => []])
+    comoAdmin()->postJson('/api/admin/roles', ['name' => 'Orientación', 'permisos' => []])
         ->assertCreated()->assertJsonPath('id', $rol['id']);
 });
 
@@ -196,7 +196,7 @@ test('bloquear un usuario revoca sus sesiones', function () {
 test('los roles base vienen de la migración con permisos CRUD', function () {
     $roles = collect(comoAdmin()->getJson('/api/admin/roles')->assertOk()->json())->keyBy('name');
 
-    expect($roles['Docente']['permisos'])->toEqual([Permisos::DICTAR_CLASES])
+    expect($roles['Docente']['permisos'])->toEqual([Permisos::DICTAR_CLASES, 'curriculum.ver', Permisos::REPORTAR_EMOCIONAL])
         ->and($roles['Dirección']['permisos'])->toContain('cursos.eliminar', 'asignaciones.crear')
         ->and($roles['Dirección']['permisos'])->not->toContain('usuarios.ver')
         ->and($roles['Administrador']['permisos'])->toContain('usuarios.editar', 'roles.eliminar');
@@ -214,7 +214,7 @@ test('un usuario recibe los permisos de sus roles', function () {
         ->assertJsonPath('permisos', [])
         ->json();
 
-    expect($nuevo['permisos_efectivos'])->toEqualCanonicalizing([...Permisos::crud('cursos'), Permisos::DICTAR_CLASES]);
+    expect($nuevo['permisos_efectivos'])->toEqualCanonicalizing([...Permisos::crud('cursos'), Permisos::DICTAR_CLASES, 'curriculum.ver', Permisos::REPORTAR_EMOCIONAL]);
 
     // Entra a cursos gracias al rol y figura como docente por el rol Docente
     $this->withToken(tokenDe(User::find($nuevo['id'])))->getJson('/api/admin/cursos')->assertOk();
@@ -236,4 +236,48 @@ test('no se pierde la edición de usuarios por cambiar roles', function () {
     comoAdmin()->putJson("/api/admin/usuarios/{$this->admin->id}", [
         'name' => 'Admin', 'email' => 'admin@demo.cl', 'roles' => [], 'permisos' => [],
     ])->assertUnprocessable();
+});
+
+test('el login con perfil limita la sesión a los permisos de ese rol', function () {
+    $utp = Role::findByName('UTP', 'web')->syncPermissions('cursos.ver');
+    Role::findByName('Docente', 'web')->syncPermissions(Permisos::DICTAR_CLASES);
+    $this->docente->syncPermissions([])->assignRole('Docente', $utp);
+
+    $this->getJson('/api/login/roles')->assertOk()->assertJsonFragment(['Docente'])->assertJsonFragment(['UTP']);
+
+    // Sin perfil: todos sus roles
+    $this->postJson('/api/login', ['email' => 'docente@demo.cl', 'password' => 'demo123'])
+        ->assertOk()->assertJsonPath('user.rol_activo', null)
+        ->assertJsonPath('user.permisos', fn ($p) => in_array('cursos.ver', $p) && in_array(Permisos::DICTAR_CLASES, $p));
+
+    // Con perfil: solo los de ese rol, también en /me y en las rutas protegidas
+    $res = $this->postJson('/api/login', ['email' => 'docente@demo.cl', 'password' => 'demo123', 'rol' => 'Docente'])
+        ->assertOk()->assertJsonPath('user.rol_activo', 'Docente')
+        ->assertJsonPath('user.permisos', [Permisos::DICTAR_CLASES]);
+    app('auth')->forgetGuards();
+    $this->withToken($res->json('token'))->getJson('/api/me')->assertJsonPath('user.permisos', [Permisos::DICTAR_CLASES]);
+    app('auth')->forgetGuards();
+    $this->withToken($res->json('token'))->getJson('/api/admin/cursos')->assertForbidden();
+
+    // Un perfil que no tiene se rechaza
+    $this->postJson('/api/login', ['email' => 'docente@demo.cl', 'password' => 'demo123', 'rol' => 'Administrador'])
+        ->assertStatus(422);
+});
+
+test('las asignaturas listan los cursos del año que las llevan', function () {
+    $mat = Asignatura::create(['nombre' => 'Matemática', 'codigo' => 'MAT']);
+    $b = Curso::create(['anio' => 2026, 'nivel' => '2° Medio', 'letra' => 'B']);
+    $a = Curso::create(['anio' => 2026, 'nivel' => '2° Medio', 'letra' => 'A']);
+    $viejo = Curso::create(['anio' => 2025, 'nivel' => '1° Medio', 'letra' => 'A']);
+    foreach ([$b, $a, $viejo] as $c) {
+        Asignacion::create(['curso_id' => $c->id, 'asignatura_id' => $mat->id, 'docente_id' => $this->docente->id, 'horas_semanales' => 6]);
+    }
+
+    comoAdmin()->getJson('/api/admin/asignaturas?anio=2026')->assertOk()
+        ->assertJsonPath('0.asignaciones_count', 3)
+        ->assertJsonPath('0.cursos.0.nombre', '2° Medio A')
+        ->assertJsonPath('0.cursos.1.nombre', '2° Medio B')
+        ->assertJsonPath('0.cursos.0.docente', 'Docente')
+        ->assertJsonCount(2, '0.cursos');
+    comoAdmin()->getJson('/api/admin/asignaturas?anio=2025')->assertJsonCount(1, '0.cursos');
 });

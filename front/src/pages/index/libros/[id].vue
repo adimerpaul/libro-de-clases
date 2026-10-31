@@ -7,6 +7,7 @@
         <p>Hojea el libro como uno físico: portada, identificación del curso y nómina con sus apoderados. Haz clic en un estudiante para ver su ficha.</p>
       </div>
       <div class="row q-gutter-sm">
+        <q-btn no-caps outline color="negative" icon="fas fa-file-pdf" label="Exportar PDF" :loading="exportando" :disable="!curso" @click="exportarPdf" />
         <q-btn no-caps flat icon="fas fa-chevron-left" label="Anterior" :disable="hoja === 0" @click="pasar(-1)" />
         <q-btn no-caps unelevated class="btnPrimary" icon-right="fas fa-chevron-right" label="Siguiente" :disable="hoja === hojas.length - 1" @click="pasar(1)" />
       </div>
@@ -24,8 +25,8 @@
           <div class="insideCover">
             <div class="indice">
               <div class="bookTitle">Índice</div>
-              <button v-for="(h, i) in hojas.slice(1)" :key="i" class="indiceLinea" @click="hoja = i + 1">
-                <span>{{ h.titulo }}</span><b>{{ 2 * (i + 1) - 1 }}</b>
+              <button v-for="e in indice" :key="e.hoja" class="indiceLinea" @click="hoja = e.hoja">
+                <span>{{ e.titulo }}</span><b>{{ 2 * e.hoja - 1 }}</b>
               </button>
             </div>
           </div>
@@ -81,6 +82,77 @@
           </section>
         </div>
 
+        <!-- Secciones del libro (asistencia, leccionario, notas, PIE, …): las arma el backend (App\Support\LibroCurso) -->
+        <div v-else-if="actual.tipo === 'seccion'" class="spread">
+          <section v-for="(p, lado) in [actual.izq, actual.der]" :key="lado" class="paper" :class="lado ? 'right' : 'left'">
+            <div class="watermark">LIBRO<br>3.0</div>
+            <template v-if="p">
+              <div class="bookTitle chico">{{ p.titulo }}</div>
+              <div v-if="p.resumen?.length" class="resumenSeccion" :class="{ leyenda: p.leyenda }">
+                <div v-for="r in p.resumen" :key="r[0]"><b>{{ r[0] }}</b><span>{{ r[1] }}</span></div>
+              </div>
+              <div v-if="p.nota" class="notaSeccion">{{ p.nota }}</div>
+              <div class="paperBar">{{ p.subtitulo }}</div>
+              <table class="paperTable seccion">
+                <thead><tr><th v-for="c in p.columnas" :key="c[0]" :class="{ izq: c[1] === 'l' }">{{ c[0] }}</th></tr></thead>
+                <tbody>
+                  <tr v-for="(f, i) in p.filas" :key="i">
+                    <td v-for="(celda, j) in f" :key="j" :class="[p.columnas[j]?.[1] === 'l' ? 'izq' : 'centro', celda?.c ? `cel-${celda.c}` : '']">{{ celda?.t ?? celda }}</td>
+                  </tr>
+                  <tr v-if="!p.filas.length"><td :colspan="p.columnas.length" class="centro sinRegistros">{{ p.vacio || 'Sin registros' }}</td></tr>
+                </tbody>
+              </table>
+            </template>
+            <div v-else class="hojaEnBlanco">Hoja en blanco</div>
+            <div class="pageNo">{{ 2 * hoja - 1 + lado }}</div>
+          </section>
+        </div>
+
+        <!-- Cierre: firmas y código de verificación del respaldo -->
+        <div v-else-if="actual.tipo === 'firmas'" class="spread">
+          <section class="paper left">
+            <div class="watermark">LIBRO<br>3.0</div>
+            <div class="bookTitle">Cierre y firmas</div>
+            <p class="cierreTexto">
+              Este libro reúne la identificación del curso, la nómina, el registro de asistencia, el leccionario, las
+              calificaciones, el PIE, la formación socioemocional y las entrevistas con apoderados del año {{ curso.anio }}.
+              El PDF exportado es el respaldo oficial que se firma.
+            </p>
+            <div class="firmas">
+              <div v-for="f in curso.firmas.firmantes" :key="f.cargo" class="firma">
+                <div class="lineaFirma" />
+                <b>{{ f.nombre || '______________________' }}</b>
+                <small>{{ f.cargo }}</small>
+              </div>
+            </div>
+            <div class="pageNo">{{ 2 * hoja - 1 }}</div>
+          </section>
+          <section class="paper right">
+            <div class="watermark">LIBRO<br>3.0</div>
+            <div class="bookTitle">Verificación del respaldo</div>
+            <div class="paperBar">Huella del contenido actual (SHA-256)</div>
+            <div class="hash">{{ curso.firmas.hash }}</div>
+            <p class="cierreTexto">
+              Cada PDF exportado imprime esta huella y queda registrado con su folio. Si el libro cambia (nuevas notas,
+              asistencia o registros), la huella cambia: un PDF firmado corresponde exactamente al contenido de ese momento.
+            </p>
+            <div class="paperBar">Respaldos generados</div>
+            <table class="paperTable seccion">
+              <thead><tr><th>Folio</th><th>Fecha</th><th class="izq">Generado por</th><th>Huella</th></tr></thead>
+              <tbody>
+                <tr v-for="r in curso.respaldos" :key="r.folio">
+                  <td class="centro nowrap">{{ r.folio }}</td>
+                  <td class="centro nowrap">{{ fechaCl(r.fecha.slice(0, 10)) }} {{ r.fecha.slice(11) }}</td>
+                  <td class="izq">{{ r.usuario }}</td>
+                  <td class="centro mono" :class="r.hash === curso.firmas.hash ? 'cel-verde' : 'cel-gris'">{{ r.hash.slice(0, 12) }}… {{ r.hash === curso.firmas.hash ? '(vigente)' : '(anterior)' }}</td>
+                </tr>
+                <tr v-if="!curso.respaldos.length"><td colspan="4" class="centro sinRegistros">Aún no se ha exportado ningún PDF</td></tr>
+              </tbody>
+            </table>
+            <div class="pageNo">{{ 2 * hoja }}</div>
+          </section>
+        </div>
+
         <!-- Nómina: izquierda estudiantes, derecha apoderados (misma fila en ambas hojas) -->
         <div v-else class="spread">
           <section class="paper left">
@@ -118,8 +190,12 @@
         </div>
 
         <div class="bookTabs">
-          <button class="bookTab" :class="{ active: actual.tipo === 'datos' }" @click="hoja = 1">DATOS</button>
-          <button class="bookTab" :class="{ active: actual.tipo === 'nomina' }" @click="hoja = Math.max(2, hoja)">NÓMINA</button>
+          <button
+            v-for="t in pestanas" :key="t.label" class="bookTab" :class="{ active: actual.pestana === t.label }"
+            @click="hoja = t.hoja"
+          >
+            {{ t.label }}
+          </button>
         </div>
 
         <div class="bookControls">
@@ -194,18 +270,102 @@ const ficha = ref(null)
 
 const activas = computed(() => (curso.value?.matriculas || []).filter(m => m.estado === 'activa'))
 
-// Portada, identificación y una doble página por cada tramo de la nómina
+// Filas por hoja en las secciones: la primera hoja lleva además el resumen y la nota
+const FILAS_HOJA = 17
+const FILAS_PRIMERA = 11
+
+/** Corta las filas en hojas: la primera con menos filas (lleva resumen). */
+function cortar (filas) {
+  const trozos = [filas.slice(0, FILAS_PRIMERA)]
+  for (let i = FILAS_PRIMERA; i < filas.length; i += FILAS_HOJA) trozos.push(filas.slice(i, i + FILAS_HOJA))
+  return trozos
+}
+
+/**
+ * Dobles páginas de una sección del backend.
+ * "pares": tabla 0 a la izquierda y tabla 1 a la derecha con las mismas filas (como la nómina).
+ * "continuo": una sola tabla que sigue de hoja en hoja (izquierda, derecha, siguiente…).
+ */
+function hojasDeSeccion (s) {
+  const pestana = s.pestana
+  const base = (t, filas, i) => ({
+    titulo: s.titulo,
+    subtitulo: t.titulo,
+    columnas: t.columnas,
+    filas,
+    resumen: i === 0 ? s.resumen : null,
+    leyenda: s.clave.startsWith('notas-'),
+    nota: i === 0 ? s.nota : null,
+    vacio: s.nota && !t.filas.length ? 'Sin registros visibles para su perfil o aún sin datos' : null,
+  })
+  const res = []
+  if (s.modo === 'pares') {
+    const [a, b] = s.tablas
+    cortar(a.filas).forEach((filas, i, todos) => {
+      const derecha = b.filas.slice(i === 0 ? 0 : FILAS_PRIMERA + (i - 1) * FILAS_HOJA).slice(0, filas.length || FILAS_PRIMERA)
+      res.push({ tipo: 'seccion', pestana, titulo: s.titulo + (todos.length > 1 ? ` · ${i + 1}/${todos.length}` : ''),
+        izq: base(a, filas, i), der: { ...base(b, derecha, i), resumen: null, nota: null } })
+    })
+  } else {
+    const t = s.tablas[0]
+    const paginas = cortar(t.filas).map((filas, i) => base(t, filas, i))
+    for (let i = 0; i < paginas.length; i += 2) {
+      res.push({ tipo: 'seccion', pestana, titulo: s.titulo + (paginas.length > 2 ? ` · ${i / 2 + 1}/${Math.ceil(paginas.length / 2)}` : ''),
+        izq: paginas[i], der: paginas[i + 1] ? { ...paginas[i + 1], titulo: s.titulo } : null })
+    }
+  }
+  if (res.length) res[0].indice = true
+  return res
+}
+
+// Portada, identificación, nómina, todas las secciones del libro y el cierre con firmas
 const hojas = computed(() => {
   const nomina = curso.value?.matriculas || []
-  const res = [{ tipo: 'portada', titulo: 'Portada' }, { tipo: 'datos', titulo: 'Identificación del curso' }]
+  const res = [{ tipo: 'portada', titulo: 'Portada' }, { tipo: 'datos', titulo: 'Identificación del curso', pestana: 'DATOS', indice: true }]
   for (let i = 0; i < Math.max(nomina.length, 1); i += POR_HOJA) {
     const filas = nomina.slice(i, i + POR_HOJA)
     const rango = filas.length ? `N° ${filas[0].numero_lista}–${filas[filas.length - 1].numero_lista}` : 'sin estudiantes'
-    res.push({ tipo: 'nomina', titulo: `Nómina · ${rango}`, filas })
+    res.push({ tipo: 'nomina', titulo: `Nómina · ${rango}`, filas, pestana: 'NÓMINA', indice: i === 0 })
   }
+  // Las secciones sin pestaña propia (notas por asignatura, bienestar) quedan bajo la anterior
+  let ultima = null
+  for (const s of curso.value?.secciones || []) {
+    ultima = s.pestana || ultima
+    res.push(...hojasDeSeccion({ ...s, pestana: ultima }))
+  }
+  if (curso.value?.firmas) res.push({ tipo: 'firmas', titulo: 'Cierre, firmas y verificación', pestana: 'FIRMAS', indice: true })
   return res
 })
 const actual = computed(() => hojas.value[hoja.value] || hojas.value[0])
+
+// Índice de la portada: el comienzo de cada sección
+const indice = computed(() => hojas.value
+  .map((h, i) => ({ hoja: i, titulo: h.titulo.replace(/ · \d+\/\d+$/, '').replace(/^Nómina · .*/, 'Nómina del curso'), indice: h.indice }))
+  .filter(h => h.indice))
+
+// Pestañas laterales: primera hoja de cada pestaña
+const pestanas = computed(() => {
+  const vistas = []
+  hojas.value.forEach((h, i) => { if (h.pestana && !vistas.some(v => v.label === h.pestana)) vistas.push({ label: h.pestana, hoja: i }) })
+  return vistas
+})
+
+// El PDF lo arma Laravel (DomPDF); se pide como blob porque la ruta exige el token
+const exportando = ref(false)
+function exportarPdf () {
+  exportando.value = true
+  proxy.$axios.get(`libros/${route.params.id}/pdf`, { responseType: 'blob' })
+    .then(res => {
+      const url = URL.createObjectURL(res.data)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `libro-${curso.value.nombre}-${curso.value.anio}.pdf`.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9.]+/g, '-')
+      a.click()
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+    })
+    .catch(err => proxy.$alert.error(mensajeError(err)))
+    .finally(() => { exportando.value = false })
+}
 
 function pasar (d) {
   hoja.value = Math.min(hojas.value.length - 1, Math.max(0, hoja.value + d))
@@ -270,6 +430,33 @@ onBeforeUnmount(() => window.removeEventListener('keydown', teclas))
 .watermark { position: absolute; left: 50%; top: 57%; transform: translate(-50%, -50%); font-size: 70px; font-weight: 900; color: #1f6fb20b; line-height: .78; text-align: center; pointer-events: none }
 .pageNo { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 900; color: #2a608b }
 .bookTitle { font-family: Georgia, "Times New Roman", serif; text-align: center; font-size: 20px; color: #155d96; text-transform: uppercase; margin-bottom: 11px }
+/* Secciones generadas */
+.bookTitle.chico { font-size: 15px; margin-bottom: 7px }
+.resumenSeccion { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 12px; margin-bottom: 6px; position: relative; z-index: 1 }
+.resumenSeccion div { display: flex; justify-content: space-between; gap: 6px; border-bottom: 1px dotted #aac2d5; font-size: 10px; padding: 2px 0 }
+.resumenSeccion b { color: #3d6e96; font-weight: 700 }
+.resumenSeccion span { font-family: Georgia, serif; color: #173f60; text-align: right }
+.resumenSeccion.leyenda { grid-template-columns: 1fr }
+.resumenSeccion.leyenda div { justify-content: flex-start }
+.resumenSeccion.leyenda span { text-align: left }
+.notaSeccion { font-size: 9px; color: #6d8090; line-height: 1.35; margin-bottom: 6px; position: relative; z-index: 1 }
+.paperTable.seccion th, .paperTable.seccion td { padding: 2px 4px; height: 22px; font-size: 10px }
+.paperTable.seccion th { font-size: 8px }
+.paperTable .izq { text-align: left }
+.paperTable td.cel-rojo { color: #bd1f2d; font-weight: 800 }
+.paperTable td.cel-verde { color: #17703f; font-weight: 700 }
+.paperTable td.cel-ambar { color: #8a520c; font-weight: 700 }
+.paperTable td.cel-gris { color: #8597a6 }
+.sinRegistros { color: #8597a6; font-style: italic }
+.hojaEnBlanco { position: absolute; inset: 0; display: grid; place-items: center; font-family: Georgia, serif; color: #c9bfae; font-size: 14px }
+.cierreTexto { font-size: 11px; line-height: 1.5; color: #33536d; margin: 6px 0 12px; position: relative; z-index: 1 }
+.firmas { display: grid; gap: 30px; margin-top: 34px; position: relative; z-index: 1 }
+.firma { text-align: center; display: grid; gap: 2px }
+.lineaFirma { border-bottom: 1px solid #173f60; width: 70%; margin: 0 auto 4px; height: 24px }
+.firma b { font-size: 11px }
+.firma small { font-size: 9px; color: #6d8090; text-transform: uppercase; letter-spacing: .08em }
+.hash { font-family: monospace; font-size: 11px; word-break: break-all; background: #f4f8fb; border: 1px solid #aac2d5; padding: 8px; margin: 6px 0 4px; position: relative; z-index: 1 }
+.mono { font-family: monospace; font-size: 9px !important }
 .paperBar { background: #1f6fb2; color: #fff; padding: 6px 8px; font-size: 10px; font-weight: 900; text-transform: uppercase }
 .paperTable { width: 100%; border-collapse: collapse; font-size: 11px; color: #224e73; background: #fff9; position: relative; z-index: 1 }
 .paperTable th, .paperTable td { border: 1px solid #aac2d5; padding: 4px 6px; height: 24px }
@@ -288,9 +475,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', teclas))
 .paperInfo span { font-family: Georgia, serif; font-size: 13px; padding: 5px; color: #173f60 }
 
 .cover { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr }
-.insideCover { background: #e8dfd0; border-radius: 10px 2px 2px 10px; padding: 40px 46px }
+.insideCover { background: #e8dfd0; border-radius: 10px 2px 2px 10px; padding: 26px 40px; overflow: hidden }
 .indice { background: #fffdf6cc; border: 1px solid #cdbfa6; border-radius: 6px; padding: 18px 20px }
-.indiceLinea { display: flex; justify-content: space-between; width: 100%; border: 0; border-bottom: 1px dotted #9c8a6b; background: none; padding: 8px 2px; font-family: Georgia, serif; font-size: 13px; color: #173f60; cursor: pointer; text-align: left }
+.indiceLinea { display: flex; justify-content: space-between; width: 100%; border: 0; border-bottom: 1px dotted #9c8a6b; background: none; padding: 5px 2px; font-family: Georgia, serif; font-size: 13px; color: #173f60; cursor: pointer; text-align: left }
 .indiceLinea:hover { color: #bd1f2d }
 .frontCover { background: linear-gradient(145deg, #c82130 0 56%, #e0e3e5 56% 70%, #991822 70%); border-radius: 2px 10px 10px 2px; color: #fff; padding: 55px; position: relative }
 .frontCover .eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .14em; color: #ffd9dd }
@@ -300,8 +487,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', teclas))
 .coverLine { border-bottom: 1px solid #6b8294; padding: 7px 3px; font-size: 10px; text-transform: uppercase }
 .coverBadge { position: absolute; right: 35px; bottom: 35px; width: 112px; height: 112px; border-radius: 50%; display: grid; place-content: center; text-align: center; background: #1c2936; border: 5px solid #f3f4f6; font-size: 10px; font-weight: 900; line-height: 1.3 }
 
-.bookTabs { position: absolute; right: -12px; top: 64px; display: flex; flex-direction: column; gap: 5px; z-index: 9 }
-.bookTab { width: 25px; min-height: 86px; writing-mode: vertical-rl; border: 1px solid #aabfd0; border-left: 0; background: #e0ebf4; color: #356389; border-radius: 0 6px 6px 0; padding: 7px 3px; font-size: 9px; font-weight: 900; cursor: pointer }
+.bookTabs { position: absolute; right: -12px; top: 14px; display: flex; flex-direction: column; gap: 3px; z-index: 9 }
+.bookTab { width: 25px; min-height: 52px; writing-mode: vertical-rl; border: 1px solid #aabfd0; border-left: 0; background: #e0ebf4; color: #356389; border-radius: 0 6px 6px 0; padding: 7px 3px; font-size: 9px; font-weight: 900; cursor: pointer }
 .bookTab.active { background: #1f6fb2; color: #fff }
 .bookControls { position: absolute; left: 50%; bottom: -54px; transform: translateX(-50%); display: flex; gap: 9px; align-items: center }
 .turn { width: 39px; height: 39px; border-radius: 50%; border: 0; background: #fff; color: #183c5c; box-shadow: 0 6px 18px #0005; cursor: pointer }

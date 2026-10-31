@@ -52,6 +52,17 @@ class EscalaNotas
         return $filas;
     }
 
+    /**
+     * Promedio simple de notas, redondeado a un decimal (mitad hacia arriba);
+     * null si no hay notas.
+     */
+    public static function promedio(iterable $notas): ?float
+    {
+        $notas = collect($notas)->filter(fn ($n) => $n !== null)->map(fn ($n) => (float) $n);
+
+        return $notas->isEmpty() ? null : round($notas->avg() + 1e-9, 1);
+    }
+
     /** Puntaje mínimo para obtener la nota 4,0. */
     public static function puntajeAprobacion(float $maximo, int $exigencia = 60): float
     {

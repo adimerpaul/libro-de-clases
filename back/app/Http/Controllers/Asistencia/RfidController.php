@@ -8,15 +8,20 @@ use App\Models\MarcaRfid;
 use App\Models\Matricula;
 use App\Models\TarjetaRfid;
 use App\Support\AsistenciaRfid;
+use App\Support\Permisos;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-/** Panel de asistencia RFID en vivo (permiso "rfid.ver"). */
+/**
+ * Panel de asistencia RFID en vivo. Con "rfid.ver" se ven todos los cursos;
+ * un docente ("clases.dictar") solo los de su carga o jefatura.
+ */
 class RfidController extends Controller
 {
     /** Cursos del año con estudiantes matriculados, y la hora hasta la que una entrada es "presente". */
-    public function cursos()
+    public function cursos(Request $request)
     {
-        $cursos = Curso::where('anio', now()->year)->whereHas('matriculas', fn ($q) => $q->activas())->get(['id', 'nivel', 'letra']);
+        $cursos = $this->visibles($request)->where('anio', now()->year)->whereHas('matriculas', fn ($q) => $q->activas())->get(['id', 'nivel', 'letra']);
 
         return [
             'cursos' => Curso::ordenar($cursos)->map(fn (Curso $c) => ['id' => $c->id, 'nombre' => $c->nombre]),
@@ -28,6 +33,7 @@ class RfidController extends Controller
     public function estudiantes(Request $request)
     {
         $request->validate(['curso_id' => 'required|integer|exists:cursos,id,deleted_at,NULL']);
+        $this->autorizarCurso($request, (int) $request->curso_id);
 
         $matriculas = Matricula::activas()->where('curso_id', $request->curso_id)
             ->with('estudiante')->orderBy('numero_lista')->get()->filter->estudiante;
@@ -56,8 +62,13 @@ class RfidController extends Controller
     /** Últimas marcas de hoy (todas o las del curso). */
     public function hoy(Request $request)
     {
+        if ($request->curso_id) {
+            $this->autorizarCurso($request, (int) $request->curso_id);
+        }
+
         return MarcaRfid::whereDate('marcado_en', today())
             ->when($request->curso_id, fn ($q, $id) => $q->where('curso_id', $id))
+            ->when(! $this->veTodo($request), fn ($q) => $q->whereIn('curso_id', $this->visibles($request)->select('id')))
             ->with('estudiante', 'curso')->latest('marcado_en')->latest('id')->limit(100)->get()
             ->map(fn (MarcaRfid $m) => AsistenciaRfid::fila($m));
     }
@@ -73,6 +84,19 @@ class RfidController extends Controller
             'curso_id' => 'nullable|integer',
             'lector' => 'nullable|string|max:60',
         ]);
+
+        // Un docente solo simula pasadas en sus cursos (y de tarjetas conocidas)
+        if ($request->user() && ! $this->veTodo($request)) {
+            if (isset($datos['codigo'])) {
+                $cursoId = TarjetaRfid::where('codigo', $datos['codigo'])->where('activa', true)->first()?->estudiante
+                    ?->matriculas()->activas()->whereHas('curso', fn ($q) => $q->where('anio', now()->year))->value('curso_id');
+                abort_unless($cursoId, 403, 'La tarjeta no es de un estudiante de sus cursos.');
+                $this->autorizarCurso($request, $cursoId);
+            } else {
+                abort_unless($datos['curso_id'] ?? null, 422, 'Elija uno de sus cursos.');
+                $this->autorizarCurso($request, $datos['curso_id']);
+            }
+        }
 
         $codigo = $datos['codigo'] ?? TarjetaRfid::where('activa', true)
             ->whereHas('estudiante.matriculas', fn ($q) => $q->activas()
@@ -91,5 +115,20 @@ class RfidController extends Controller
         abort_unless(config('services.rfid.simulador_get'), 404);
 
         return $this->marcar($request);
+    }
+
+    private function veTodo(Request $request): bool
+    {
+        return $request->user()->tienePermiso(Permisos::VER_RFID);
+    }
+
+    private function visibles(Request $request): Builder
+    {
+        return Curso::visiblesPara($request->user(), Permisos::VER_RFID);
+    }
+
+    private function autorizarCurso(Request $request, int $cursoId): void
+    {
+        abort_unless($this->veTodo($request) || $this->visibles($request)->whereKey($cursoId)->exists(), 403, 'Ese curso no es de su carga ni de su jefatura.');
     }
 }
