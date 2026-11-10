@@ -1,1 +1,3 @@
 *.sqlite*
+# Datos del Módulo Curricular que cargan las migraciones: sí van al repositorio
+!data/curriculum_core_demo.sqlite

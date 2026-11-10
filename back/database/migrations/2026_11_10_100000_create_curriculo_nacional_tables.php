@@ -17,6 +17,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // MySQL no revierte el DDL: si un intento anterior falló a medias (p. ej. sin el .sqlite),
+        // quedan tablas creadas sin registrar la migración. Se limpian antes de crearlas de nuevo.
+        $this->limpiar();
+
         Schema::create('curriculum_sources', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -231,9 +235,16 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('objetivos_aprendizaje', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('curriculum_objective_id');
-        });
+        $this->limpiar();
+    }
+
+    private function limpiar(): void
+    {
+        if (Schema::hasColumn('objetivos_aprendizaje', 'curriculum_objective_id')) {
+            Schema::table('objetivos_aprendizaje', function (Blueprint $table) {
+                $table->dropConstrainedForeignId('curriculum_objective_id');
+            });
+        }
 
         foreach ([
             'curriculum_tp_module_objective', 'curriculum_tp_modules', 'curriculum_tp_specialties', 'curriculum_planning_templates',
