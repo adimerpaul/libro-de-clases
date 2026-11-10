@@ -66,8 +66,17 @@
               v-model="form.asignatura_id" :options="asignaturasDisponibles" option-value="id" option-label="nombre"
               emit-value map-options label="Asignatura" outlined dense class="full" :disable="!!form.id"
               :rules="[v => !!v || 'Requerido']" hide-bottom-space
-              :hint="form.curso_id && !form.id ? 'Solo asignaturas activas que aún no tienen docente en el curso' : ''"
-            />
+              :hint="form.curso_id && !form.id ? 'Las que ya tienen docente en el curso aparecen bloqueadas' : ''"
+            >
+              <template #option="{ itemProps, opt }">
+                <q-item v-bind="itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ opt.nombre }}</q-item-label>
+                    <q-item-label v-if="opt.motivo" caption>{{ opt.motivo }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
             <q-select
               v-model="form.docente_id" :options="docentes" option-value="id" option-label="name"
               emit-value map-options label="Docente" outlined dense class="full"
@@ -129,11 +138,16 @@ const columns = [
 const cursoSel = computed(() => cursos.value.find(c => c.id === cursoId.value))
 const totalHoras = computed(() => rows.value.reduce((s, r) => s + (r.horas_semanales || 0), 0))
 
-// Asignaturas que todavía no tienen docente en el curso elegido en el formulario
-const ocupadas = ref([])
+// Se listan todas las asignaturas; las que ya tienen docente en el curso elegido (una por
+// curso) o están inactivas aparecen bloqueadas, con el motivo.
+const ocupadas = ref({}) // asignatura_id → nombre del docente
 const asignaturasDisponibles = computed(() => {
   if (form.value.id) return asignaturas.value
-  return asignaturas.value.filter(a => a.activo && !ocupadas.value.includes(a.id))
+  return asignaturas.value.map(a => {
+    const docente = ocupadas.value[a.id]
+    const motivo = docente ? `Ya asignada a ${docente}` : (!a.activo ? 'Inactiva' : '')
+    return { ...a, motivo, disable: !!motivo }
+  })
 })
 
 function filtrar () {
@@ -154,10 +168,10 @@ function cargarCursos () {
 
 // Al elegir curso en el formulario se consultan sus asignaturas ya cubiertas
 watch(() => [dialog.value, form.value.curso_id], ([abierto, curso]) => {
-  ocupadas.value = []
+  ocupadas.value = {}
   if (!abierto || !curso || form.value.id) return
   proxy.$axios.get('admin/asignaciones', { params: { curso_id: curso } })
-    .then(res => { ocupadas.value = res.data.map(a => a.asignatura_id) })
+    .then(res => { ocupadas.value = Object.fromEntries(res.data.map(a => [a.asignatura_id, a.docente?.name || 'otro docente'])) })
 })
 
 onMounted(() => {
