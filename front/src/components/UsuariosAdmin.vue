@@ -50,7 +50,13 @@
         </template>
         <template #body-cell-carga="p">
           <q-td :props="p">
-            <span v-if="p.row.asignaciones_count">{{ p.row.asignaciones_count }} asignatura(s)</span>
+            <div v-if="p.row.asignaturas?.length" class="cargaAsig">
+              <span v-for="a in p.row.asignaturas" :key="a.nombre" class="asigChip" :style="{ '--c': a.color || '#0f4f85' }">
+                {{ a.nombre }} <small>· {{ a.cursos.length }}</small>
+                <q-tooltip>{{ a.nombre }}: {{ a.cursos.join(', ') }}</q-tooltip>
+              </span>
+            </div>
+            <span v-else-if="p.row.asignaciones_count" class="subtle">{{ p.row.asignaciones_count }} asignatura(s) en otros años</span>
             <span v-else class="subtle">Sin carga</span>
             <div v-if="p.row.jefaturas_count" class="subtle">Profesor(a) jefe de {{ p.row.jefaturas_count }} curso(s)</div>
           </q-td>
@@ -254,6 +260,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.cargaAsig { display: flex; flex-wrap: wrap; gap: 4px; max-width: 420px }
+.asigChip { font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; color: var(--c); background: color-mix(in srgb, var(--c) 12%, #fff); border: 1px solid color-mix(in srgb, var(--c) 30%, #fff); white-space: nowrap; cursor: default }
+.asigChip small { font-weight: 400; opacity: .8 }
 .filtros { display: flex; gap: 10px; flex-wrap: wrap }
 .who { display: flex; align-items: center; gap: 10px }
 .avatar {

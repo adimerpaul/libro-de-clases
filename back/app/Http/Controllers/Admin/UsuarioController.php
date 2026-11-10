@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Curso;
 use App\Models\Role;
 use App\Models\User;
 use App\Rules\RunValido;
@@ -26,7 +27,14 @@ class UsuarioController extends Controller
         $permiso = $this->gestionaUsuarios($request, Permisos::VER) ? $request->permiso : Permisos::DICTAR_CLASES;
         $rol = $this->gestionaUsuarios($request, Permisos::VER) ? $request->rol : null;
 
-        return User::with(['roles.permissions:id,name', 'permissions:id,name'])
+        $anio = (int) now()->year;
+
+        return User::with([
+            'roles.permissions:id,name', 'permissions:id,name',
+            // Carga del año en curso: qué asignaturas dicta y en qué cursos
+            'asignaciones' => fn ($q) => $q->whereHas('curso', fn ($c) => $c->where('anio', $anio))
+                ->with(['asignatura:id,nombre,codigo,color', 'curso:id,anio,nivel,letra']),
+        ])
             ->withCount(['asignaciones', 'jefaturas'])
             // permission() de Spatie considera permisos directos y los heredados por rol
             ->when(in_array($permiso, Permisos::todos(), true), fn ($q) => $q->permission($permiso))
@@ -146,7 +154,21 @@ class UsuarioController extends Controller
             'permisos_efectivos' => $u->permisosEfectivos(),
             'asignaciones_count' => $u->asignaciones_count ?? 0,
             'jefaturas_count' => $u->jefaturas_count ?? 0,
+            'asignaturas' => $u->relationLoaded('asignaciones') ? $this->asignaturas($u) : [],
         ];
+    }
+
+    /** Asignaturas que dicta en el año en curso, con sus cursos (columna "Carga" de Docentes). */
+    private function asignaturas(User $u): array
+    {
+        return $u->asignaciones->filter(fn ($a) => $a->asignatura && $a->curso)
+            ->groupBy('asignatura_id')
+            ->map(fn ($grupo) => [
+                'nombre' => $grupo->first()->asignatura->nombre,
+                'color' => $grupo->first()->asignatura->color,
+                'cursos' => Curso::ordenar($grupo->pluck('curso'))->pluck('nombre')->values(),
+            ])
+            ->sortBy('nombre')->values()->all();
     }
 
     private function validar(Request $request, ?User $usuario = null): array
