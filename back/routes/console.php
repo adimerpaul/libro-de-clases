@@ -2,6 +2,7 @@
 
 use App\Models\TarjetaRfid;
 use App\Support\AsistenciaRfid;
+use App\Support\ImportadorCurriculo;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -32,3 +33,17 @@ Artisan::command('rfid:simular {cantidad=10} {--cada=1 : segundos entre pasadas}
         sleep((int) $this->option('cada'));
     }
 })->purpose('Simula pasadas de tarjetas RFID y las avisa al socket');
+
+// Catálogo curricular desde una base SQLite "curriculum_core" (niveles, asignaturas, OA, indicadores, competencias)
+Artisan::command('curriculo:importar {ruta? : archivo .sqlite (por defecto database/data/curriculum_core_demo.sqlite)}', function () {
+    $ruta = $this->argument('ruta') ?? database_path('data/curriculum_core_demo.sqlite');
+    foreach (ImportadorCurriculo::cargarReferencia($ruta) as $tabla => $n) {
+        $this->line("{$tabla}: {$n}");
+    }
+    $r = ImportadorCurriculo::sincronizar();
+
+    $this->info("Asignaturas creadas: {$r['asignaturas_creadas']} · OA creados: {$r['oa_creados']} · OA actualizados: {$r['oa_actualizados']}");
+    foreach ($r['omitidos'] as $o) {
+        $this->warn("Omitido {$o}");
+    }
+})->purpose('Carga el Módulo Curricular (SQLite curriculum_core) y sincroniza sus OA al catálogo');

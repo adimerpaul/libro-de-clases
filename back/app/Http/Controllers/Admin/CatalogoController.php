@@ -13,6 +13,7 @@ class CatalogoController extends Controller
     {
         return response()->json([
             'niveles' => Niveles::TODOS,
+            'niveles_bases' => Niveles::porBase(),
             'permisos' => Permisos::grupos(),
             'acciones' => collect(Permisos::ACCIONES)->map(fn ($label, $key) => compact('key', 'label'))->values(),
             'anio' => (int) now()->year,

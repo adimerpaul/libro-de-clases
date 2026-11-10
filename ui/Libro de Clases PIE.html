@@ -1,0 +1,895 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Libro de Clases PIE</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Baloo+2:wght@500;700;800&display=swap">
+<style>
+/* Layout: a single landscape book page on a desk, glued spine at left, ribbon bookmarks on the right edge; pages turn on a hinge at the spine. */
+:root{
+  --desk:#dde3e8; --desk-2:#cfd7de;
+  --paper:#fbfcfa; --paper-2:#f2f5f8; --edge:#d9e0e8;
+  --ink:#1c2b4f; --muted:#5a6884; --hand:#183f8f;
+  --rule:#a8bce0; --rule-soft:#d3dff0; --band:#dfe9f6;
+  --brand:#2c58a6; --navy:#1b2a52; --lime:#8cc63f; --sky:#3ea6e6; --grass:#4caf3d;
+  --ok:#23845a; --warn:#b97a10; --bad:#bf3a33; --info:#2c6fb8; --none:#7a8296;
+  --weekend:#eef1f5; --focus:#f2a900;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --shadow:0 1px 0 rgba(20,30,60,.06),0 18px 40px -18px rgba(20,30,60,.35);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --desk:#0e131b; --desk-2:#141b26;
+  --paper:#1a2131; --paper-2:#20293b; --edge:#2b3549;
+  --ink:#e2e8f5; --muted:#9ba8c2; --hand:#9cc0ff;
+  --rule:#3d5180; --rule-soft:#2c3a59; --band:#25324c;
+  --brand:#8db0ef; --navy:#16213f; --lime:#9fd45a; --sky:#3b8fc8; --grass:#3d8f33;
+  --ok:#5cc394; --warn:#e3a84a; --bad:#f07a72; --info:#7fb2ef; --none:#8e97ab;
+  --weekend:#202a3c; --focus:#f5c04a; color-scheme:dark;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 22px 50px -20px rgba(0,0,0,.8);
+}}
+:root[data-theme="dark"]{
+  --desk:#0e131b; --desk-2:#141b26;
+  --paper:#1a2131; --paper-2:#20293b; --edge:#2b3549;
+  --ink:#e2e8f5; --muted:#9ba8c2; --hand:#9cc0ff;
+  --rule:#3d5180; --rule-soft:#2c3a59; --band:#25324c;
+  --brand:#8db0ef; --navy:#16213f; --lime:#9fd45a; --sky:#3b8fc8; --grass:#3d8f33;
+  --ok:#5cc394; --warn:#e3a84a; --bad:#f07a72; --info:#7fb2ef; --none:#8e97ab;
+  --weekend:#202a3c; --focus:#f5c04a; color-scheme:dark;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 22px 50px -20px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--desk);background-image:radial-gradient(circle at 20% 0%,var(--desk-2),transparent 60%);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 40px}
+
+/* top bar */
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.bar h1{font-family:var(--display);font-weight:800;font-size:20px;margin:0;color:var(--ink);letter-spacing:.2px;line-height:1}
+.bar h1 small{display:block;font-family:var(--body);font-weight:400;font-size:12px;color:var(--muted);letter-spacing:.3px;margin-top:3px}
+.bar .grow{flex:1}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:999px;background:var(--paper);border:1px solid var(--edge);color:var(--muted);white-space:nowrap}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.chip.saving i{background:var(--warn)} .chip.err i{background:var(--bad)} .chip.local i{background:var(--none)}
+.nav{display:flex;align-items:center;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--edge);background:var(--paper);color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:14px;line-height:1.1}
+.btn:hover{border-color:var(--rule)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--paper)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.sm{padding:4px 9px;font-size:13px}
+.pg{font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:64px;text-align:center}
+
+/* book */
+.desk{display:flex;flex-direction:column}
+.book{z-index:1}
+.book{position:relative;min-width:0;border-radius:6px 14px 14px 6px;box-shadow:var(--shadow);background:var(--paper)}
+.book::before{content:"";position:absolute;inset:0 auto 0 0;width:22px;border-radius:6px 0 0 6px;background:linear-gradient(90deg,var(--navy),color-mix(in srgb,var(--navy) 70%,var(--paper)) 70%,var(--edge));z-index:3;pointer-events:none}
+.book::after{content:"";position:absolute;top:10px;bottom:10px;right:-5px;width:5px;border-radius:0 4px 4px 0;background:repeating-linear-gradient(180deg,var(--paper-2) 0 2px,var(--edge) 2px 3px);z-index:-1}
+.sheet{display:grid;perspective:2400px;min-height:620px}
+.page{grid-area:1/1;background:var(--paper);border-radius:6px 14px 14px 6px;padding:22px 26px 26px 46px;min-width:0;position:relative;transform-origin:0 50%;backface-visibility:hidden}
+.page.turn-out{z-index:2;animation:turnOut .62s cubic-bezier(.45,.05,.4,1) forwards;box-shadow:-30px 0 60px -30px rgba(0,0,0,.35)}
+.page.turn-in{z-index:2;animation:turnIn .62s cubic-bezier(.3,.6,.4,1) both}
+@keyframes turnOut{0%{transform:rotateY(0)}70%{opacity:1}100%{transform:rotateY(-115deg);opacity:0}}
+@keyframes turnIn{0%{transform:rotateY(-115deg);opacity:0}30%{opacity:1}100%{transform:rotateY(0)}}
+.page.fade{animation:fade .25s ease both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.page.turn-out,.page.turn-in{animation:fade .01s both}}
+.folio{position:absolute;bottom:10px;right:22px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ribbons: index tabs peeking from the top edge of the book */
+.ribbons{display:flex;gap:3px;padding:0 14px 0 30px;overflow-x:auto;scrollbar-width:thin;margin-bottom:-2px;position:relative;z-index:0}
+.ribbon{flex:1 0 auto;border:0;cursor:pointer;padding:7px 10px 9px;border-radius:9px 9px 0 0;font-size:12px;font-weight:700;letter-spacing:.3px;color:#fff;background:var(--c);opacity:.72;transform:translateY(5px);transition:transform .15s,opacity .15s;white-space:nowrap}
+.ribbon:hover{opacity:.95;transform:translateY(2px)}
+.ribbon[aria-current="true"]{opacity:1;transform:translateY(0)}
+@media (max-width:860px){
+  .ribbons{padding:0 4px 0 18px}
+  .ribbon{flex:none}
+  .page{padding:16px 14px 30px 30px}
+  .book::before{width:14px}
+}
+
+/* page header band, like the printed book */
+.band{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--band);border:1px solid var(--rule);border-radius:4px 22px 4px 4px;padding:8px 14px;margin-bottom:16px}
+.band h2{margin:0;font-family:var(--body);font-weight:700;font-size:18px;letter-spacing:2.5px;text-transform:uppercase;color:var(--brand);text-wrap:balance}
+.band .n{font-family:var(--display);font-weight:800;color:var(--paper);background:var(--brand);border-radius:6px;min-width:28px;height:28px;display:grid;place-items:center;font-size:15px;padding:0 6px}
+.band .grow{flex:1}
+.band label.inl{display:flex;align-items:center;gap:6px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--brand);font-weight:700}
+.band select,.band input{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:4px 8px;font-size:14px;text-transform:none;letter-spacing:0;font-weight:400;color:var(--hand)}
+.lead{color:var(--muted);margin:-6px 0 14px;max-width:70ch;font-size:14px}
+.tag{display:inline-block;font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;font-weight:700;padding:2px 7px;border-radius:4px;background:color-mix(in srgb,var(--lime) 30%,transparent);color:var(--ink)}
+
+/* ruled forms */
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 28px;border:1px solid var(--rule);border-radius:4px 22px 4px 4px;padding:18px 22px}
+.form .full{grid-column:1/-1}
+.field{display:flex;align-items:flex-end;gap:10px;border-bottom:1px solid var(--rule);padding:12px 0 2px;min-width:0}
+.field>span{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;color:var(--brand);white-space:nowrap;font-weight:700;padding-bottom:4px}
+.field input,.field select{flex:1;min-width:0;border:0;background:transparent;padding:2px 2px 4px;color:var(--hand);font-size:16px}
+.field input:focus,.field select:focus{outline:none;background:color-mix(in srgb,var(--band) 70%,transparent)}
+@media (max-width:640px){.form{grid-template-columns:1fr;padding:12px 14px}}
+
+/* tables */
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:4px 18px 4px 4px;background:var(--paper)}
+table.grid{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+.grid th{background:var(--band);color:var(--brand);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.6px;padding:6px 6px;border:1px solid var(--rule);text-align:center;vertical-align:bottom;line-height:1.15}
+.grid td{border:1px solid var(--rule-soft);border-left-color:var(--rule);border-right-color:var(--rule);padding:0;height:32px;vertical-align:middle}
+.grid td.num{text-align:center;color:var(--muted);width:34px;font-size:12px}
+.grid td.ro{padding:4px 8px;white-space:nowrap}
+.grid td input,.grid td select,.grid td textarea{width:100%;border:0;background:transparent;padding:6px 7px;color:var(--hand);font-size:13.5px;min-width:0}
+.grid td textarea{resize:vertical;min-height:32px;display:block;line-height:1.35}
+.grid td input:focus,.grid td select:focus,.grid td textarea:focus{outline:2px solid var(--focus);outline-offset:-2px;background:color-mix(in srgb,var(--band) 60%,transparent)}
+.grid tr:hover td{background:color-mix(in srgb,var(--band) 35%,transparent)}
+.grid tfoot td{background:var(--paper-2);font-weight:700;text-align:center;font-size:12px;color:var(--ink)}
+.grid tfoot td.lbl{text-align:right;padding:4px 8px;text-transform:uppercase;letter-spacing:.8px;font-size:11px;color:var(--brand)}
+.del{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:6px}
+.del:hover{color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+.toolrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 0}
+.toolrow .grow{flex:1}
+
+/* attendance */
+.att th.day{min-width:27px;padding:4px 2px;font-size:11px;cursor:pointer}
+.att th.day:hover{background:color-mix(in srgb,var(--brand) 18%,var(--band))}
+.att th.day.we{background:var(--weekend);color:var(--muted);cursor:default}
+.att th.day small{display:block;font-weight:400;font-size:9px;letter-spacing:0;opacity:.8}
+.att td.c{padding:0;width:27px}
+.att td.we{background:var(--weekend)}
+.mk{width:100%;height:31px;border:0;background:transparent;cursor:pointer;font-weight:700;font-size:12.5px;padding:0}
+.mk[data-v="P"]{color:var(--ok)}
+.mk[data-v="A"]{color:var(--paper);background:var(--bad)}
+.mk[data-v="J"]{color:var(--paper);background:var(--warn)}
+.mk[data-v="R"]{color:var(--info);background:color-mix(in srgb,var(--info) 15%,transparent)}
+.att td.name{white-space:nowrap;padding:4px 8px;min-width:200px;position:sticky;left:0;background:var(--paper);z-index:1}
+.att th.name{position:sticky;left:0;z-index:2}
+.pct{font-weight:700}
+.pct.low{color:var(--bad)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:10px;align-items:center}
+.legend b{display:inline-grid;place-items:center;width:22px;height:20px;border-radius:4px;margin-right:4px;font-size:11.5px}
+
+/* evaluation */
+.ev{border:0;width:100%;height:31px;cursor:pointer;font-size:11px;font-weight:700;background:transparent;padding:0}
+.ev[data-v="L"]{background:color-mix(in srgb,var(--ok) 22%,transparent);color:var(--ok)}
+.ev[data-v="ML"]{background:color-mix(in srgb,var(--info) 20%,transparent);color:var(--info)}
+.ev[data-v="PL"]{background:color-mix(in srgb,var(--warn) 22%,transparent);color:var(--warn)}
+.ev[data-v="NO"]{background:color-mix(in srgb,var(--none) 18%,transparent);color:var(--none)}
+.att th.areah input{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:3px 6px;color:var(--hand);font-size:12px;text-transform:none;letter-spacing:0;font-weight:400;width:100%}
+.objs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px}
+.objs fieldset{border:1px solid var(--rule);border-radius:4px 14px 4px 4px;padding:8px 12px 10px;margin:0;min-width:0}
+.objs legend{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--brand);font-weight:700;padding:0 4px}
+.objs label{display:flex;gap:6px;align-items:baseline;border-bottom:1px solid var(--rule-soft);padding:4px 0}
+.objs label b{color:var(--muted);font-size:12px}
+.objs input{border:0;background:transparent;flex:1;min-width:0;color:var(--hand);font-size:13.5px;padding:2px}
+.sug{font-size:11px;color:var(--muted);display:block;padding:0 7px 3px}
+
+/* lined writing */
+.lined{width:100%;border:1px solid var(--rule);border-radius:4px 14px 4px 4px;padding:6px 12px;line-height:30px;font-size:15px;color:var(--hand);resize:vertical;min-height:152px;background-color:var(--paper);background-image:repeating-linear-gradient(180deg,transparent 0 29px,var(--rule-soft) 29px 30px);background-attachment:local;background-position:0 5px}
+.lined:focus{outline:2px solid var(--focus);outline-offset:1px}
+.sec{margin-bottom:22px}
+.sec h3{font-size:13px;letter-spacing:1.6px;text-transform:uppercase;color:var(--brand);margin:0 0 8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sec h3 .n{color:var(--muted);font-weight:400}
+.dates{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;font-size:13px;color:var(--muted)}
+.dates input{border:0;border-bottom:1px solid var(--rule);background:transparent;color:var(--hand);padding:2px 4px}
+.periods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.periods{grid-template-columns:1fr}}
+
+/* contents */
+.toc{list-style:none;margin:0;padding:0;border:1px solid var(--rule);border-radius:4px 22px 4px 4px;max-width:820px}
+.toc li{border-bottom:1px solid var(--rule-soft)}
+.toc li:last-child{border-bottom:0}
+.toc button{display:flex;width:100%;gap:12px;align-items:baseline;border:0;background:transparent;text-align:left;padding:9px 16px;cursor:pointer;font-size:14px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink)}
+.toc button:hover{background:var(--band)}
+.toc .no{color:var(--brand);font-weight:700;min-width:28px;font-variant-numeric:tabular-nums}
+.toc .dots{flex:1;border-bottom:1px dotted var(--rule);transform:translateY(-4px)}
+.toc .go{font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0}
+
+/* summary */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.stat{border:1px solid var(--rule);border-radius:4px 14px 4px 4px;padding:12px 14px;background:var(--paper)}
+.stat .k{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--brand);font-weight:700}
+.stat .v{font-family:var(--display);font-weight:800;font-size:34px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat .s{font-size:12.5px;color:var(--muted)}
+.bars{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--rule-soft);margin-top:8px}
+.bars span{display:block;height:100%}
+.cols2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+@media (max-width:800px){.cols2{grid-template-columns:1fr}}
+.list{border:1px solid var(--rule);border-radius:4px 14px 4px 4px}
+.list .row{display:flex;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--rule-soft);font-size:14px}
+.list .row:last-child{border-bottom:0}
+.list .row .grow{flex:1;min-width:0}
+.empty{padding:22px;text-align:center;color:var(--muted);font-size:14px}
+.pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.pill.bad{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
+.pill.ok{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.pill.info{background:color-mix(in srgb,var(--info) 15%,transparent);color:var(--info)}
+.pill.mute{background:color-mix(in srgb,var(--none) 15%,transparent);color:var(--none)}
+
+/* actividades footer */
+.actfoot{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(220px,300px);gap:16px;margin-top:12px;align-items:stretch}
+@media (max-width:900px){.actfoot{grid-template-columns:1fr}}
+.hmt{border:1px solid var(--rule);border-radius:6px;padding:6px 10px;text-align:center}
+.hmt .t{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--brand);font-weight:700}
+.hmt .boxes{display:flex;gap:6px;margin-top:4px;justify-content:center}
+.hmt .boxes div{border:1px solid var(--rule);min-width:46px;border-radius:4px;font-size:11px;color:var(--muted);padding:2px 4px}
+.hmt .boxes b{display:block;font-size:18px;color:var(--hand);font-variant-numeric:tabular-nums}
+.hmt .note{font-size:11px;color:var(--muted);margin-top:4px}
+.sign{border:1px solid var(--rule);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px;justify-content:space-between}
+.sign .line{border-top:1px solid var(--ink);text-align:center;font-size:12px;color:var(--muted);padding-top:3px;margin-top:auto}
+.stamp{border:2px solid var(--ok);color:var(--ok);border-radius:6px;padding:6px 8px;font-size:12.5px;transform:rotate(-1.5deg);text-align:center}
+.stamp b{display:block;font-size:14px}
+.datechips{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 12px}
+.datechips button{border:1px solid var(--rule);background:var(--paper);border-radius:999px;font-size:12px;padding:2px 9px;cursor:pointer;color:var(--hand);font-variant-numeric:tabular-nums}
+.datechips button[aria-pressed="true"]{background:var(--brand);color:var(--paper);border-color:var(--brand)}
+.obsline{border:0;border-bottom:1px solid var(--rule);background:transparent;width:100%;color:var(--hand);padding:4px 2px;font-size:14px}
+
+/* entrevistas / hoja de vida */
+.acta{border:1px solid var(--rule);border-radius:4px 14px 4px 4px;padding:12px 14px;display:grid;gap:8px}
+.acta .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.acta .top .grow{flex:1}
+.acta label{display:grid;gap:2px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--brand);font-weight:700;min-width:0}
+.acta input,.acta select,.acta textarea{border:0;border-bottom:1px solid var(--rule);background:transparent;color:var(--hand);font-size:14px;padding:3px 2px;text-transform:none;letter-spacing:0;font-weight:400;min-width:0;width:100%}
+.acta textarea{resize:vertical;line-height:1.4}
+.acta .g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.acta .g3{grid-template-columns:1fr}}
+.stack{display:grid;gap:12px}
+.hv{display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px}
+@media (max-width:760px){.hv{grid-template-columns:1fr}}
+.stu{display:flex;flex-direction:column;border:1px solid var(--rule);border-radius:4px 14px 4px 4px;max-height:560px;overflow:auto}
+.stu button{border:0;border-bottom:1px solid var(--rule-soft);background:transparent;text-align:left;padding:8px 12px;cursor:pointer;font-size:14px;display:flex;gap:8px;align-items:center}
+.stu button:hover{background:var(--band)}
+.stu button[aria-pressed="true"]{background:var(--brand);color:var(--paper)}
+.stu button .c{margin-left:auto;font-size:11px;opacity:.8;font-variant-numeric:tabular-nums}
+.ficha{border:1px solid var(--rule);border-radius:4px 22px 4px 4px;padding:14px 18px;margin-bottom:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 18px}
+.ficha h3{grid-column:1/-1;margin:0;font-family:var(--display);font-size:22px;color:var(--ink);line-height:1.1}
+.ficha div{font-size:13px;color:var(--muted)}
+.ficha div b{display:block;color:var(--hand);font-size:14.5px;font-weight:400}
+.entry{border-left:4px solid var(--info);padding:6px 12px;background:var(--paper-2);border-radius:0 8px 8px 0;display:grid;gap:4px}
+.entry.Positiva{border-color:var(--ok)} .entry.Negativa{border-color:var(--bad)}
+.entry .meta{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.entry .meta .grow{flex:1}
+.entry p{margin:0;white-space:pre-wrap}
+
+/* cover: a deliberately fixed illustration in both themes */
+.cover{padding:0 !important;overflow:hidden;min-height:620px;background:linear-gradient(180deg,#46b2ee 0%,#7ccbf3 55%,#a8dcf5 100%);color:#10224a}
+.cover .cloud{position:absolute;background:#fff;border-radius:999px;opacity:.95;box-shadow:40px 10px 0 6px #fff,-34px 14px 0 2px #fff}
+.cover .hill{position:absolute;left:-10%;right:-10%;bottom:-38%;height:70%;border-radius:50% 50% 0 0;background:radial-gradient(ellipse at 40% 20%,#7fd04f,#3f9e33 70%)}
+.cover .hill2{position:absolute;left:-30%;width:80%;bottom:-30%;height:58%;border-radius:50% 50% 0 0;background:#58b63f}
+.cover .grassdots{position:absolute;inset:auto 0 0 0;height:40%;background-image:radial-gradient(#fff9 1.6px,transparent 2px),radial-gradient(#ffe46b 1.6px,transparent 2px);background-size:46px 38px,58px 44px;background-position:0 0,20px 14px;opacity:.7}
+.badge{position:absolute;left:6%;top:9%;width:min(330px,46%);aspect-ratio:1;max-width:100%}
+.badge svg{width:100%;height:100%;display:block}
+.label{position:absolute;right:5%;bottom:0;width:min(380px,58%);background:#1b2a52;color:#fff;border-radius:190px 190px 0 0;padding:44px 30px 30px;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 -6px 0 6px #ffffff33}
+.label .t{font-family:var(--display);font-weight:800;font-size:clamp(34px,5vw,52px);line-height:.85;color:#9be04d;text-align:center;-webkit-text-stroke:1.5px #0b1734;paint-order:stroke fill;text-shadow:0 3px 0 #0b1734}
+.label .sub{font-size:13px;text-align:center;letter-spacing:.5px;color:#d6e6ff;line-height:1.3}
+.label .sub b{display:block;font-size:15px;color:#fff;letter-spacing:1px}
+.label .slots{display:grid;gap:7px;width:100%;margin-top:8px}
+.label .slot{display:flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:#b9c9ea}
+.label .slot span{width:92px;flex:none}
+.label .slot b{flex:1;background:#fff;color:#183f8f;border-radius:3px;padding:4px 8px;font-size:14px;letter-spacing:0;text-transform:none;font-weight:400;min-height:26px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.label .open{margin-top:10px;background:#9be04d;color:#0b1734;border:0;border-radius:999px;padding:9px 18px;font-weight:700;cursor:pointer;font-size:15px}
+.label .open:hover{background:#b5ef6b}
+.cover .code{position:absolute;left:5%;bottom:22px;color:#fff;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-shadow:0 1px 2px #0005}
+@media (max-width:700px){
+  .cover{min-height:760px}
+  .badge{left:50%;transform:translateX(-50%);top:5%;width:min(280px,80%)}
+  .label{left:16px;right:16px;width:auto;border-radius:140px 140px 0 0;padding:36px 18px 22px}
+}
+
+.banner{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:color-mix(in srgb,var(--lime) 18%,var(--paper));border:1px dashed var(--grass);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.banner .grow{flex:1;min-width:200px}
+.confirm{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;font-size:14px;z-index:50;max-width:min(92vw,520px);box-shadow:var(--shadow)}
+.loading{display:grid;place-items:center;min-height:400px;color:var(--muted)}
+.hint{font-size:12.5px;color:var(--muted)}
+kbd{font-family:var(--body);font-size:11px;border:1px solid var(--edge);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--paper)}
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <h1>Libro de Clases PIE<small id="subt">Programa de Integración Escolar · Educación Especial Diferencial</small></h1>
+    <div class="grow"></div>
+    <span class="chip" id="sync"><i></i><span>Conectando…</span></span>
+    <div class="nav">
+      <button class="btn" id="prev" aria-label="Página anterior">‹ Anterior</button>
+      <span class="pg" id="pgno">—</span>
+      <button class="btn" id="next" aria-label="Página siguiente">Siguiente ›</button>
+    </div>
+  </header>
+  <div class="desk">
+    <nav class="ribbons" id="ribbons" aria-label="Separadores del libro"></nav>
+    <div class="book"><div class="sheet" id="sheet"></div></div>
+  </div>
+  <p class="hint" style="margin-top:12px">Hojea con <kbd>←</kbd> <kbd>→</kbd>, deslizando en el teléfono, o con los separadores de colores.</p>
+</div>
+
+<script>
+(() => {
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
+const pad = n => String(n).padStart(2, "0");
+const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const DIAS = ["D","L","M","M","J","V","S"];
+const fmtDate = iso => { if (!iso) return ""; const [y,m,d] = iso.split("-"); return `${d}-${m}-${y}`; };
+const LS = "pie-libro:";
+
+/* ---------- storage: artifact db when available, browser fallback ---------- */
+const store = { db: null, mode: "local", cache: new Map(), timers: new Map(), chain: new Map(), pending: 0, readonly: false, err: false };
+async function getDoc(path, def) {
+  if (store.cache.has(path)) return store.cache.get(path);
+  let d = null;
+  if (store.db) {
+    try { const s = await store.db.doc(path).get(); if (s.exists) d = JSON.parse(JSON.stringify(s.data())); }
+    catch (e) { toast("No se pudo leer esta página. Revisa tu conexión e intenta de nuevo."); }
+  } else { try { const r = localStorage.getItem(LS + path); if (r) d = JSON.parse(r); } catch {} }
+  const v = Object.assign(structuredClone(def), d || {});
+  store.cache.set(path, v);
+  return v;
+}
+function save(path) {
+  if (store.readonly) return;
+  clearTimeout(store.timers.get(path));
+  store.timers.set(path, setTimeout(() => flush(path), 650));
+  setSync();
+}
+function flush(path) {
+  store.timers.delete(path);
+  const data = JSON.parse(JSON.stringify(store.cache.get(path) || {}));
+  const prev = store.chain.get(path) || Promise.resolve();
+  const p = prev.then(() => write(path, data));
+  store.chain.set(path, p.catch(() => {}));
+}
+async function write(path, data) {
+  store.pending++; setSync();
+  try {
+    if (store.db) await store.db.doc(path).set(data);
+    else localStorage.setItem(LS + path, JSON.stringify(data));
+    store.err = false;
+  } catch (e) {
+    store.err = true;
+    if (e && e.code === "invalid_argument") { store.readonly = true; toast("Tienes acceso de solo lectura: los cambios no se guardan."); }
+    else if (e && e.code === "quota_exceeded") toast("El libro alcanzó su capacidad máxima. Elimina registros antiguos para seguir guardando.");
+    else toast("No se pudo guardar. Revisa tu conexión; el cambio sigue en pantalla.");
+  } finally { store.pending--; setSync(); }
+}
+async function delDoc(path) {
+  store.cache.delete(path);
+  try { if (store.db) await store.db.doc(path).delete(); else localStorage.removeItem(LS + path); } catch {}
+}
+async function listIds(col) {
+  const ids = new Set();
+  if (store.db) { try { (await store.db.collection(col).get()).docs.forEach(d => ids.add(d.id)); } catch {} }
+  else { try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith(LS + col + "/")) ids.add(k.slice((LS + col + "/").length)); } } catch {} }
+  for (const k of store.cache.keys()) if (k.startsWith(col + "/")) ids.add(k.slice(col.length + 1));
+  return [...ids].sort();
+}
+function freshen() { if (store.pending || store.timers.size) return; store.cache.clear(); }
+function setSync() {
+  const el = $("#sync"), t = el.querySelector("span");
+  el.className = "chip";
+  if (store.readonly) { el.classList.add("err"); t.textContent = "Solo lectura"; return; }
+  if (store.timers.size || store.pending) { el.classList.add("saving"); t.textContent = "Guardando…"; return; }
+  if (store.err) { el.classList.add("err"); t.textContent = "Sin guardar"; return; }
+  if (store.mode === "local") { el.classList.add("local"); t.textContent = "Guardado en este navegador"; return; }
+  t.textContent = "Guardado";
+}
+let toastT;
+function toast(msg) {
+  let el = $(".toast"); if (!el) { el = document.createElement("div"); el.className = "toast"; el.setAttribute("role", "status"); document.body.append(el); }
+  el.textContent = msg; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => el.hidden = true, 4200);
+}
+let downloads = null;
+async function downloadCSV(name, rows) {
+  const body = "﻿" + rows.map(r => r.map(c => { const s = String(c ?? ""); return /[;"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; }).join(";")).join("\r\n");
+  try { const r = await downloads.save({ filename: name, data: new Blob([body], { type: "text/csv;charset=utf-8" }) }); if (r.status === "saved") toast("Archivo descargado: " + name); }
+  catch (e) { if (e && e.code !== "cancelled") toast("No se pudo descargar el archivo."); }
+}
+const csvBtn = id => downloads ? `<button class="btn sm" data-csv="${id}">Descargar CSV</button>` : "";
+
+/* ---------- data model ---------- */
+const DEF = {
+  general: { anio: String(new Date().getFullYear()), curso: "", nivel: "", ciclo: "", educador: "", profesorAula: "", establecimiento: "", rbd: "", comuna: "", provincia: "", region: "", localidad: "", ejemplo: false },
+  alumnos: { list: [] },
+  asis: { m: {} },
+  act: { rows: [], obs: "", firma: null },
+  eval: { fecha: "", areas: [], n: {}, final: {} },
+  plan: { elaboracion: "", generales: "", especificos: "", org: { ini: "", fin: "", txt: "" }, eje: { ini: "", fin: "", txt: "" }, fin: { ini: "", fin: "", txt: "" } },
+  entrevistas: { list: [] },
+  hojas: { by: {} },
+};
+const blankRows = () => Array.from({ length: 6 }, () => ({ hora: "", materia: "", actividades: "", inasist: "", asist: "", atrasos: "", eval: "" }));
+const blankAreas = () => Array.from({ length: 5 }, () => ({ nombre: "", obj: ["", "", "", "", ""] }));
+const G = () => getDoc("libro/general", DEF.general);
+const A = () => getDoc("libro/alumnos", DEF.alumnos);
+const nombre = s => [s.apPat, s.apMat].filter(Boolean).join(" ") + (s.nombres ? ", " + s.nombres : "") || "Sin nombre";
+const sorted = list => [...list].sort((a, b) => nombre(a).localeCompare(nombre(b), "es"));
+function edad31Marzo(fn, anio) {
+  if (!fn) return "";
+  const [y, m, d] = fn.split("-").map(Number); if (!y) return "";
+  let e = Number(anio) - y; if (m > 3 || (m === 3 && d > 31)) e--; return e >= 0 && e < 40 ? e : "";
+}
+const isWE = (y, m, d) => { const w = new Date(y, m - 1, d).getDay(); return w === 0 || w === 6; };
+const daysIn = (y, m) => new Date(y, m, 0).getDate();
+function defaultMonth() { const m = new Date().getMonth() + 1; return m >= 3 ? m : 3; }
+function attStats(doc, id) {
+  const r = (doc.m || {})[id] || {}; let p = 0, a = 0, j = 0, rr = 0;
+  for (const v of Object.values(r)) { if (v === "P") p++; else if (v === "A") a++; else if (v === "J") j++; else if (v === "R") rr++; }
+  const asist = p + rr, inas = a + j, tot = asist + inas;
+  return { asist, inas, j, rr, tot, pct: tot ? Math.round(asist * 1000 / tot) / 10 : null };
+}
+
+/* ---------- pages ---------- */
+const PAGES = [
+  { id: "portada", s: "Portada", t: "Portada", c: "#1b2a52" },
+  { id: "general", s: "General", n: 1, t: "Información general", c: "#2c58a6" },
+  { id: "contenido", s: "Índice", t: "Contenido", c: "#5873a8" },
+  { id: "resumen", s: "Resumen", t: "Resumen del curso", c: "#23845a", nuevo: true },
+  { id: "matricula", s: "Matrícula", n: 2, t: "Registro de matrícula", c: "#2c6fb8" },
+  { id: "familia", s: "Familia", n: 3, t: "Antecedentes familiares", c: "#3a86a8" },
+  { id: "asistencia", s: "Asistencia", n: 4, t: "Asistencia diaria", c: "#b8452f" },
+  { id: "actividades", s: "Actividades", n: 6, t: "Registro de actividades", c: "#c27a12" },
+  { id: "evaluaciones", s: "Evaluaciones", n: 8, t: "Evaluaciones", c: "#6b4fb0" },
+  { id: "plan", s: "Plan anual", n: 10, t: "Plan de trabajo anual", c: "#4a8f2c" },
+  { id: "entrevistas", s: "Entrevistas", n: 16, t: "Entrevistas con apoderados", c: "#a8456e" },
+  { id: "hojas", s: "Hoja de vida", n: 17, t: "Hoja de vida", c: "#3d5a80" },
+];
+const TOC = [
+  [1, "Información general", "general"], [2, "Registro de matrícula", "matricula"], [null, "Antecedentes generales del (la) alumno(a)", "matricula"],
+  [3, "Antecedentes familiares", "familia"], [4, "Registro de asistencia diaria", "asistencia"], [5, "Asistencia diaria", "asistencia"],
+  [6, "Registro de actividades diarias", "actividades"], [7, "Registro de actividades", "actividades"], [8, "Registro de evaluaciones", "evaluaciones"],
+  [9, "Evaluaciones", "evaluaciones"], [10, "Elaboración del plan de trabajo anual", "plan"], [11, "Objetivos generales", "plan"],
+  [12, "Objetivos específicos", "plan"], [13, "Período de organización", "plan"], [14, "Período de realización o ejecución", "plan"],
+  [15, "Período de finalización", "plan"], [16, "Reuniones y/o entrevistas con apoderados", "entrevistas"], [17, "Hoja de vida de los(as) alumnos(as)", "hojas"],
+];
+const band = (p, extra = "") => `<div class="band">${p.n ? `<span class="n">${p.n}</span>` : ""}<h2>${esc(p.t)}</h2>${p.nuevo ? '<span class="tag">Nuevo en 2.0</span>' : ""}<span class="grow"></span>${extra}</div>`;
+const ui = { mes: defaultMonth(), fecha: todayISO(), periodo: "1S", alumnoHV: null, confirmClear: false };
+
+const R = {};
+
+R.portada = async el => {
+  const g = await G();
+  el.classList.add("cover");
+  el.innerHTML = `
+    <div class="cloud" style="width:120px;height:42px;left:58%;top:12%"></div>
+    <div class="cloud" style="width:90px;height:32px;left:80%;top:30%"></div>
+    <div class="cloud" style="width:70px;height:26px;left:12%;top:70%;opacity:.7"></div>
+    <div class="hill2"></div><div class="hill"></div><div class="grassdots"></div>
+    <div class="badge" aria-hidden="true">${badgeSVG()}</div>
+    <div class="label">
+      <div class="t">Libro<br>de<br>Clases</div>
+      <div class="sub"><b>PIE</b>Programa de Integración Escolar<br>Educación Especial Diferencial</div>
+      <div class="slots">
+        <div class="slot"><span>Educador(a)</span><b>${esc(g.educador)}</b></div>
+        <div class="slot"><span>Grupo / Curso</span><b>${esc(g.curso)}</b></div>
+        <div class="slot"><span>Nivel</span><b>${esc(g.nivel)}</b></div>
+        <div class="slot"><span>Año</span><b>${esc(g.anio)}</b></div>
+      </div>
+      <button class="open" data-go="${g.curso ? "contenido" : "general"}">${g.curso ? "Abrir libro" : "Completar portada"} →</button>
+    </div>
+    <div class="code">Edición digital 2.0</div>`;
+};
+function badgeSVG() {
+  const icons = ["Visual","Auditiva","Cognitiva","Motora","Del lenguaje","Mental","TEA"];
+  const ic = icons.map((t, i) => { const a = (Math.PI * (0.06 + 0.88 * i / (icons.length - 1))); const x = 160 + Math.cos(a) * 116, y = 158 + Math.sin(a) * 116;
+    return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><circle r="13" fill="#ffffff" opacity=".9"/><circle r="5" fill="#2f7d2a"/><text y="-17" text-anchor="middle" font-size="8" fill="#fff" font-family="Atkinson Hyperlegible, sans-serif" letter-spacing=".5">${t.toUpperCase()}</text></g>`; }).join("");
+  return `<svg viewBox="0 0 320 320" role="img"><defs><path id="arc" d="M 34 172 A 126 126 0 0 1 286 172"/></defs>
+    <circle cx="160" cy="160" r="156" fill="#4f9d3a" stroke="#fff" stroke-width="3" stroke-dasharray="4 5"/>
+    <circle cx="160" cy="160" r="138" fill="#5fb246"/>
+    <text font-family="Baloo 2, sans-serif" font-weight="800" font-size="22" fill="#fff" letter-spacing="3"><textPath href="#arc" startOffset="50%" text-anchor="middle">EDUCACIÓN INCLUSIVA</textPath></text>
+    <circle cx="160" cy="164" r="70" fill="#fff6c8"/>
+    <g font-family="Baloo 2, sans-serif" font-weight="800" text-anchor="middle">
+      <rect x="104" y="128" width="34" height="34" rx="7" fill="#e85a4f"/><text x="121" y="154" font-size="24" fill="#fff">A</text>
+      <rect x="143" y="120" width="34" height="34" rx="7" fill="#3ea6e6"/><text x="160" y="146" font-size="24" fill="#fff">B</text>
+      <rect x="182" y="128" width="34" height="34" rx="7" fill="#f5b72c"/><text x="199" y="154" font-size="24" fill="#fff">C</text>
+      <text x="160" y="200" font-size="26" fill="#1b2a52">1 + 2 = 3</text>
+      <text x="160" y="226" font-size="13" fill="#4f7a2a" letter-spacing="2">P · I · E</text>
+    </g>${ic}</svg>`;
+}
+
+R.general = async el => {
+  const g = await G(); const al = await A();
+  const f = (k, label, full) => `<label class="field${full ? " full" : ""}"><span>${label}</span><input id="g-${k}" data-k="${k}" value="${esc(g[k])}" autocomplete="off"></label>`;
+  el.innerHTML = band(PAGES[1]) +
+    (g.ejemplo ? `<div class="banner"><span class="grow">Este libro tiene <b>datos de ejemplo</b> con alumnos ficticios. Vacíalo cuando quieras empezar con tu curso real.</span>${clearCtl()}</div>` : "") +
+    (!al.list.length && !g.ejemplo ? `<div class="banner"><span class="grow">¿Quieres ver cómo funciona antes de ingresar tu curso? Carga un curso de ejemplo con 7 alumnos ficticios; podrás vaciarlo después.</span><button class="btn" data-act="demo">Cargar curso de ejemplo</button></div>` : "") +
+    `<div class="form">
+      ${f("anio", "Año")}${f("ciclo", "Ciclo")}
+      ${f("curso", "Curso")}${f("nivel", "Nivel")}
+      ${f("educador", "Nombre del educador(a) diferencial", true)}
+      ${f("profesorAula", "Profesor(a) de aula (co-docencia)", true)}
+      ${f("establecimiento", "Nombre del establecimiento", true)}
+      ${f("rbd", "RBD")}${f("localidad", "Localidad")}
+      ${f("comuna", "Comuna")}${f("provincia", "Provincia")}
+      ${f("region", "Región", true)}
+    </div>
+    <div class="toolrow"><span class="hint grow">Los datos se guardan solos mientras escribes. La portada se completa con esta información.</span>${g.ejemplo ? "" : (al.list.length ? clearCtl() : "")}</div>`;
+  el.addEventListener("input", e => { const k = e.target.dataset.k; if (!k) return; g[k] = e.target.value; save("libro/general"); });
+};
+function clearCtl() {
+  return ui.confirmClear
+    ? `<span class="confirm"><span>¿Borrar todo el libro? No se puede deshacer.</span><button class="btn sm danger" data-act="clear-yes">Sí, vaciar</button><button class="btn sm" data-act="clear-no">Cancelar</button></span>`
+    : `<button class="btn sm danger" data-act="clear">Vaciar libro</button>`;
+}
+
+R.contenido = async el => {
+  el.innerHTML = band(PAGES[2]) + `<p class="lead">El mismo índice del libro impreso. Cada línea te lleva a su página.</p><ol class="toc">${TOC.map(([n, t, id]) =>
+    `<li><button data-go="${id}"><span class="no">${n ? n + "." : ""}</span><span>${esc(t)}</span><span class="dots"></span><span class="go">ir →</span></button></li>`).join("")}
+    <li><button data-go="resumen"><span class="no">+</span><span>Resumen del curso</span><span class="tag">Nuevo</span><span class="dots"></span><span class="go">ir →</span></button></li></ol>`;
+};
+
+R.resumen = async el => {
+  const g = await G(), al = await A(), y = Number(g.anio) || new Date().getFullYear();
+  const mes = defaultMonth(), as = await getDoc(`asistencia/${y}-${pad(mes)}`, DEF.asis);
+  const ent = await getDoc("entrevistas/registro", DEF.entrevistas);
+  const acts = (await listIds("actividades")).filter(d => d.startsWith(y + "-"));
+  const list = al.list, H = list.filter(s => s.sexo === "H").length, M = list.filter(s => s.sexo === "M").length;
+  const perm = list.filter(s => s.nee === "Permanente").length, trans = list.filter(s => s.nee === "Transitoria").length;
+  let sum = 0, cnt = 0; const low = [];
+  sorted(list).forEach(s => { const st = attStats(as, s.id); if (st.pct != null) { sum += st.pct; cnt++; if (st.pct < 85) low.push([s, st]); } });
+  const avg = cnt ? Math.round(sum / cnt * 10) / 10 : null;
+  const diag = {}; list.forEach(s => { const k = (s.diagnostico || "Sin registrar").trim() || "Sin registrar"; diag[k] = (diag[k] || 0) + 1; });
+  const pct = (a, b) => b ? (a / b * 100) : 0;
+  el.innerHTML = band(PAGES[3]) + `<p class="lead">Lo que el libro impreso obligaba a contar a mano, calculado al día. Asistencia de ${MESES[mes - 1].toLowerCase()} ${y}.</p>
+  <div class="stats">
+    <div class="stat"><div class="k">Matrícula PIE</div><div class="v">${list.length}</div><div class="s">${H} hombres · ${M} mujeres</div><div class="bars"><span style="width:${pct(H, list.length)}%;background:var(--info)"></span><span style="width:${pct(M, list.length)}%;background:var(--lime)"></span></div></div>
+    <div class="stat"><div class="k">NEE</div><div class="v">${perm}<span style="font-size:18px;color:var(--muted)"> / ${trans}</span></div><div class="s">permanentes / transitorias</div><div class="bars"><span style="width:${pct(perm, list.length)}%;background:var(--brand)"></span><span style="width:${pct(trans, list.length)}%;background:var(--warn)"></span></div></div>
+    <div class="stat"><div class="k">Asistencia ${MESES[mes - 1]}</div><div class="v" style="color:${avg != null && avg < 85 ? "var(--bad)" : "inherit"}">${avg == null ? "—" : avg + "%"}</div><div class="s">${avg == null ? "Aún sin registros este mes" : "promedio del curso"}</div><div class="bars"><span style="width:${avg || 0}%;background:${avg != null && avg < 85 ? "var(--bad)" : "var(--ok)"}"></span></div></div>
+    <div class="stat"><div class="k">Clases registradas</div><div class="v">${acts.length}</div><div class="s">${ent.list.length} entrevista${ent.list.length === 1 ? "" : "s"} con apoderados</div></div>
+  </div>
+  <div class="cols2">
+    <div><div class="sec"><h3>Alerta de asistencia <span class="n">bajo 85%</span></h3>
+      <div class="list">${low.length ? low.map(([s, st]) => `<div class="row"><span class="grow">${esc(nombre(s))}</span><span class="pill bad">${st.pct}%</span><button class="btn sm ghost" data-hv="${s.id}">Hoja de vida</button></div>`).join("") : `<div class="empty">${cnt ? "Todos los alumnos están sobre 85% este mes." : "Registra asistencia para ver alertas."}</div>`}</div></div></div>
+    <div><div class="sec"><h3>Diagnósticos del grupo</h3>
+      <div class="list">${list.length ? Object.entries(diag).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="row"><span class="grow">${esc(k)}</span><span class="pill info">${v}</span></div>`).join("") : `<div class="empty">Agrega alumnos en el <button class="btn sm" data-go="matricula">Registro de matrícula</button></div>`}</div></div></div>
+  </div>`;
+};
+
+R.matricula = async el => {
+  const g = await G(), al = await A();
+  const cols = [["apPat", "Apellido paterno"], ["apMat", "Apellido materno"], ["nombres", "Nombres"], ["rut", "RUN"]];
+  const render = () => {
+    const rows = al.list.map((s, i) => `<tr data-id="${s.id}">
+      <td class="num">${i + 1}</td>
+      ${cols.map(([k]) => `<td><input id="m-${s.id}-${k}" data-k="${k}" value="${esc(s[k])}" style="min-width:${k === "nombres" ? 150 : 110}px"></td>`).join("")}
+      <td><select id="m-${s.id}-sexo" data-k="sexo"><option value=""></option><option value="H"${s.sexo === "H" ? " selected" : ""}>H</option><option value="M"${s.sexo === "M" ? " selected" : ""}>M</option></select></td>
+      <td><input type="date" id="m-${s.id}-fn" data-k="fechaNac" value="${esc(s.fechaNac)}"></td>
+      <td class="ro" style="text-align:center" data-edad>${edad31Marzo(s.fechaNac, g.anio)}</td>
+      <td><input type="date" id="m-${s.id}-fm" data-k="fechaMatricula" value="${esc(s.fechaMatricula)}"></td>
+      <td><input id="m-${s.id}-dir" data-k="direccion" value="${esc(s.direccion)}" style="min-width:170px"></td>
+      <td><input id="m-${s.id}-com" data-k="comuna" value="${esc(s.comuna)}" style="min-width:100px"></td>
+      <td><select id="m-${s.id}-nee" data-k="nee"><option value=""></option>${["Transitoria", "Permanente"].map(o => `<option${s.nee === o ? " selected" : ""}>${o}</option>`).join("")}</select></td>
+      <td><input id="m-${s.id}-dg" data-k="diagnostico" value="${esc(s.diagnostico)}" style="min-width:170px" list="dx"></td>
+      <td><input id="m-${s.id}-obs" data-k="obs" value="${esc(s.obs)}" style="min-width:160px"></td>
+      <td><button class="del" data-del="${s.id}" aria-label="Eliminar alumno">✕</button></td></tr>`).join("");
+    el.innerHTML = band(PAGES[4], csvBtn("matricula")) + `<p class="lead">Antecedentes generales del (la) alumno(a). La edad al 31 de marzo se calcula sola a partir de la fecha de nacimiento.</p>
+    <div class="scroll"><table class="grid"><thead><tr><th>N°</th>${cols.map(c => `<th>${c[1]}</th>`).join("")}<th>Sexo</th><th>Fecha de nacimiento</th><th>Edad al 31 de marzo</th><th>Fecha de matrícula</th><th>Domicilio · Dirección</th><th>Comuna</th><th>NEE</th><th>Diagnóstico</th><th>Observaciones</th><th></th></tr></thead>
+    <tbody>${rows || `<tr><td colspan="16"><div class="empty">Aún no hay alumnos. Agrega el primero con el botón de abajo.</div></td></tr>`}</tbody></table></div>
+    <datalist id="dx">${["Discapacidad intelectual leve","Discapacidad intelectual moderada","Trastorno del espectro autista","Discapacidad visual","Discapacidad auditiva","Discapacidad motora","Disfasia severa","Trastorno específico del lenguaje","Dificultades específicas del aprendizaje","Trastorno por déficit atencional (TDAH)","Funcionamiento intelectual limítrofe"].map(o => `<option value="${o}">`).join("")}</datalist>
+    <div class="toolrow"><button class="btn primary" data-act="add">+ Agregar alumno</button><span class="hint">${al.list.length} alumno${al.list.length === 1 ? "" : "s"} matriculado${al.list.length === 1 ? "" : "s"}</span></div>`;
+  };
+  render();
+  el.addEventListener("input", e => { const tr = e.target.closest("tr[data-id]"), k = e.target.dataset.k; if (!tr || !k) return;
+    const s = al.list.find(x => x.id === tr.dataset.id); s[k] = e.target.value; if (k === "fechaNac") tr.querySelector("[data-edad]").textContent = edad31Marzo(s.fechaNac, g.anio); save("libro/alumnos"); });
+  el.addEventListener("change", e => { if (e.target.tagName === "SELECT") e.target.dispatchEvent(new Event("input", { bubbles: true })); });
+  el.addEventListener("click", e => {
+    if (e.target.closest("[data-act=add]")) { const s = { id: uid(), fechaMatricula: todayISO() }; al.list.push(s); save("libro/alumnos"); render(); $(`#m-${s.id}-apPat`)?.focus(); }
+    const d = e.target.closest("[data-del]"); if (d) { const s = al.list.find(x => x.id === d.dataset.del);
+      if (d.dataset.sure) { al.list = al.list.filter(x => x !== s); save("libro/alumnos"); render(); } else { d.dataset.sure = 1; d.textContent = "¿Eliminar?"; setTimeout(() => { if (d.isConnected) { delete d.dataset.sure; d.textContent = "✕"; } }, 3000); } }
+    if (e.target.closest("[data-csv]")) downloadCSV(`matricula_${g.curso || "curso"}_${g.anio}.csv`, [["N°", "Apellido paterno", "Apellido materno", "Nombres", "RUN", "Sexo", "Fecha nacimiento", "Edad al 31/03", "Fecha matrícula", "Dirección", "Comuna", "NEE", "Diagnóstico", "Observaciones"],
+      ...al.list.map((s, i) => [i + 1, s.apPat, s.apMat, s.nombres, s.rut, s.sexo, fmtDate(s.fechaNac), edad31Marzo(s.fechaNac, g.anio), fmtDate(s.fechaMatricula), s.direccion, s.comuna, s.nee, s.diagnostico, s.obs])]);
+  });
+};
+
+R.familia = async el => {
+  const al = await A();
+  const cols = [["apoderado", "Nombre del apoderado(a)", 180], ["parentesco", "Parentesco", 100], ["telefono", "Teléfono", 120], ["email", "Correo", 170], ["viveCon", "Vive con", 130], ["ocupacion", "Ocupación apoderado", 140], ["apSuplente", "Apoderado suplente", 160]];
+  const list = al.list;
+  el.innerHTML = band(PAGES[5]) + `<p class="lead">Datos de contacto y grupo familiar. Los nombres vienen del registro de matrícula.</p>
+  <div class="scroll"><table class="grid"><thead><tr><th>N°</th><th>Alumno(a)</th>${cols.map(c => `<th>${c[1]}</th>`).join("")}</tr></thead><tbody>
+  ${list.length ? list.map((s, i) => `<tr data-id="${s.id}"><td class="num">${i + 1}</td><td class="ro">${esc(nombre(s))}</td>${cols.map(([k, , w]) => `<td><input id="f-${s.id}-${k}" data-k="${k}" value="${esc(s[k])}" style="min-width:${w}px"></td>`).join("")}</tr>`).join("")
+    : `<tr><td colspan="9"><div class="empty">Primero agrega alumnos en el <button class="btn sm" data-go="matricula">Registro de matrícula</button></div></td></tr>`}
+  </tbody></table></div>`;
+  el.addEventListener("input", e => { const tr = e.target.closest("tr[data-id]"), k = e.target.dataset.k; if (!tr || !k) return; list.find(x => x.id === tr.dataset.id)[k] = e.target.value; save("libro/alumnos"); });
+};
+
+const CYC = ["", "P", "A", "J", "R"];
+R.asistencia = async el => {
+  const g = await G(), al = await A(), y = Number(g.anio) || new Date().getFullYear();
+  const render = async () => {
+    const path = `asistencia/${y}-${pad(ui.mes)}`, doc = await getDoc(path, DEF.asis);
+    const nd = daysIn(y, ui.mes), list = sorted(al.list);
+    const days = Array.from({ length: nd }, (_, i) => i + 1);
+    const worked = days.filter(d => list.some(s => (doc.m[s.id] || {})[d]));
+    const dayHead = days.map(d => { const we = isWE(y, ui.mes, d), w = new Date(y, ui.mes - 1, d).getDay();
+      return `<th class="day${we ? " we" : ""}" ${we ? "" : `data-day="${d}" title="Marcar a todos presentes el ${d}"`}>${d}<small>${DIAS[w]}</small></th>`; }).join("");
+    const rows = list.map((s, i) => { const r = doc.m[s.id] || {}, st = attStats(doc, s.id);
+      return `<tr data-id="${s.id}"><td class="num">${i + 1}</td><td class="name">${esc(nombre(s))}</td>${days.map(d => isWE(y, ui.mes, d) ? `<td class="c we"></td>` :
+        `<td class="c"><button class="mk" data-d="${d}" data-v="${r[d] || ""}" aria-label="${esc(nombre(s))}, día ${d}: ${({ P: "presente", A: "ausente", J: "justificado", R: "atraso" })[r[d]] || "sin marcar"}">${r[d] === "P" ? "•" : (r[d] || "")}</button></td>`).join("")}
+        <td class="ro" style="text-align:center">${st.asist}</td><td class="ro" style="text-align:center">${st.inas}</td><td class="ro pct ${st.pct != null && st.pct < 85 ? "low" : ""}" style="text-align:center">${st.pct == null ? "—" : st.pct + "%"}</td></tr>`; }).join("");
+    const foot = (lbl, fn) => `<tr><td></td><td class="lbl">${lbl}</td>${days.map(d => isWE(y, ui.mes, d) ? `<td class="we"></td>` : `<td>${fn(d)}</td>`).join("")}<td colspan="3"></td></tr>`;
+    const cnt = (d, set) => { const n = list.filter(s => set.includes((doc.m[s.id] || {})[d])).length; return worked.includes(d) ? n : ""; };
+    el.innerHTML = band(PAGES[6], `<label class="inl">Mes de <select id="as-mes">${MESES.map((m, i) => i >= 2 ? `<option value="${i + 1}"${i + 1 === ui.mes ? " selected" : ""}>${m}</option>` : "").join("")}</select></label><span class="chip">de ${y}</span><span class="chip">Días trabajados: <b>${worked.length}</b></span>${csvBtn("asistencia")}`) +
+      `<p class="lead">Toca una casilla para cambiar entre presente, ausente, justificado y atraso. Toca el número del día para marcar a todo el curso presente.</p>
+      <div class="scroll"><table class="grid att"><thead><tr><th>N°</th><th class="name">Apellidos y nombres</th>${dayHead}<th>Asist.</th><th>Inasist.</th><th>%</th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="${nd + 5}"><div class="empty">Agrega alumnos en el <button class="btn sm" data-go="matricula">Registro de matrícula</button> para pasar lista.</div></td></tr>`}</tbody>
+      <tfoot>${list.length ? foot("Asistencia", d => cnt(d, ["P", "R"])) + foot("Inasistencia", d => cnt(d, ["A", "J"])) + foot("Matrícula", d => worked.includes(d) ? list.length : "") : ""}</tfoot></table></div>
+      <div class="legend"><span><b style="color:var(--ok)">•</b>Presente</span><span><b style="background:var(--bad);color:var(--paper)">A</b>Ausente</span><span><b style="background:var(--warn);color:var(--paper)">J</b>Ausente justificado</span><span><b style="color:var(--info);background:color-mix(in srgb,var(--info) 15%,transparent)">R</b>Atraso (cuenta como presente)</span><span>En rojo: bajo 85% de asistencia</span></div>`;
+    el._doc = doc; el._path = path; el._list = list;
+  };
+  await render();
+  el.addEventListener("change", async e => { if (e.target.id === "as-mes") { ui.mes = Number(e.target.value); await render(); } });
+  el.addEventListener("click", async e => {
+    const doc = el._doc, path = el._path;
+    const b = e.target.closest(".mk"); if (b) { const id = b.closest("tr").dataset.id, d = b.dataset.d; doc.m[id] = doc.m[id] || {};
+      const nv = CYC[(CYC.indexOf(doc.m[id][d] || "") + 1) % CYC.length]; if (nv) doc.m[id][d] = nv; else delete doc.m[id][d]; save(path); await render(); $(`tr[data-id="${id}"] .mk[data-d="${d}"]`, el)?.focus(); return; }
+    const h = e.target.closest("th[data-day]"); if (h) { const d = h.dataset.day; const all = el._list.every(s => (doc.m[s.id] || {})[d] === "P");
+      el._list.forEach(s => { doc.m[s.id] = doc.m[s.id] || {}; if (all) delete doc.m[s.id][d]; else if (!doc.m[s.id][d]) doc.m[s.id][d] = "P"; }); save(path); await render(); return; }
+    if (e.target.closest("[data-csv]")) { const nd = daysIn(y, ui.mes), days = Array.from({ length: nd }, (_, i) => i + 1).filter(d => !isWE(y, ui.mes, d));
+      downloadCSV(`asistencia_${MESES[ui.mes - 1].toLowerCase()}_${y}.csv`, [["N°", "Alumno(a)", ...days, "Asistencias", "Inasistencias", "%"], ...el._list.map((s, i) => { const st = attStats(doc, s.id); return [i + 1, nombre(s), ...days.map(d => (doc.m[s.id] || {})[d] || ""), st.asist, st.inas, st.pct ?? ""]; })]); }
+  });
+};
+
+R.actividades = async el => {
+  const g = await G(), al = await A();
+  const render = async () => {
+    const path = `actividades/${ui.fecha}`, doc = await getDoc(path, DEF.act);
+    if (!doc.rows.length) doc.rows = blankRows();
+    const [y, m, d] = ui.fecha.split("-").map(Number);
+    const as = await getDoc(`asistencia/${y}-${pad(m)}`, DEF.asis);
+    let H = 0, M = 0, any = false; al.list.forEach(s => { const v = (as.m[s.id] || {})[d]; if (v) any = true; if (v === "P" || v === "R") { if (s.sexo === "H") H++; else if (s.sexo === "M") M++; } });
+    const ids = (await listIds("actividades")).filter(x => x.startsWith(`${y}-${pad(m)}`));
+    if (!ids.includes(ui.fecha)) ids.push(ui.fecha); ids.sort();
+    const locked = !!doc.firma;
+    const dis = locked ? " disabled" : "";
+    const dt = new Date(y, m - 1, d);
+    el.innerHTML = band(PAGES[7], `<label class="inl">Fecha <input type="date" id="ac-fecha" value="${ui.fecha}"></label><span class="chip">${["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"][dt.getDay()]} ${d} de ${MESES[m - 1].toLowerCase()}</span>`) +
+      `<div class="datechips" aria-label="Días con registro este mes">${ids.map(x => `<button data-fecha="${x}" aria-pressed="${x === ui.fecha}">${Number(x.slice(8))}</button>`).join("")}</div>
+      <div class="scroll"><table class="grid"><thead><tr><th style="width:80px">Hora o período</th><th>Materia · contenido · tema u objetivos</th><th>Actividades desarrolladas</th><th style="width:78px">Inasist.</th><th style="width:78px">Asist.</th><th style="width:78px">Atrasos</th><th style="width:150px">Evaluación<br>(tipo de instrumento)</th></tr></thead>
+      <tbody>${doc.rows.map((r, i) => `<tr data-i="${i}">
+        <td><input id="ac-${i}-hora" data-k="hora" value="${esc(r.hora)}" placeholder="${i + 1}°"${dis}></td>
+        <td><textarea id="ac-${i}-mat" data-k="materia" rows="1" style="min-width:200px"${dis}>${esc(r.materia)}</textarea></td>
+        <td><textarea id="ac-${i}-act" data-k="actividades" rows="1" style="min-width:220px"${dis}>${esc(r.actividades)}</textarea></td>
+        <td><input id="ac-${i}-in" data-k="inasist" inputmode="numeric" value="${esc(r.inasist)}"${dis}></td>
+        <td><input id="ac-${i}-as" data-k="asist" inputmode="numeric" value="${esc(r.asist)}"${dis}></td>
+        <td><input id="ac-${i}-at" data-k="atrasos" inputmode="numeric" value="${esc(r.atrasos)}"${dis}></td>
+        <td><input id="ac-${i}-ev" data-k="eval" value="${esc(r.eval)}" list="instr" style="min-width:140px"${dis}></td></tr>`).join("")}</tbody></table></div>
+      <datalist id="instr">${["Lista de cotejo","Escala de apreciación","Rúbrica","Registro anecdótico","Prueba adaptada","Observación directa","Portafolio","Autoevaluación"].map(o => `<option value="${o}">`).join("")}</datalist>
+      <div class="toolrow">${locked ? "" : `<button class="btn sm" data-act="row">+ Agregar período</button>`}<span class="grow"></span></div>
+      <div class="actfoot">
+        <label style="display:grid;gap:4px"><span class="hint" style="text-transform:uppercase;letter-spacing:1px;color:var(--brand);font-weight:700;font-size:11px">Observaciones</span>
+          <textarea id="ac-obs" class="lined" style="min-height:92px" data-obs${dis}>${esc(doc.obs)}</textarea></label>
+        <div class="hmt"><div class="t">Asistencia diaria</div><div class="boxes"><div>H<b>${any ? H : "–"}</b></div><div>M<b>${any ? M : "–"}</b></div><div>T<b>${any ? H + M : "–"}</b></div></div>
+          <div class="note">${any ? "Tomada de la asistencia del día" : "Pasa lista en Asistencia diaria"}</div></div>
+        <div class="sign">${locked ? `<div class="stamp"><b>Firmado</b>${esc(doc.firma.nombre)}<br>${new Date(doc.firma.ts).toLocaleString("es-CL", { dateStyle: "short", timeStyle: "short" })}</div><button class="btn sm ghost" data-act="unsign">Quitar firma para editar</button>`
+          : `<input id="ac-firma" class="obsline" placeholder="Nombre del profesor(a)" value="${esc(g.educador)}"><button class="btn sm primary" data-act="sign">Firmar registro del día</button>`}
+          <div class="line">Firma del profesor(a)</div></div>
+      </div>`;
+    el._doc = doc; el._path = path;
+  };
+  await render();
+  el.addEventListener("input", e => { const doc = el._doc; if (e.target.dataset.obs !== undefined) { doc.obs = e.target.value; save(el._path); return; }
+    const tr = e.target.closest("tr[data-i]"), k = e.target.dataset.k; if (!tr || !k) return; doc.rows[tr.dataset.i][k] = e.target.value; save(el._path); });
+  el.addEventListener("change", async e => { if (e.target.id === "ac-fecha" && e.target.value) { ui.fecha = e.target.value; await render(); } });
+  el.addEventListener("click", async e => {
+    const c = e.target.closest("[data-fecha]"); if (c) { ui.fecha = c.dataset.fecha; await render(); return; }
+    const a = e.target.closest("[data-act]")?.dataset.act; const doc = el._doc;
+    if (a === "row") { doc.rows.push({ hora: "", materia: "", actividades: "", inasist: "", asist: "", atrasos: "", eval: "" }); save(el._path); await render(); }
+    if (a === "sign") { const n = $("#ac-firma", el).value.trim(); if (!n) { toast("Escribe tu nombre para firmar."); return; } doc.firma = { nombre: n, ts: Date.now() }; save(el._path); await render(); toast("Registro del día firmado."); }
+    if (a === "unsign") { doc.firma = null; save(el._path); await render(); }
+  });
+};
+
+const EVC = ["", "L", "ML", "PL", "NO"];
+const PERIODOS = { "1S": "1° Semestre", "2S": "2° Semestre", "1T": "1° Trimestre", "2T": "2° Trimestre", "3T": "3° Trimestre" };
+function sugerencia(doc, id) { const n = doc.n[id] || {}; let s = 0, c = 0; for (const v of Object.values(n)) { if (v === "L") { s += 3; c++; } else if (v === "ML") { s += 2; c++; } else if (v === "PL") { s += 1; c++; } }
+  if (!c) return ""; const p = s / c; return p >= 2.5 ? "Logrado" : p >= 1.75 ? "Medianamente logrado" : "Por lograr"; }
+R.evaluaciones = async el => {
+  const g = await G(), al = await A(), y = g.anio;
+  const render = async () => {
+    const path = `evaluaciones/${y}-${ui.periodo}`, doc = await getDoc(path, DEF.eval);
+    if (!doc.areas.length) doc.areas = blankAreas();
+    const list = sorted(al.list);
+    el.innerHTML = band(PAGES[8], `<label class="inl">Período <select id="ev-p">${Object.entries(PERIODOS).map(([k, v]) => `<option value="${k}"${k === ui.periodo ? " selected" : ""}>${v}</option>`).join("")}</select></label><label class="inl">Fecha <input type="date" id="ev-fecha" value="${esc(doc.fecha)}"></label>${csvBtn("evaluaciones")}`) +
+      `<p class="lead">Cinco áreas con cinco objetivos cada una, como en el libro. Toca una casilla para registrar el nivel de logro; la situación final se sugiere sola y puedes reemplazarla.</p>
+      <div class="scroll"><table class="grid att"><thead>
+        <tr><th rowspan="2">N°</th><th rowspan="2" class="name">Alumno(a)</th>${doc.areas.map((a, i) => `<th colspan="5" class="areah">Área<input id="ev-area-${i}" data-area="${i}" value="${esc(a.nombre)}" placeholder="Ej.: Lenguaje"></th>`).join("")}<th rowspan="2" style="min-width:170px">Situación final</th></tr>
+        <tr>${doc.areas.map(() => [1, 2, 3, 4, 5].map(o => `<th class="day" style="cursor:default">${o}</th>`).join("")).join("")}</tr></thead>
+      <tbody>${list.length ? list.map((s, i) => `<tr data-id="${s.id}"><td class="num">${i + 1}</td><td class="name">${esc(nombre(s))}</td>${doc.areas.map((a, ai) => [0, 1, 2, 3, 4].map(o => { const v = (doc.n[s.id] || {})[`${ai}-${o}`] || "";
+          return `<td class="c"><button class="ev" data-k="${ai}-${o}" data-v="${v}" aria-label="${esc(nombre(s))}, ${esc(a.nombre || "área " + (ai + 1))}, objetivo ${o + 1}: ${v || "sin evaluar"}">${v}</button></td>`; }).join("")).join("")}
+          <td><input id="ev-fin-${s.id}" data-fin="${s.id}" value="${esc(doc.final[s.id] || "")}" placeholder="${esc(sugerencia(doc, s.id))}"><span class="sug" data-sug="${s.id}">${sugerencia(doc, s.id) ? "Sugerido: " + sugerencia(doc, s.id) : ""}</span></td></tr>`).join("")
+        : `<tr><td colspan="28"><div class="empty">Agrega alumnos en el <button class="btn sm" data-go="matricula">Registro de matrícula</button>.</div></td></tr>`}</tbody></table></div>
+      <div class="legend"><span><b class="ev" data-v="L" style="width:26px">L</b>Logrado</span><span><b class="ev" data-v="ML" style="width:26px">ML</b>Medianamente logrado</span><span><b class="ev" data-v="PL" style="width:26px">PL</b>Por lograr</span><span><b class="ev" data-v="NO" style="width:26px">NO</b>No observado</span></div>
+      <div class="objs">${doc.areas.map((a, ai) => `<fieldset><legend>Objetivos · ${esc(a.nombre || "Área " + (ai + 1))}</legend>${a.obj.map((o, oi) => `<label><b>${oi + 1}.-</b><input id="ev-o-${ai}-${oi}" data-obj="${ai}-${oi}" value="${esc(o)}"></label>`).join("")}</fieldset>`).join("")}</div>`;
+    el._doc = doc; el._path = path; el._list = list;
+  };
+  await render();
+  el.addEventListener("input", e => { const doc = el._doc, t = e.target;
+    if (t.dataset.area !== undefined) { doc.areas[t.dataset.area].nombre = t.value; }
+    else if (t.dataset.obj) { const [a, o] = t.dataset.obj.split("-"); doc.areas[a].obj[o] = t.value; }
+    else if (t.dataset.fin) { doc.final[t.dataset.fin] = t.value; }
+    else if (t.id === "ev-fecha") { doc.fecha = t.value; } else return; save(el._path); });
+  el.addEventListener("change", async e => { if (e.target.id === "ev-p") { ui.periodo = e.target.value; await render(); } });
+  el.addEventListener("click", e => { const doc = el._doc;
+    const b = e.target.closest("button.ev"); if (b) { const id = b.closest("tr").dataset.id; doc.n[id] = doc.n[id] || {}; const nv = EVC[(EVC.indexOf(b.dataset.v) + 1) % EVC.length];
+      if (nv) doc.n[id][b.dataset.k] = nv; else delete doc.n[id][b.dataset.k]; b.dataset.v = nv; b.textContent = nv; save(el._path);
+      const sg = sugerencia(doc, id); $(`[data-sug="${id}"]`, el).textContent = sg ? "Sugerido: " + sg : ""; $(`[data-fin="${id}"]`, el).placeholder = sg; return; }
+    if (e.target.closest("[data-csv]")) { const hdr = ["N°", "Alumno(a)"]; doc.areas.forEach((a, ai) => [1, 2, 3, 4, 5].forEach(o => hdr.push(`${a.nombre || "Área " + (ai + 1)} · Obj ${o}`))); hdr.push("Situación final");
+      downloadCSV(`evaluaciones_${ui.periodo}_${y}.csv`, [hdr, ...el._list.map((s, i) => [i + 1, nombre(s), ...doc.areas.flatMap((a, ai) => [0, 1, 2, 3, 4].map(o => (doc.n[s.id] || {})[`${ai}-${o}`] || "")), doc.final[s.id] || sugerencia(doc, s.id)])]); }
+  });
+};
+
+R.plan = async el => {
+  const doc = await getDoc("plan/anual", DEF.plan);
+  const per = (k, n, t) => `<div class="sec"><h3><span class="n">${n}.</span>${t}</h3><div class="dates"><label>Desde <input type="date" id="pl-${k}-ini" data-p="${k}.ini" value="${esc(doc[k].ini)}"></label><label>Hasta <input type="date" id="pl-${k}-fin" data-p="${k}.fin" value="${esc(doc[k].fin)}"></label></div><textarea class="lined" id="pl-${k}-txt" data-p="${k}.txt" placeholder="Acciones y responsables del período">${esc(doc[k].txt)}</textarea></div>`;
+  el.innerHTML = band(PAGES[9]) + `<p class="lead">Elaboración del plan de trabajo anual del equipo PIE, con sus objetivos y los tres períodos del año.</p>
+    <div class="sec"><h3><span class="n">10.</span>Elaboración del plan de trabajo anual</h3><textarea class="lined" id="pl-elab" data-p="elaboracion" placeholder="Fundamentación, diagnóstico del grupo, estrategias de co-docencia…">${esc(doc.elaboracion)}</textarea></div>
+    <div class="cols2"><div class="sec"><h3><span class="n">11.</span>Objetivos generales</h3><textarea class="lined" id="pl-gen" data-p="generales" style="min-height:212px">${esc(doc.generales)}</textarea></div>
+    <div class="sec"><h3><span class="n">12.</span>Objetivos específicos</h3><textarea class="lined" id="pl-esp" data-p="especificos" style="min-height:212px">${esc(doc.especificos)}</textarea></div></div>
+    <div class="periods">${per("org", 13, "Período de organización")}${per("eje", 14, "Período de realización o ejecución")}${per("fin", 15, "Período de finalización")}</div>`;
+  el.addEventListener("input", e => { const p = e.target.dataset.p; if (!p) return; const [a, b] = p.split("."); if (b) doc[a][b] = e.target.value; else doc[a] = e.target.value; save("plan/anual"); });
+};
+
+R.entrevistas = async el => {
+  const al = await A(), doc = await getDoc("entrevistas/registro", DEF.entrevistas);
+  const opts = sel => `<option value="">— Seleccionar —</option>` + sorted(al.list).map(s => `<option value="${s.id}"${s.id === sel ? " selected" : ""}>${esc(nombre(s))}</option>`).join("");
+  const render = () => {
+    const list = [...doc.list].sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""));
+    el.innerHTML = band(PAGES[10], `<button class="btn sm primary" data-act="new">+ Nueva entrevista</button>`) +
+      `<p class="lead">Cada entrevista queda como un acta: quién asistió, el motivo y los acuerdos tomados.</p>
+      <div class="stack">${list.length ? list.map(r => `<article class="acta" data-id="${r.id}">
+        <div class="top"><span class="pill ${r.tipo === "Reunión de apoderados" ? "info" : "mute"}">${esc(r.tipo || "Entrevista")}</span><span class="grow"></span><button class="del" data-del="${r.id}">Eliminar</button></div>
+        <div class="g3"><label>Fecha<input type="date" id="en-${r.id}-f" data-k="fecha" value="${esc(r.fecha)}"></label>
+          <label>Alumno(a)<select id="en-${r.id}-a" data-k="alumnoId">${opts(r.alumnoId)}</select></label>
+          <label>Tipo<select id="en-${r.id}-t" data-k="tipo">${["Entrevista individual", "Reunión de apoderados", "Entrega de informe", "Citación"].map(o => `<option${r.tipo === o ? " selected" : ""}>${o}</option>`).join("")}</select></label></div>
+        <div class="g3"><label>Asiste<input id="en-${r.id}-as" data-k="asistente" value="${esc(r.asistente)}" placeholder="Nombre del apoderado(a)"></label>
+          <label>Parentesco<input id="en-${r.id}-pa" data-k="parentesco" value="${esc(r.parentesco)}"></label>
+          <label>Profesional<input id="en-${r.id}-pr" data-k="profesional" value="${esc(r.profesional)}"></label></div>
+        <label>Motivo<textarea id="en-${r.id}-m" data-k="motivo" rows="2">${esc(r.motivo)}</textarea></label>
+        <label>Acuerdos y compromisos<textarea id="en-${r.id}-ac" data-k="acuerdos" rows="2">${esc(r.acuerdos)}</textarea></label>
+      </article>`).join("") : `<div class="list"><div class="empty">No hay entrevistas registradas. Crea la primera con “Nueva entrevista”.</div></div>`}</div>`;
+  };
+  render();
+  const upd = e => { const art = e.target.closest("[data-id]"), k = e.target.dataset.k; if (!art || !k) return; doc.list.find(x => x.id === art.dataset.id)[k] = e.target.value; save("entrevistas/registro"); };
+  el.addEventListener("input", upd); el.addEventListener("change", e => { if (e.target.tagName === "SELECT") { upd(e); if (e.target.dataset.k === "tipo") render(); } });
+  el.addEventListener("click", e => {
+    if (e.target.closest("[data-act=new]")) { const g = store.cache.get("libro/general") || {}; const r = { id: uid(), fecha: todayISO(), tipo: "Entrevista individual", profesional: g.educador || "" }; doc.list.push(r); save("entrevistas/registro"); render(); $(`#en-${r.id}-a`)?.focus(); }
+    const d = e.target.closest("[data-del]"); if (d) { if (d.dataset.sure) { doc.list = doc.list.filter(x => x.id !== d.dataset.del); save("entrevistas/registro"); render(); } else { d.dataset.sure = 1; d.textContent = "¿Eliminar acta?"; } }
+  });
+};
+
+R.hojas = async el => {
+  const g = await G(), al = await A(), doc = await getDoc("hojas/registro", DEF.hojas), y = Number(g.anio) || new Date().getFullYear();
+  const list = sorted(al.list);
+  if (!ui.alumnoHV || !list.find(s => s.id === ui.alumnoHV)) ui.alumnoHV = list[0]?.id || null;
+  const months = []; for (let m = 3; m <= 12; m++) months.push(await getDoc(`asistencia/${y}-${pad(m)}`, DEF.asis));
+  const render = () => {
+    const s = list.find(x => x.id === ui.alumnoHV);
+    let asis = 0, tot = 0; if (s) months.forEach(md => { const st = attStats(md, s.id); asis += st.asist; tot += st.tot; });
+    const pct = tot ? Math.round(asis * 1000 / tot) / 10 : null;
+    const ent = s ? [...(doc.by[s.id] || [])].sort((a, b) => (b.fecha || "").localeCompare(a.fecha || "")) : [];
+    el.innerHTML = band(PAGES[11]) + (list.length ? `<div class="hv">
+      <div class="stu" role="list">${list.map(x => `<button data-s="${x.id}" aria-pressed="${x.id === ui.alumnoHV}">${esc(nombre(x))}<span class="c">${(doc.by[x.id] || []).length || ""}</span></button>`).join("")}</div>
+      <div>${s ? `<div class="ficha"><h3>${esc(nombre(s))}</h3>
+        <div>RUN<b>${esc(s.rut) || "—"}</b></div><div>Edad al 31/03<b>${edad31Marzo(s.fechaNac, g.anio) || "—"}</b></div>
+        <div>NEE<b>${esc(s.nee) || "—"}</b></div><div>Diagnóstico<b>${esc(s.diagnostico) || "—"}</b></div>
+        <div>Apoderado(a)<b>${esc(s.apoderado) || "—"}${s.telefono ? " · " + esc(s.telefono) : ""}</b></div>
+        <div>Asistencia anual<b style="color:${pct != null && pct < 85 ? "var(--bad)" : "inherit"}">${pct == null ? "Sin registros" : pct + "%"}</b></div></div>
+        <div class="acta" style="margin-bottom:14px"><div class="g3"><label>Fecha<input type="date" id="hv-f" value="${todayISO()}"></label>
+          <label>Tipo<select id="hv-t"><option>Observación</option><option>Positiva</option><option>Negativa</option></select></label>
+          <label>Registra<input id="hv-a" value="${esc(g.educador)}"></label></div>
+          <label>Anotación<textarea id="hv-x" rows="2" placeholder="Describe el hecho observado, avances o apoyos entregados"></textarea></label>
+          <div><button class="btn primary sm" data-act="add">Agregar a la hoja de vida</button></div></div>
+        <div class="stack">${ent.length ? ent.map(r => `<div class="entry ${esc(r.tipo)}"><div class="meta"><span class="pill ${r.tipo === "Positiva" ? "ok" : r.tipo === "Negativa" ? "bad" : "info"}">${esc(r.tipo)}</span><span>${fmtDate(r.fecha)}</span><span>${esc(r.autor)}</span><span class="grow"></span><button class="del" data-del="${r.id}">Eliminar</button></div><p>${esc(r.texto)}</p></div>`).join("")
+          : `<div class="list"><div class="empty">Sin anotaciones para este alumno(a).</div></div>`}</div>` : ""}</div></div>`
+      : `<div class="list"><div class="empty">Agrega alumnos en el <button class="btn sm" data-go="matricula">Registro de matrícula</button>.</div></div>`);
+  };
+  render();
+  el.addEventListener("click", e => {
+    const b = e.target.closest("[data-s]"); if (b) { ui.alumnoHV = b.dataset.s; render(); return; }
+    if (e.target.closest("[data-act=add]")) { const x = $("#hv-x", el).value.trim(); if (!x) { toast("Escribe la anotación antes de agregarla."); return; }
+      (doc.by[ui.alumnoHV] = doc.by[ui.alumnoHV] || []).push({ id: uid(), fecha: $("#hv-f", el).value, tipo: $("#hv-t", el).value, autor: $("#hv-a", el).value, texto: x }); save("hojas/registro"); render(); toast("Anotación agregada."); }
+    const d = e.target.closest("[data-del]"); if (d) { if (d.dataset.sure) { doc.by[ui.alumnoHV] = doc.by[ui.alumnoHV].filter(r => r.id !== d.dataset.del); save("hojas/registro"); render(); } else { d.dataset.sure = 1; d.textContent = "¿Eliminar?"; } }
+  });
+};
+
+/* ---------- demo + clear ---------- */
+async function loadDemo() {
+  const g = await G(), al = await A(), y = Number(g.anio) || new Date().getFullYear();
+  Object.assign(g, { curso: "4° Básico A", nivel: "Básica", ciclo: "Segundo ciclo", educador: g.educador || "Educadora de ejemplo", profesorAula: "Profesor de ejemplo", establecimiento: "Escuela de ejemplo", comuna: "Santiago", provincia: "Santiago", region: "Metropolitana", localidad: "Urbana", ejemplo: true });
+  const S = [["Araya","Muñoz","Tomás Ignacio","H","2016-05-12","Permanente","Discapacidad intelectual leve","María Muñoz","Madre"],
+    ["Bravo","Soto","Valentina Paz","M","2015-11-03","Transitoria","Dificultades específicas del aprendizaje","Carlos Bravo","Padre"],
+    ["Castillo","Rojas","Benjamín Andrés","H","2016-02-20","Permanente","Trastorno del espectro autista","Paula Rojas","Madre"],
+    ["Díaz","Fuentes","Martina Belén","M","2016-08-15","Transitoria","Trastorno por déficit atencional (TDAH)","Rosa Fuentes","Abuela"],
+    ["Espinoza","Vera","Agustín Felipe","H","2015-09-28","Transitoria","Funcionamiento intelectual limítrofe","Javier Espinoza","Padre"],
+    ["Figueroa","Lagos","Josefa Antonia","M","2016-01-07","Permanente","Discapacidad auditiva","Claudia Lagos","Madre"],
+    ["González","Pino","Mateo Alonso","H","2016-06-30","Transitoria","Dificultades específicas del aprendizaje","Ana Pino","Madre"]];
+  al.list = S.map(([apPat, apMat, nombres, sexo, fechaNac, nee, diagnostico, apoderado, parentesco], i) => ({ id: "ej" + i, apPat, apMat, nombres, sexo, fechaNac, nee, diagnostico, apoderado, parentesco, rut: "", fechaMatricula: `${y}-03-04`, direccion: "Dirección de ejemplo " + (100 + i * 7), comuna: "Santiago", telefono: "+56 9 0000 000" + i }));
+  const m = defaultMonth(), as = await getDoc(`asistencia/${y}-${pad(m)}`, DEF.asis);
+  const lim = (new Date().getFullYear() === y && new Date().getMonth() + 1 === m) ? new Date().getDate() : daysIn(y, m);
+  let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  al.list.forEach((s, i) => { as.m[s.id] = {}; for (let d = 1; d <= lim; d++) { if (isWE(y, m, d)) continue; const r = rnd(); as.m[s.id][d] = r < (i === 3 ? .22 : .06) ? "A" : r < (i === 3 ? .27 : .08) ? "J" : r < .11 ? "R" : "P"; } });
+  const ev = await getDoc(`evaluaciones/${y}-1S`, DEF.eval);
+  ev.areas = [{ nombre: "Lenguaje", obj: ["Lee palabras con sílabas directas", "Comprende textos breves", "Escribe oraciones simples", "", ""] }, { nombre: "Matemática", obj: ["Cuenta hasta 100", "Resuelve sumas simples", "Reconoce figuras 2D", "", ""] }, { nombre: "Socioemocional", obj: ["Respeta turnos", "Expresa emociones", "", "", ""] }, { nombre: "", obj: ["", "", "", "", ""] }, { nombre: "", obj: ["", "", "", "", ""] }];
+  const lv = ["L", "ML", "PL", "L", "ML"]; al.list.forEach((s, i) => { ev.n[s.id] = {}; [[0, 3], [1, 3], [2, 2]].forEach(([a, n]) => { for (let o = 0; o < n; o++) ev.n[s.id][`${a}-${o}`] = lv[(i + a + o) % 5]; }); });
+  ev.fecha = `${y}-07-10`;
+  const act = await getDoc(`actividades/${todayISO()}`, DEF.act);
+  act.rows = blankRows(); act.rows[0] = { hora: "1°-2°", materia: "Lenguaje: comprensión lectora (OA 4)", actividades: "Co-docencia en aula. Lectura compartida con apoyo de pictogramas.", inasist: "", asist: "", atrasos: "", eval: "Lista de cotejo" };
+  act.rows[1] = { hora: "3°", materia: "Matemática: adición hasta 20", actividades: "Trabajo en aula de recursos con material concreto.", inasist: "", asist: "", atrasos: "", eval: "Observación directa" };
+  ["libro/general", "libro/alumnos", `asistencia/${y}-${pad(m)}`, `evaluaciones/${y}-1S`, `actividades/${todayISO()}`].forEach(save);
+}
+async function clearAll() {
+  const paths = ["libro/general", "libro/alumnos", "plan/anual", "entrevistas/registro", "hojas/registro"];
+  for (const c of ["asistencia", "actividades", "evaluaciones"]) for (const id of await listIds(c)) paths.push(`${c}/${id}`);
+  store.timers.forEach(t => clearTimeout(t)); store.timers.clear();
+  await Promise.all(paths.map(delDoc)); store.cache.clear(); setSync();
+}
+
+/* ---------- book navigation ---------- */
+let cur = -1, busy = false;
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const sheet = $("#sheet");
+function ribbons() {
+  $("#ribbons").innerHTML = PAGES.map((p, i) => `<button class="ribbon" style="--c:${p.c}" data-idx="${i}" aria-current="${i === cur}">${esc(p.s || p.t)}</button>`).join("");
+}
+async function go(i, dir) {
+  if (busy || i < 0 || i >= PAGES.length || i === cur) return;
+  busy = true; freshen();
+  dir = dir ?? (i > cur ? 1 : -1);
+  const old = sheet.querySelector(".page");
+  const nw = document.createElement("section"); nw.className = "page"; nw.setAttribute("aria-label", PAGES[i].t);
+  try { await R[PAGES[i].id](nw); } catch (e) { console.error(e); nw.innerHTML = `<div class="empty">No se pudo abrir esta página. Recarga e intenta de nuevo.</div>`; }
+  if (PAGES[i].id !== "portada") nw.insertAdjacentHTML("beforeend", `<span class="folio">${i}</span>`);
+  cur = i; ribbons(); updNav();
+  try { history.replaceState(null, "", "#" + PAGES[i].id); } catch {}
+  const done = () => { busy = false; };
+  if (!old) { nw.classList.add("fade"); sheet.append(nw); done(); return; }
+  const finish = (el, fn) => { let ok = false; const f = () => { if (ok) return; ok = true; fn(); done(); }; el.addEventListener("animationend", f, { once: true }); setTimeout(f, 900); };
+  if (reduced) { old.remove(); nw.classList.add("fade"); sheet.append(nw); done(); }
+  else if (dir > 0) { sheet.insertBefore(nw, old); old.classList.add("turn-out"); finish(old, () => old.remove()); }
+  else { sheet.append(nw); nw.classList.add("turn-in"); finish(nw, () => { old.remove(); nw.classList.remove("turn-in"); }); }
+  const top = $(".desk").getBoundingClientRect().top; if (top < 0) window.scrollBy({ top: top - 10, behavior: reduced ? "auto" : "smooth" });
+}
+function updNav() { $("#prev").disabled = cur <= 0; $("#next").disabled = cur >= PAGES.length - 1; $("#pgno").textContent = cur === 0 ? "Portada" : `Pág. ${cur} de ${PAGES.length - 1}`; }
+const idxOf = id => PAGES.findIndex(p => p.id === id);
+$("#prev").onclick = () => go(cur - 1);
+$("#next").onclick = () => go(cur + 1);
+$("#ribbons").addEventListener("click", e => { const b = e.target.closest("[data-idx]"); if (b) go(Number(b.dataset.idx)); });
+document.addEventListener("click", async e => {
+  const g = e.target.closest("[data-go]"); if (g) { go(idxOf(g.dataset.go)); return; }
+  const h = e.target.closest("[data-hv]"); if (h) { ui.alumnoHV = h.dataset.hv; go(idxOf("hojas")); return; }
+  const a = e.target.closest("[data-act]")?.dataset.act;
+  if (a === "demo") { await loadDemo(); toast("Curso de ejemplo cargado."); rerender(); }
+  if (a === "clear") { ui.confirmClear = true; rerender(); }
+  if (a === "clear-no") { ui.confirmClear = false; rerender(); }
+  if (a === "clear-yes") { ui.confirmClear = false; await clearAll(); toast("Libro vaciado."); rerender(); }
+});
+async function rerender() { const i = cur; const old = sheet.querySelector(".page"); const nw = document.createElement("section"); nw.className = "page"; await R[PAGES[i].id](nw); if (PAGES[i].id !== "portada") nw.insertAdjacentHTML("beforeend", `<span class="folio">${i}</span>`); old?.replaceWith(nw); }
+document.addEventListener("keydown", e => {
+  if (e.target.closest("input,textarea,select,[contenteditable]") || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); go(cur + 1); }
+  if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(cur - 1); }
+});
+let tx = null, ty = 0;
+sheet.addEventListener("touchstart", e => { if (e.target.closest(".scroll,input,textarea,select")) { tx = null; return; } tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+sheet.addEventListener("touchend", e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty; if (Math.abs(dx) > 70 && Math.abs(dy) < 50) go(cur + (dx < 0 ? 1 : -1)); tx = null; });
+window.addEventListener("beforeunload", () => { for (const p of [...store.timers.keys()]) { clearTimeout(store.timers.get(p)); flush(p); } });
+
+/* ---------- boot ---------- */
+(async () => {
+  sheet.innerHTML = `<section class="page"><div class="loading">Abriendo el libro…</div></section>`;
+  const use = n => window.claude?.use ? Promise.race([window.claude.use(n).catch(() => null), new Promise(r => setTimeout(() => r(null), 9000))]) : Promise.resolve(null);
+  const [db, dl] = await Promise.all([use("db"), use("downloads")]);
+  if (db) { store.db = db; store.mode = "db"; }
+  downloads = dl;
+  setSync();
+  sheet.innerHTML = "";
+  const h = (location.hash || "").slice(1); const start = idxOf(h);
+  ribbons(); await go(start >= 0 ? start : 0);
+})();
+})();
+</script>
+
+</body></html>

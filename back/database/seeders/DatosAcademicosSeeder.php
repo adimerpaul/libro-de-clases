@@ -35,7 +35,7 @@ class DatosAcademicosSeeder extends Seeder
             ['FIL', 'Filosofía', '#4a5a9a'],
             ['ECI', 'Educación Ciudadana', '#7a6a2f'],
             ['CCI', 'Ciencias para la Ciudadanía', '#2f8a7a'],
-        ])->mapWithKeys(fn ($a) => [$a[0] => Asignatura::create([
+        ])->mapWithKeys(fn ($a) => [$a[0] => Asignatura::updateOrCreate(['codigo' => $a[0]], [
             'codigo' => $a[0], 'nombre' => $a[1], 'color' => $a[2],
         ])]);
 

@@ -1,0 +1,68 @@
+openapi: 3.0.3
+info:
+  title: Libro de Clases 3.0 - Curriculum API
+  version: 0.1.0
+paths:
+  /api/curriculum/levels:
+    get:
+      summary: Lista niveles educativos
+      responses:
+        '200': {description: OK}
+  /api/curriculum/grades:
+    get:
+      summary: Lista cursos por nivel
+      parameters:
+        - in: query
+          name: level_id
+          schema: {type: integer}
+      responses:
+        '200': {description: OK}
+  /api/curriculum/subjects:
+    get:
+      summary: Lista asignaturas/ámbitos válidos por curso
+      parameters:
+        - in: query
+          name: grade_id
+          required: true
+          schema: {type: integer}
+      responses:
+        '200': {description: OK}
+  /api/curriculum/objectives:
+    get:
+      summary: OA por curso-asignatura, unidad o eje
+      parameters:
+        - in: query
+          name: grade_subject_id
+          required: true
+          schema: {type: integer}
+        - in: query
+          name: unit_id
+          schema: {type: integer}
+        - in: query
+          name: axis_id
+          schema: {type: integer}
+      responses:
+        '200': {description: OK}
+  /api/curriculum/objectives/{id}/bundle:
+    get:
+      summary: Paquete pedagógico completo de un OA
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: {type: integer}
+      responses:
+        '200': {description: OA, indicadores, habilidades, recursos, fuente/licencia}
+  /api/curriculum/resources:
+    get:
+      summary: Recursos vinculados a OA
+      parameters:
+        - in: query
+          name: objective_id
+          required: true
+          schema: {type: integer}
+        - in: query
+          name: resource_type
+          schema: {type: string}
+      responses:
+        '200': {description: OK}

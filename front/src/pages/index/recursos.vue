@@ -13,7 +13,10 @@
 
     <div class="toolbar">
       <q-select v-model="nivel" :options="niveles" dense outlined label="Nivel" clearable style="min-width: 150px" />
-      <q-select v-model="asignatura" :options="asignaturas" dense outlined label="Asignatura" clearable style="min-width: 200px" />
+      <q-select
+        v-model="asignatura" :options="asignaturas" dense outlined label="Asignatura" clearable multiple use-chips
+        style="min-width: 220px" :hint="deCarga && asignatura?.length ?'Tus asignaturas (y material transversal)' : undefined"
+      />
       <q-select v-model="tipo" :options="tipos" dense outlined label="Tipo de recurso" clearable style="min-width: 170px" />
       <q-input v-model="texto" dense outlined debounce="250" placeholder="Buscar recurso u OA" style="min-width: 220px">
         <template #prepend><q-icon name="fas fa-magnifying-glass" size="14px" /></template>
@@ -102,7 +105,8 @@ const { proxy } = getCurrentInstance()
 const recursos = ref([])
 const loading = ref(false)
 const nivel = ref(null)
-const asignatura = ref(null)
+const asignatura = ref([])
+const deCarga = ref(false) // el filtro de asignatura viene de la carga del docente
 const tipo = ref(null)
 const texto = ref('')
 const detalle = ref(false)
@@ -120,7 +124,7 @@ const items = computed(() => {
   const q = normalizar(texto.value)
   return recursos.value.filter(r =>
     (!nivel.value || (r.nivel || 'Transversal') === nivel.value) &&
-    (!asignatura.value || r.asignatura?.nombre === asignatura.value) &&
+    (!asignatura.value?.length || !r.asignatura || asignatura.value.includes(r.asignatura.nombre)) &&
     (!tipo.value || r.tipo === tipo.value) &&
     (!q || normalizar([r.titulo, r.descripcion, r.objetivo?.codigo, r.objetivo?.texto].join(' ')).includes(q)))
 })
@@ -132,8 +136,19 @@ function ver (r) {
 
 onMounted(() => {
   loading.value = true
-  proxy.$axios.get('biblioteca')
-    .then(res => { recursos.value = res.data })
+  // El docente llega filtrado por las asignaturas de su carga del año (puede quitar el filtro)
+  const carga = proxy.$auth.hasPermission('clases.dictar')
+    ? proxy.$axios.get('docente/asignaciones').then(res => res.data).catch(() => [])
+    : Promise.resolve([])
+  Promise.all([proxy.$axios.get('biblioteca'), carga])
+    .then(([res, mias]) => {
+      recursos.value = res.data
+      const propias = unicos(mias.map(a => a.asignatura?.nombre))
+      if (propias.length) {
+        asignatura.value = propias
+        deCarga.value = true
+      }
+    })
     .catch(err => proxy.$alert.error(mensajeError(err)))
     .finally(() => { loading.value = false })
 })

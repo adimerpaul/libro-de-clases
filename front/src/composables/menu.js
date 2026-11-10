@@ -24,6 +24,7 @@ export const MENU = [
     title: 'Apoyo',
     links: [
       { key: 'pie', title: 'PIE / Inclusión', icon: 'fas fa-puzzle-piece', link: '/pie', permiso: 'pie.ver', desc: 'Evaluación integral, barreras, co-docencia, DUA, PACI, flexibilización, aula de recursos y vinculación familiar.' },
+      { key: 'pieLibro', title: 'Libro de clases PIE', icon: 'fas fa-book-open', link: '/pie/libro', permiso: 'pie.ver', desc: 'Libro de clases PIE por curso: matrícula, asistencia, actividades diarias, evaluaciones, plan anual, entrevistas y hoja de vida.' },
       { key: 'emocional', title: 'Educación emocional', icon: 'fas fa-heart-pulse', link: '/emocional', permiso: ['emocional.ver', 'emocional.reportar', 'clases.dictar'], desc: 'Plan socioemocional, sesiones por curso, seguimiento individual de bienestar, protocolo DEC y diagnóstico tipo DIA.' },
     ],
   },
@@ -40,7 +41,7 @@ export const MENU = [
   {
     title: 'Operación',
     links: [
-      { key: 'rfid', title: 'Asistencia RFID', icon: 'fas fa-tower-broadcast', link: '/rfid', permiso: ['rfid.ver', 'clases.dictar'], desc: 'El evento físico no es la asistencia oficial: el motor propone y los casos inciertos los valida una persona autorizada.' },
+      { key: 'rfid', title: 'Asistencia', icon: 'fas fa-tower-broadcast', link: '/rfid', permiso: ['rfid.ver', 'clases.dictar'], desc: 'El evento físico no es la asistencia oficial: el motor propone y los casos inciertos los valida una persona autorizada.' },
       { key: 'retiros', title: 'Retiro estudiantes', icon: 'fas fa-door-open', link: '/retiros', permiso: 'matriculas.ver', desc: 'Baja de estudiantes del año escolar (retiro o traslado) con fecha, motivo y trazabilidad.' },
     ],
   },

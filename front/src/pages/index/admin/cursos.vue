@@ -18,12 +18,15 @@
 
     <div class="card">
       <div class="cardHead">
-        <h3>Cursos {{ anio }} <span class="badge blue q-ml-sm">{{ rows.length }}</span></h3>
-        <q-select v-model="anio" :options="anios" dense outlined label="Año escolar" style="min-width: 150px" @update:model-value="cargar" />
+        <h3>Cursos {{ anio }} <span class="badge blue q-ml-sm">{{ filtrados.length }}</span></h3>
+        <div class="row q-gutter-sm">
+          <NivelSelect v-model="filtroNivel" label="Curso / Nivel" clearable style="min-width: 220px" />
+          <q-select v-model="anio" :options="anios" dense outlined label="Año escolar" style="min-width: 150px" @update:model-value="cargar" />
+        </div>
       </div>
 
       <q-table
-        :rows="rows" :columns="columns" row-key="id" flat :loading="loading"
+        :rows="filtrados" :columns="columns" row-key="id" flat :loading="loading"
         :pagination="{ rowsPerPage: 0 }" hide-pagination class="adminTable" no-data-label="Sin cursos para este año"
       >
         <template #body-cell-nombre="p">
@@ -53,7 +56,7 @@
         <q-form @submit.prevent="guardar()">
           <q-card-section class="formTitle">{{ form.id ? 'Editar curso' : 'Nuevo curso' }}</q-card-section>
           <q-card-section class="formGrid">
-            <q-select v-model="form.nivel" :options="catalogos.niveles" label="Nivel" outlined dense :rules="[v => !!v || 'Requerido']" hide-bottom-space />
+            <NivelSelect v-model="form.nivel" label="Curso / Nivel" :rules="[v => !!v || 'Requerido']" hide-bottom-space />
             <q-input v-model="form.letra" label="Letra" outlined dense maxlength="2" :rules="[v => !!v || 'Requerido']" hide-bottom-space />
             <q-input v-model.number="form.anio" label="Año" type="number" outlined dense :rules="[v => !!v || 'Requerido']" hide-bottom-space />
             <q-select
@@ -72,14 +75,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, getCurrentInstance } from 'vue'
-import { useCrud, useCatalogos, mensajeError } from '../../../composables/useCrud'
+import { ref, computed, onMounted, getCurrentInstance } from 'vue'
+import { useCrud, mensajeError } from '../../../composables/useCrud'
 import MenuAcciones from '../../../components/MenuAcciones.vue'
+import NivelSelect from '../../../components/NivelSelect.vue'
 
 definePage({ meta: { title: 'Cursos', permiso: 'cursos.ver' } })
 
 const { proxy } = getCurrentInstance()
-const catalogos = useCatalogos()
+const filtroNivel = ref(null)
 
 const actual = new Date().getFullYear()
 const anio = ref(actual)
@@ -112,6 +116,8 @@ const { rows, loading, dialog, saving, form, cargar, nuevo, editar, guardar, eli
     aForm: c => ({ id: c.id, anio: c.anio, nivel: c.nivel, letra: c.letra, profesor_jefe_id: c.profesor_jefe_id }),
   },
 )
+
+const filtrados = computed(() => filtroNivel.value ? rows.value.filter(c => c.nivel === filtroNivel.value) : rows.value)
 
 const columns = [
   { name: 'acciones', label: '', field: 'id', align: 'left', style: 'width: 44px' },

@@ -34,8 +34,7 @@
             <small>{{ ultima ? ultima.meta : (enVivo ? 'Esperando la próxima pasada' : 'Activa el tiempo real') }}</small>
           </div>
           <div class="ground" />
-          <div class="gate one"><span class="gateLabel">Portal establecimiento</span></div>
-          <div class="gate two"><span class="gateLabel">Portal sala {{ nombreCurso }}</span></div>
+          <div class="gate"><span class="gateLabel">Portal establecimiento</span></div>
           <div
             v-for="w in caminantes" :key="w.key" class="walker" :class="[w.clase, { salida: w.salida }]"
             @animationend="quitarCaminante(w.key)"
@@ -176,7 +175,6 @@ const claseBadge = estado => ({ presente: 'ok', atrasado: 'warn', ausente: 'red'
 const hora = f => (f || '').slice(11, 16)
 const iniciales = n => (n || '').split(/[ ,]+/).filter(Boolean).slice(0, 2).map(p => p[0]).join('')
 const detalle = e => (e.entrada ? `Entrada ${hora(e.entrada)}${estadoDe(e) === 'salio' ? ' · ya salió' : ''}` : (e.codigo || 'Sin tarjeta'))
-const nombreCurso = computed(() => cursos.value.find(c => c.id === cursoId.value)?.nombre || '')
 
 const conteo = computed(() => {
   const c = { presente: 0, atrasado: 0, ausente: 0, salieron: 0 }
@@ -225,7 +223,7 @@ async function cargar () {
   }
 }
 
-// Un punto que cruza los dos portales (de vuelta si es salida)
+// Un punto que cruza el portal (de vuelta si es salida)
 function animar (m, e) {
   const clase = m.desconocida ? 'desconocida' : m.tipo === 'salida' ? 'salio' : m.propuesta
   caminantes.value.push({ key: ++secuencia, iniciales: e ? iniciales(e.nombre) : '?', clase, salida: m.tipo === 'salida' })
@@ -329,9 +327,7 @@ onBeforeUnmount(() => {
 .portalWrap { display: grid; grid-template-columns: 1.2fr .8fr; gap: 14px; margin-bottom: 14px }
 .portalStage { height: 330px; border: 1px solid #c9d9e5; border-radius: 16px; background: linear-gradient(#edf6fb, #fff); position: relative; overflow: hidden }
 .ground { position: absolute; left: 0; right: 0; bottom: 60px; height: 3px; background: #b7c8d5 }
-.gate { position: absolute; bottom: 62px; width: 90px; height: 150px; border: 7px solid #426e91; border-bottom: 0; border-radius: 20px 20px 0 0 }
-.gate.one { left: 23% }
-.gate.two { right: 18% }
+.gate { position: absolute; bottom: 62px; left: calc(50% - 45px); width: 90px; height: 150px; border: 7px solid #426e91; border-bottom: 0; border-radius: 20px 20px 0 0 }
 .gate::before, .gate::after { content: ""; position: absolute; top: 40px; width: 8px; height: 74px; background: #1f6fb2; border-radius: 5px; box-shadow: 0 0 18px #1f6fb2aa }
 .gate::before { left: -8px }
 .gate::after { right: -8px }
@@ -349,8 +345,8 @@ onBeforeUnmount(() => {
 .walker.atrasado { background: #d97706 }
 .walker.salio { background: #1f6fb2 }
 .walker.salida { animation-name: walkBack }
-@keyframes walk { 0% { left: -30px; opacity: 0 } 4% { opacity: 1 } 43% { left: 31% } 69% { left: 69% } 96% { opacity: 1 } 100% { left: 103%; opacity: 0 } }
-@keyframes walkBack { 0% { left: 103%; opacity: 0 } 4% { opacity: 1 } 31% { left: 69% } 57% { left: 31% } 96% { opacity: 1 } 100% { left: -30px; opacity: 0 } }
+@keyframes walk { 0% { left: -30px; opacity: 0 } 4% { opacity: 1 } 96% { opacity: 1 } 100% { left: 103%; opacity: 0 } }
+@keyframes walkBack { 0% { left: 103%; opacity: 0 } 4% { opacity: 1 } 96% { opacity: 1 } 100% { left: -30px; opacity: 0 } }
 
 .rfidMetrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px }
 .rfidMetric { background: #fff; border: 1px solid #d7e1e9; border-radius: 12px; padding: 10px; text-align: center }
@@ -404,7 +400,7 @@ onBeforeUnmount(() => {
 }
 @media (max-width: 600px) {
   .rfidMetrics { grid-template-columns: repeat(2, 1fr) }
-  .gate { width: 64px; height: 140px }
+  .gate { width: 64px; height: 140px; left: calc(50% - 32px) }
   .scanPanel { min-width: 0; width: 88% }
 }
 </style>

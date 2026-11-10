@@ -1,1 +1,0 @@
-import{M as e,c as t}from"./runtime-core.esm-bundler-Bzd4vjQp.js";import{t as n}from"./UsuariosAdmin-CEgCU69e.js";var r={__name:`docentes`,setup(r){return(r,i)=>(e(),t(n,{"solo-docentes":``}))}};export{r as default};

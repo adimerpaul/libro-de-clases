@@ -61,7 +61,7 @@
               v-model="form.curso_id" :options="cursos" option-value="id" option-label="nombre" emit-value map-options
               label="Curso" outlined dense :disable="!!form.id" :rules="[v => !!v || 'Requerido']" hide-bottom-space
             />
-            <q-input v-model.number="form.horas_semanales" label="Horas semanales" type="number" min="1" max="40" outlined dense />
+            <q-select v-model="form.horas_semanales" :options="HORAS" label="Horas semanales" clearable outlined dense />
             <q-select
               v-model="form.asignatura_id" :options="asignaturasDisponibles" option-value="id" option-label="nombre"
               emit-value map-options label="Asignatura" outlined dense class="full" :disable="!!form.id"
@@ -99,6 +99,7 @@ const router = useRouter()
 
 const actual = new Date().getFullYear()
 const anios = [actual - 1, actual, actual + 1]
+const HORAS = Array.from({ length: 45 }, (_, i) => i + 1) // horas semanales: 1 a 45
 const anio = ref(route.query.anio ? Number(route.query.anio) : actual)
 const cursoId = ref(route.query.curso ? Number(route.query.curso) : null)
 const docenteId = ref(route.query.docente ? Number(route.query.docente) : null)

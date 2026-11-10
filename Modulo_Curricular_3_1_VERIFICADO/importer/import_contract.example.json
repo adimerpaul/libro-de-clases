@@ -1,0 +1,35 @@
+{
+  "curriculum_version": {
+    "code": "CN_1_6_SNAPSHOT_YYYY_MM_DD",
+    "name": "Snapshot Currículum Nacional 1° a 6° Básico",
+    "snapshot_date": "YYYY-MM-DD"
+  },
+  "offering": {
+    "grade_code": "1B",
+    "subject_code": "ART_VIS"
+  },
+  "axes": [
+    {"code": "EXP_CREAR", "name": "Expresar y crear visualmente"}
+  ],
+  "objectives": [
+    {
+      "code": "AR01-OA-01",
+      "oa_number": 1,
+      "axis_code": "EXP_CREAR",
+      "official_text": "Texto oficial o autorizado",
+      "source_url": "https://www.curriculumnacional.cl/...",
+      "source_kind": "OFFICIAL"
+    }
+  ],
+  "resources": [
+    {
+      "external_code": "AR-01-OA-1-U1-A10",
+      "title": "Título",
+      "type": "ACTIVIDAD_SUGERIDA",
+      "url": "https://www.curriculumnacional.cl/...",
+      "license_code": "CC-BY-NC-SA",
+      "hosting_policy": "LINK_ONLY",
+      "oa_codes": ["AR01-OA-01"]
+    }
+  ]
+}

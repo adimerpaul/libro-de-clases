@@ -58,7 +58,7 @@ test('UTP crea, edita y lista OA del catálogo con su estructura pedagógica', f
     comoEnCurriculum($this->docente)->getJson('/api/curriculum/oa?nivel=2° Medio&asignatura_id='.$this->mat->id)
         ->assertOk()->assertJsonCount(2);
     comoEnCurriculum($this->docente)->getJson('/api/curriculum/catalogos')
-        ->assertOk()->assertJsonPath('resumen.vigentes', 2)->assertJsonPath('niveles.11.total', 2);
+        ->assertOk()->assertJsonPath('resumen.vigentes', 2)->assertJsonPath('niveles.13.total', 2);
 });
 
 test('el docente solo consulta el catálogo', function () {

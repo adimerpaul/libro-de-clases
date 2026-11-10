@@ -30,6 +30,7 @@ use App\Http\Controllers\LibretaController;
 use App\Http\Controllers\LibroController;
 use App\Http\Controllers\Pie\CasoController;
 use App\Http\Controllers\Pie\DocumentoController;
+use App\Http\Controllers\Pie\LibroPieController;
 use App\Http\Controllers\Pie\SeguimientoController;
 use App\Http\Controllers\Student360Controller;
 use App\Support\Permisos;
@@ -211,6 +212,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/casos/{caso}/seguimientos', [SeguimientoController::class, 'store'])->middleware($editar);
         Route::put('/seguimientos/{seguimiento}', [SeguimientoController::class, 'update'])->middleware($editar);
         Route::delete('/seguimientos/{seguimiento}', [SeguimientoController::class, 'destroy'])->middleware($editar);
+
+        // Libro de Clases PIE por curso (hojas del libro impreso como documentos por clave)
+        Route::prefix('libro')->group(function () use ($ver, $editar) {
+            Route::get('/cursos', [LibroPieController::class, 'cursos'])->middleware($ver);
+            Route::get('/{curso}', [LibroPieController::class, 'show'])->middleware($ver)->whereNumber('curso');
+            Route::get('/{curso}/serie/{prefijo}', [LibroPieController::class, 'serie'])->middleware($ver)->whereNumber('curso');
+            Route::get('/{curso}/hojas/{clave}', [LibroPieController::class, 'hoja'])->middleware($ver)->whereNumber('curso')->where('clave', '.+');
+            Route::put('/{curso}/hojas/{clave}', [LibroPieController::class, 'guardar'])->middleware($editar)->whereNumber('curso')->where('clave', '.+');
+            Route::post('/{curso}/actividades/{fecha}/firma', [LibroPieController::class, 'firmar'])->middleware($editar)->whereNumber('curso');
+            Route::delete('/{curso}/actividades/{fecha}/firma', [LibroPieController::class, 'quitarFirma'])->middleware($editar)->whereNumber('curso');
+        });
     });
 
     // ── Trabajo docente: planificador y creador de evaluaciones (datos propios) ──

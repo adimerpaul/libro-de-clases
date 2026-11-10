@@ -5,10 +5,13 @@
         <h2>PIE e inclusión</h2>
         <p>Evaluación integral, barreras, equipo de apoyo, plan de apoyo, PACI, expediente y bitácora de cada estudiante del Programa de Integración Escolar.</p>
       </div>
-      <q-btn
-        v-if="$auth.hasPermission('pie.crear')" no-caps unelevated class="btnPrimary" icon="fas fa-user-plus"
-        label="Ingresar estudiante" @click="formAbierto = true"
-      />
+      <div class="row q-gutter-sm no-wrap">
+        <q-btn no-caps outline color="primary" icon="fas fa-book-open" label="Libro PIE por curso" to="/pie/libro" />
+        <q-btn
+          v-if="$auth.hasPermission('pie.crear')" no-caps unelevated class="btnPrimary" icon="fas fa-user-plus"
+          label="Ingresar estudiante" @click="formAbierto = true"
+        />
+      </div>
     </div>
 
     <div class="kpiLine q-mb-md">

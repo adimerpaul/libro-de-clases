@@ -1,0 +1,28 @@
+0f494d1c7f576eda181a46978441077622da7d16ff2c5a11031cafb0ae38e9a4  ./README.md
+34230ce552dd42380406f7073b3235f49522147b05df5bcf9fd52e3ae66e5d8c  ./VERIFICACION_PAQUETE.md
+34480c5bf0567cb5d22ceea9d9f793d169ca503d73dbb78cc234e43d85ab1b3e  ./api/openapi.yaml
+0fe1b99b47bc80d863d558747fc0305075580661aacf1d4944d4626ded2c2369  ./database/CONSULTAS_DEMO.sql
+cef74437e1b1c8558faef296269cb3c3854b1776b2555f5d066f58f9ea323621  ./database/README_DATABASE.md
+f73ca1f551f893bb2eb15e33025222e267bc8153baaa25259557a3ca09958a24  ./database/build_sqlite.py
+57b2c29306d6fb9f9779ca00fc3ab80d3fcb26a01121f89f1e0abe9c45ed4e56  ./database/curriculum_core_demo.sqlite
+56a4e73d45799bf8f88c9618b10c5e930855e23fc2d6f7b97f4c1b703dbf9175  ./database/laravel/2026_11_02_000100_create_curriculum_module_tables.php
+98c0a08d51e528f390cda1ae29c7cdd01a5b37dabfdccb4fcf99a84324b08947  ./database/laravel/CurriculumDemoSeeder.php
+3d08ba0e6fd7272f8d1e307b6ea2d34a31521e1f422f784e3c37b3532d6dd058  ./database/schema.sql
+06317a550f1fa6447a8f4a09d0d8842d82250c5337b9c1c9b2487a3359a0c200  ./docs/INTEGRACION_LARAVEL.md
+7ad9deccfb992d8152427a0fc2514c9e1829d252f98577a36fc33bdc93287d54  ./docs/MODELO_DATOS.md
+67fa5946538a2d51f4b07d1de2d01d2839c4acb60ead352ace28f06b47c56926  ./importer/import_contract.example.json
+
+# FILE SIZES
+README.md | 2236 bytes
+VERIFICACION_PAQUETE.md | 1657 bytes
+api/openapi.yaml | 1793 bytes
+database/CONSULTAS_DEMO.sql | 1069 bytes
+database/README_DATABASE.md | 647 bytes
+database/build_sqlite.py | 23587 bytes
+database/curriculum_core_demo.sqlite | 237568 bytes
+database/laravel/2026_11_02_000100_create_curriculum_module_tables.php | 10063 bytes
+database/laravel/CurriculumDemoSeeder.php | 1069 bytes
+database/schema.sql | 11012 bytes
+docs/INTEGRACION_LARAVEL.md | 3169 bytes
+docs/MODELO_DATOS.md | 4694 bytes
+importer/import_contract.example.json | 895 bytes

@@ -1,1 +1,0 @@
-import{b as e}from"./runtime-core.esm-bundler-CBrD_RwI.js";import{F as t}from"./use-router-link-COphSzo6.js";var n=t({name:`QSpace`,setup(){let t=e(`div`,{class:`q-space`});return()=>t}});export{n as t};

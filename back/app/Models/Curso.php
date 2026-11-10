@@ -28,6 +28,7 @@ class Curso extends Model implements Auditable
             $curso->matriculas()->get()->each->delete();
             SesionSocioemocional::where('curso_id', $curso->id)->get()->each->delete();
             DiagnosticoSocioemocional::where('curso_id', $curso->id)->get()->each->delete();
+            PieLibroHoja::where('curso_id', $curso->id)->get()->each->delete();
         });
     }
 

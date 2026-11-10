@@ -55,7 +55,7 @@ class AsignacionController extends Controller
                 Rule::unique('asignaciones')->ignore($asignacion)->withoutTrashed()->where('curso_id', $request->curso_id),
             ],
             'docente_id' => ['required', 'integer', 'exists:users,id,deleted_at,NULL'],
-            'horas_semanales' => ['nullable', 'integer', 'between:1,40'],
+            'horas_semanales' => ['nullable', 'integer', 'between:1,45'],
         ], ['asignatura_id.unique' => 'Esa asignatura ya tiene docente en este curso.'], [
             'curso_id' => 'curso', 'asignatura_id' => 'asignatura', 'docente_id' => 'docente',
         ]);

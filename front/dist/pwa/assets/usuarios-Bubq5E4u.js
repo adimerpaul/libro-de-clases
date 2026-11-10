@@ -1,1 +1,0 @@
-import{P as e,c as t}from"./runtime-core.esm-bundler-CBrD_RwI.js";import{t as n}from"./UsuariosAdmin-Dyusakgb.js";var r={__name:`usuarios`,setup(r){return(r,i)=>(e(),t(n))}};export{r as default};

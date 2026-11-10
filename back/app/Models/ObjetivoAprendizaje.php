@@ -17,7 +17,7 @@ class ObjetivoAprendizaje extends Model implements Auditable
     protected $table = 'objetivos_aprendizaje';
 
     protected $fillable = [
-        'codigo', 'nivel', 'asignatura_id', 'unidad', 'texto', 'contenidos', 'habilidades', 'actitudes', 'indicadores',
+        'codigo', 'nivel', 'asignatura_id', 'curriculum_objective_id', 'unidad', 'texto', 'contenidos', 'habilidades', 'actitudes', 'indicadores',
         'instrumentos', 'estrategias', 'inicio', 'desarrollo', 'cierre', 'recursos', 'tiempo_espacio',
         'fuente', 'fuente_url', 'version_curricular', 'vigente_desde', 'vigente_hasta', 'fuente_hash', 'es_demo',
     ];

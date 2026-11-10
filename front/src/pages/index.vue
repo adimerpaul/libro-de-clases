@@ -171,8 +171,9 @@ function logout () {
   display: grid; place-items: center;
   background: var(--roleSoft); color: var(--role); font-weight: 900; font-size: 12px;
 }
-.utxt b { display: block; font-size: 11px }
-.utxt small { display: block; color: #6d8090; font-size: 11px }
+.utxt { line-height: 1.25 }
+.utxt b { display: block; font-size: 11px; line-height: 1.25 }
+.utxt small { display: block; color: #6d8090; font-size: 11px; line-height: 1.25; margin-top: 1px }
 .userBtn { border-radius: 12px; padding: 4px 10px 4px 4px }
 .userBtn:hover { background: var(--roleSoft) }
 .flecha { color: #6d8090 }
