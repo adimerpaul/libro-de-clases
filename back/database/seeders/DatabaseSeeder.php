@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             ])->syncRoles($roles);
         }
 
-        $this->call([DatosAcademicosSeeder::class, CurriculoSeeder::class, TrabajoDocenteSeeder::class, EstudiantesSeeder::class, BibliotecaSeeder::class, TarjetasRfidSeeder::class, AsistenciaDemoSeeder::class, PieSeeder::class, FamiliaSeeder::class, LibretaSeeder::class, EmocionalSeeder::class]);
+        $this->call([DatosAcademicosSeeder::class, TrabajoDocenteSeeder::class, EstudiantesSeeder::class, BibliotecaSeeder::class, TarjetasRfidSeeder::class, AsistenciaDemoSeeder::class, PieSeeder::class, FamiliaSeeder::class, LibretaSeeder::class, EmocionalSeeder::class]);
 
     }
 }

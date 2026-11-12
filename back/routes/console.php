@@ -2,6 +2,7 @@
 
 use App\Models\TarjetaRfid;
 use App\Support\AsistenciaRfid;
+use App\Support\CurriculoNacional;
 use App\Support\ImportadorCurriculo;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -47,3 +48,10 @@ Artisan::command('curriculo:importar {ruta? : archivo .sqlite (por defecto datab
         $this->warn("Omitido {$o}");
     }
 })->purpose('Carga el Módulo Curricular (SQLite curriculum_core) y sincroniza sus OA al catálogo');
+
+// OA oficiales de curriculumnacional.cl (database/data/curriculo_nacional_oa.json) → catálogo /curriculum
+Artisan::command('curriculo:nacional {ruta? : archivo .json (por defecto database/data/curriculo_nacional_oa.json)}', function () {
+    $r = CurriculoNacional::cargar($this->argument('ruta'));
+
+    $this->info("Asignaturas creadas: {$r['asignaturas_creadas']} · OA creados: {$r['oa_creados']} · OA actualizados: {$r['oa_actualizados']}");
+})->purpose('Carga los OA oficiales extraídos de curriculumnacional.cl al catálogo');

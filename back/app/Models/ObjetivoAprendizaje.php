@@ -19,7 +19,7 @@ class ObjetivoAprendizaje extends Model implements Auditable
     protected $fillable = [
         'codigo', 'nivel', 'asignatura_id', 'curriculum_objective_id', 'unidad', 'texto', 'contenidos', 'habilidades', 'actitudes', 'indicadores',
         'instrumentos', 'estrategias', 'inicio', 'desarrollo', 'cierre', 'recursos', 'tiempo_espacio',
-        'fuente', 'fuente_url', 'version_curricular', 'vigente_desde', 'vigente_hasta', 'fuente_hash', 'es_demo',
+        'fuente', 'fuente_url', 'version_curricular', 'vigente_desde', 'vigente_hasta', 'fuente_hash', 'es_demo', 'priorizado',
     ];
 
     protected function casts(): array
@@ -33,6 +33,7 @@ class ObjetivoAprendizaje extends Model implements Auditable
             'vigente_desde' => 'date:Y-m-d',
             'vigente_hasta' => 'date:Y-m-d',
             'es_demo' => 'boolean',
+            'priorizado' => 'boolean',
         ];
     }
 

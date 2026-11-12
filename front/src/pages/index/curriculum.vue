@@ -95,6 +95,7 @@
               <div class="oaBadges">
                 <span v-if="oa.es_demo" class="badge warn">DEMO</span>
                 <span v-else class="badge ok">Oficial</span>
+                <span v-if="oa.priorizado" class="badge blue">Priorizado<q-tooltip>OA priorizado por el Mineduc (Priorización Curricular)</q-tooltip></span>
                 <span class="badge">Versión {{ oa.version_curricular }}</span>
                 <span v-if="!vigente(oa)" class="badge red">Retirado {{ fechaCl(oa.vigente_hasta) }}</span>
                 <span v-else-if="oa.vigente_desde" class="badge">Vigente desde {{ fechaCl(oa.vigente_desde) }}</span>
@@ -139,7 +140,7 @@
             </div>
           </div>
 
-          <p class="oaTexto"><b>OA / propósito:</b> {{ oa.texto }}</p>
+          <p class="oaTexto" style="white-space: pre-line"><b>OA / propósito:</b> {{ oa.texto }}</p>
 
           <div class="pedagogyGrid">
             <div class="pedBox">
@@ -332,10 +333,11 @@ const etapas = computed(() => {
 const nivelesConOa = computed(() => cat.value.niveles.filter(n => n.total).length)
 const totalNivel = computed(() => cat.value.niveles.find(n => n.nivel === nivel.value)?.total || 0)
 
-// Asignaturas con su cantidad de OA vigentes en el nivel; primero las que tienen OA
+// Asignaturas con OA vigentes en el nivel (el catálogo tiene ~100: diferenciados y especialidades TP)
 const asignaturasNivel = computed(() => cat.value.asignaturas
   .map(a => ({ ...a, total: cat.value.conteo.find(c => c.nivel === nivel.value && c.asignatura_id === a.id)?.total || 0 }))
-  .sort((a, b) => (b.total > 0) - (a.total > 0) || a.nombre.localeCompare(b.nombre)))
+  .filter(a => a.total || a.id === asignatura.value)
+  .sort((a, b) => a.nombre.localeCompare(b.nombre)))
 
 function cargarCatalogos () {
   return proxy.$axios.get('curriculum/catalogos')

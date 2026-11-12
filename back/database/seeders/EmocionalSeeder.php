@@ -56,16 +56,6 @@ class EmocionalSeeder extends Seeder
     ];
 
     /** OA DEMO de Orientación (ui3 "Vinculación con Orientación"); no son el texto oficial del Mineduc. */
-    private const OA_ORIENTACION = [
-        ['ORI-1B-01', '1° Básico', 'Identificar emociones propias y ajenas y formas de expresarlas.', 'Crecimiento personal'],
-        ['ORI-3B-01', '3° Básico', 'Aceptar emociones y practicar estrategias de manejo emocional.', 'Crecimiento personal'],
-        ['ORI-5B-01', '5° Básico', 'Manifestar empatía y promover relaciones positivas.', 'Relaciones interpersonales'],
-        ['ORI-7B-01', '7° Básico', 'Desarrollar habilidades de resolución de conflictos.', 'Relaciones interpersonales'],
-        ['ORI-8B-01', '8° Básico', 'Reconocer y valorar la diversidad y el cuidado colectivo.', 'Participación y pertenencia'],
-        ['ORI-1M-01', '1° Medio', 'Autocuidado, bienestar y toma de decisiones responsables.', 'Bienestar y autocuidado'],
-        ['ORI-2M-01', '2° Medio', 'Gestionar emociones en contextos de estrés y presión académica.', 'Bienestar y autocuidado'],
-    ];
-
     public function run(): void
     {
         if (SesionSocioemocional::exists()) {
@@ -142,13 +132,8 @@ class EmocionalSeeder extends Seeder
         if (! $asignaturaId) {
             return collect();
         }
-        foreach (self::OA_ORIENTACION as [$codigo, $nivel, $texto, $unidad]) {
-            ObjetivoAprendizaje::firstOrCreate(['codigo' => $codigo], [
-                'nivel' => $nivel, 'asignatura_id' => $asignaturaId, 'unidad' => $unidad, 'texto' => $texto,
-                'habilidades' => ['Autoconocimiento', 'Empatía'], 'version_curricular' => 'demo', 'es_demo' => true,
-            ]);
-        }
 
+        // OA oficiales de Orientación (catálogo de curriculumnacional.cl)
         return ObjetivoAprendizaje::where('asignatura_id', $asignaturaId)->get();
     }
 

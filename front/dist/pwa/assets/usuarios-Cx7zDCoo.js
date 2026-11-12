@@ -1,0 +1,1 @@
+import{P as e,c as t}from"./runtime-core.esm-bundler-CMkITF1c.js";import{t as n}from"./UsuariosAdmin-DvfrALNV.js";var r={__name:`usuarios`,setup(r){return(r,i)=>(e(),t(n))}};export{r as default};

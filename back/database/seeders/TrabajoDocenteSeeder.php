@@ -30,11 +30,11 @@ class TrabajoDocenteSeeder extends Seeder
 
         $clases = [
             // [curso, día (0 = lunes), hora, OA, título, evidencia]
-            ['2° Medio B', 0, '08:30', 'MAT-2M-02', 'Funciones lineales: tablas y gráficos', 'Ticket de salida'],
-            ['2° Medio A', 1, '10:15', 'MAT-2M-02', 'Pendiente como razón de cambio', 'Guía resuelta en parejas'],
-            ['1° Medio A', 2, '11:45', 'MAT-1M-02', 'Productos notables con material concreto', 'Organizador gráfico'],
-            ['2° Medio B', 3, '08:30', 'MAT-2M-01', 'Potencias y raíces en contexto', 'Resolución de problemas'],
-            ['1° Medio B', 4, '09:50', 'MAT-1M-03', 'Gráficos y medidas de tendencia central', 'Informe breve de datos'],
+            ['2° Medio B', 0, '08:30', 'MA2M-OA-01', 'Números reales: cálculo y estimación', 'Ticket de salida'],
+            ['2° Medio A', 1, '10:15', 'MA2M-OA-02', 'Potencias, raíces enésimas y logaritmos', 'Guía resuelta en parejas'],
+            ['1° Medio A', 2, '11:45', 'MA1M-OA-03', 'Productos notables con material concreto', 'Organizador gráfico'],
+            ['2° Medio B', 3, '08:30', 'MA2M-OA-02', 'Potencias y raíces en contexto', 'Resolución de problemas'],
+            ['1° Medio B', 4, '09:50', 'MA1M-OA-12', 'Distribuciones de dos características', 'Informe breve de datos'],
         ];
 
         foreach ($clases as [$curso, $dia, $hora, $codigo, $titulo, $evidencia]) {
@@ -62,13 +62,13 @@ class TrabajoDocenteSeeder extends Seeder
 
         // Instrumento de ejemplo generado desde el OA y guardado como borrador
         $asignacion = $carga->first(fn ($a) => $a->curso->nombre === '2° Medio B');
-        $objetivo = $oa('MAT-2M-02');
+        $objetivo = $oa('MA2M-OA-02');
         if ($asignacion && $objetivo) {
             $instrumento = Instrumento::create([
                 'docente_id' => $marcela->id,
                 'asignacion_id' => $asignacion->id,
                 'objetivo_aprendizaje_id' => $objetivo->id,
-                'nombre' => 'Control funciones lineales',
+                'nombre' => 'Control potencias, raíces y logaritmos',
                 'tipo' => 'Control',
                 'fecha_aplicacion' => $lunes->copy()->addDays(4)->toDateString(),
                 'exigencia' => 60,

@@ -65,12 +65,16 @@ class DatosAcademicosSeeder extends Seeder
 
         // ── Plan de estudio simplificado: [código => horas semanales] por tramo ──
         $planes = [
+            'parvularia' => ['PCI' => 8, 'PDPS' => 8, 'PICE' => 6],
+            'basica16' => ['LEN' => 8, 'MAT' => 6, 'HIS' => 3, 'CIE' => 3, 'ING' => 2, 'EFI' => 4, 'ART' => 2, 'MUS' => 2, 'TEC' => 1, 'ORI' => 1],
+            'tp' => ['LEN' => 3, 'MAT' => 3, 'ING' => 2, 'FIL' => 2, 'ECI' => 2, 'ORI' => 1, 'TPADM' => 14],
             'basica' => ['LEN' => 6, 'MAT' => 6, 'HIS' => 4, 'CIE' => 4, 'ING' => 3, 'EFI' => 2, 'ART' => 2, 'MUS' => 1, 'TEC' => 1, 'ORI' => 1],
             'media' => ['LEN' => 6, 'MAT' => 7, 'HIS' => 4, 'CIE' => 6, 'ING' => 4, 'EFI' => 2, 'ART' => 2, 'TEC' => 2, 'ORI' => 1],
             'diferenciada' => ['LEN' => 3, 'MAT' => 3, 'ING' => 2, 'FIL' => 2, 'ECI' => 2, 'CCI' => 2, 'EFI' => 2, 'ORI' => 1],
         ];
 
-        // Quién dicta cada asignatura según tramo: [básica, media 1°-2°, media 3°-4°]
+        // Quién dicta cada asignatura según tramo: [básica, media 1°-2°, media 3°-4° y TP]
+        // (en Parvularia y en lo que no está aquí, la educadora o profesor jefe)
         $quien = [
             'LEN' => ['andrea', 'carolina', 'andrea'],
             'MAT' => ['tomas', 'marcela', 'tomas'],
@@ -87,8 +91,18 @@ class DatosAcademicosSeeder extends Seeder
             'CCI' => ['valentina', 'valentina', 'valentina'],
         ];
 
-        // ── Cursos [nivel, letra, profesor jefe, tramo] ──
+        // ── Cursos [nivel, letra, profesor jefe, tramo]: uno por nivel, dos en 1° y 2° Medio ──
         $cursos = [
+            ['Sala Cuna', 'A', 'francisca', 'parvularia'],
+            ['Nivel Medio', 'A', 'francisca', 'parvularia'],
+            ['Pre-kínder', 'A', 'camila', 'parvularia'],
+            ['Kínder', 'A', 'camila', 'parvularia'],
+            ['1° Básico', 'A', 'andrea', 'basica16'],
+            ['2° Básico', 'A', 'valentina', 'basica16'],
+            ['3° Básico', 'A', 'tomas', 'basica16'],
+            ['4° Básico', 'A', 'jorge', 'basica16'],
+            ['5° Básico', 'A', 'rodrigo', 'basica16'],
+            ['6° Básico', 'A', 'ignacio', 'basica16'],
             ['7° Básico', 'A', 'andrea', 'basica'],
             ['8° Básico', 'A', 'tomas', 'basica'],
             ['1° Medio', 'A', 'jorge', 'media'],
@@ -97,26 +111,31 @@ class DatosAcademicosSeeder extends Seeder
             ['2° Medio', 'B', 'marcela', 'media'],
             ['3° Medio', 'A', 'rodrigo', 'diferenciada'],
             ['4° Medio', 'A', 'ignacio', 'diferenciada'],
+            ['3° Medio TP', 'A', 'tomas', 'tp'],
+            ['4° Medio TP', 'A', 'jorge', 'tp'],
         ];
-        $tramo = ['basica' => 0, 'media' => 1, 'diferenciada' => 2];
+        $tramo = ['parvularia' => null, 'basica16' => 0, 'basica' => 0, 'media' => 1, 'diferenciada' => 2, 'tp' => 2];
+
+        // Ámbitos de Parvularia y especialidad TP: los crea la migración del Currículum Nacional
+        $asignaturas = $asignaturas->merge(Asignatura::whereIn('codigo', ['PCI', 'PDPS', 'PICE', 'TPADM'])->get()->keyBy('codigo'));
 
         foreach ($cursos as [$nivel, $letra, $jefe, $plan]) {
-            $curso = Curso::create([
-                'anio' => $anio,
-                'nivel' => $nivel,
-                'letra' => $letra,
-                'profesor_jefe_id' => $d[$jefe]->id,
-            ]);
+            // La migración crear_cursos_todos_los_niveles ya pudo crear el curso "A"
+            $curso = Curso::updateOrCreate(
+                ['anio' => $anio, 'nivel' => $nivel, 'letra' => $letra],
+                ['profesor_jefe_id' => $d[$jefe]->id],
+            );
 
             foreach ($planes[$plan] as $codigo => $horas) {
-                $responsable = $quien[$codigo][$tramo[$plan]] ?? $jefe;
+                if (! isset($asignaturas[$codigo])) {
+                    continue;
+                }
+                $responsable = $tramo[$plan] === null ? $jefe : ($quien[$codigo][$tramo[$plan]] ?? $jefe);
 
-                Asignacion::create([
-                    'curso_id' => $curso->id,
-                    'asignatura_id' => $asignaturas[$codigo]->id,
-                    'docente_id' => $d[$responsable]->id,
-                    'horas_semanales' => $horas,
-                ]);
+                Asignacion::updateOrCreate(
+                    ['curso_id' => $curso->id, 'asignatura_id' => $asignaturas[$codigo]->id],
+                    ['docente_id' => $d[$responsable]->id, 'horas_semanales' => $horas],
+                );
             }
         }
     }
